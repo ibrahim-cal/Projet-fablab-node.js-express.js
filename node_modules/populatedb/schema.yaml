@@ -1,0 +1,37 @@
+#only for mongo
+sla:
+  type: 'string'
+scope:
+  type: object
+  tenant:
+    type: string
+  account:
+    type: string
+sender:
+  type: object
+  host:
+    type: string
+  enviroment:
+    type: string
+  cluster:
+    type: string
+measures:
+  type: array
+  measure:
+    type: object
+    resource:
+      type: string
+    method:
+      type: string
+    result:
+      type: string
+    ts:
+      type: string
+    metrics:
+      type: object
+      responseTime:
+        type: number
+      animalTypes:
+        type: number
+      resourceInstances:
+        type: number

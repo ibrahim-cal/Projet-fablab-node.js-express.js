@@ -1,5 +1,5 @@
 const config = require( "../config/mysql.json");
-const debug = require("debug")("projet-pid:db");
+const debug = require("debug")("projet-pid:sequelize");
 const { Sequelize, DataTypes, Model } = require("sequelize");
 
 const sequelize = new Sequelize(
@@ -14,11 +14,22 @@ const sequelize = new Sequelize(
   }
 );
 
-// A COMPLETER AVEC LES AUTRES TABLES
-const User = require("./User")(sequelize);
-const Equipement = require("./equipement")(sequelize);
+const Facture =             require("./facture")(sequelize);
+const LigneFacturation =    require("./ligneFacturation")(sequelize);
+const Machine =             require("./machine")(sequelize);
+const Utilisateur =         require("./utilisateur")(sequelize);
+const Utilisation =         require("./utilisation")(sequelize);
 
-User.hasMany(Equipement);
-Equipement.hasMany(User);
+Facture.hasMany(LigneFacturation);
+LigneFacturation.belongsTo(Utilisation);
+LigneFacturation.belongsTo(Facture);
 
-module.exports = { sequelize, User, Equipement};
+Machine.hasMany(Utilisation);
+
+Utilisateur.hasMany(Utilisation);
+Utilisation.belongsTo(Utilisateur);
+Utilisation.belongsTo(Machine);
+Utilisation.hasMany(LigneFacturation);
+
+module.exports = { sequelize, Facture, LigneFacture,
+     Machine, Utilisateur, Utilisation};

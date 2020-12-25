@@ -1,0 +1,53 @@
+randomFields:
+  tenant:
+    - tenant1
+    - tenant2
+    - tenant3
+    - tenant4
+    - tenant5
+  account:
+    - autumn@gmail.com
+    - hidden@gmail.com
+    - summer@gmail.com
+    - blue@gmail.com
+    - billowing@gmail.com
+  resource:
+    - /api/pets
+    - /api/pets/dogs
+    - /api/pets/cats
+    - /api/pets/snakes
+    - /api/pets
+    - /api/pets
+  method:
+    - GET
+    - POST
+    - DELETE
+    - HEAD
+    - GET
+    - GET
+  date:
+    - Date
+body: >
+        {
+            "sla": "mock-sample",
+            "scope": {
+                "tenant": "{{tenant}}",
+                "account": "{{account}}"
+            },
+            "sender": {
+                "host": "node1234",
+                "environment": "qa",
+                "cluster": "quique.isa.es"
+            },
+            "measures": [{
+                "resource": "{{resource}}",
+                "method": "{{method}}",
+                "result": "200",
+                "ts": "{{date}}",
+                "metrics": {
+                    "responseTime": 200,
+                    "animalTypes": 2,
+                    "resourceInstances": 200
+                }
+            }]
+        }
