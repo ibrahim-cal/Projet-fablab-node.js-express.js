@@ -11,22 +11,19 @@ module.exports = (sequelize) => {
                 },
             },
             prix: {
-                type: DataTypes.NUMBER(100),
+                type: DataTypes.STRING(100),
                 allowNull: false,
                 validate: {
                     len: [3, 100],
                 },
             },
             duree: {
-                type: DataTypes.NUMBER(50),
+                type: DataTypes.STRING(50),
                 allowNull: false,
             },
             sousTotal: {
-                type: DataTypes.NUMBER(100),
+                type: DataTypes.STRING(100),
                 allowNull: false,
-                validate: {
-                    len: [3, 100],
-                },
 
             },
             url: {

@@ -31,5 +31,5 @@ Utilisation.belongsTo(Utilisateur);
 Utilisation.belongsTo(Machine);
 Utilisation.hasMany(LigneFacturation);
 
-module.exports = { sequelize, Facture, LigneFacture,
+module.exports = { sequelize, Facture, LigneFacturation,
      Machine, Utilisateur, Utilisation};

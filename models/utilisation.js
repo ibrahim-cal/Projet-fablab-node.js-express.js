@@ -2,13 +2,25 @@ const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
   const Utilisation = sequelize.define("utilisation", {
+    duree: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+    },
+   
     dateUtilisation: {
       type: DataTypes.DATEONLY,
       allowNull: false,
     },
-    duree: {
-      type: DataTypes.NUMBER(50),
-      allowNull: false,
+  
+    name: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        if (this.duree) {
+          return `${this.duree}`;
+        } else {
+          return "";
+        }
+      },
     },
     url: {
       type: DataTypes.VIRTUAL,

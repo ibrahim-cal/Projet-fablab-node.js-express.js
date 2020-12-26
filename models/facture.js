@@ -1,30 +1,51 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-    const Facture = sequelize.define("facture",
-     {
+  const Facture = sequelize.define("facture",
+    {
       numeroFacture: {
-        type: DataTypes.NUMBER(100),
+        type: DataTypes.STRING(100),
         allowNull: false,
-        },
-        dateFacture: {
-            type: DataTypes.DATEONLY,
-            allowNull: false,
-          },
-          montant: {
-            type: DataTypes.NUMBER(100),
-            allowNull: false,
-            validate: {
-                len: [3, 100],
-            },
-        },
-
-      url: {
-        type: DataTypes.VIRTUAL,
-        get() {
-          return `/catalog/facture/${this.id}`;
-        },
       },
-    });
-    return Facture;
-  };
+     
+      montant: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+      },
+      dateFacture: DataTypes.DATEONLY,
+      
+        name: {
+          type: DataTypes.VIRTUAL,
+          get() {
+            if (this.numeroFacture && this.montant) {
+              return `${this.montant}, ${this.numeroFacture}`;
+            } else {
+              return "";
+            }
+          },
+        },
+        url: {
+          type: DataTypes.VIRTUAL,
+          get() {
+            return `/catalog/facture/${this.id}`;
+          },
+        },
+        lifespan: {
+          type: DataTypes.VIRTUAL,
+          get() {
+            let lifetime_string = "";
+            if (this.dateFacture) {
+              lifetime_string = DateTime.fromISO(this.dateFacture).toFormat("MMMM Do, YYYY");
+            }
+            return lifetime_string;
+          },
+        },
+        dateFacture_yyyy_mm_dd: {
+          type: DataTypes.VIRTUAL,
+          get() {
+            return DateTime.fromISO(this.dateFacture).toFormat("YYYY-MM-DD");
+          },
+        }
+      });
+  return Facture;
+};
