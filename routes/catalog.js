@@ -9,6 +9,7 @@ var machine_controller = require("../controllers/machineController");
 var utilisateur_controller = require("../controllers/utilisateurController");
 var utilisation_controller = require("../controllers/utilisationController");
 
+router.get("/", machine_controller.index);
 
 // GET request for creating a facture. NOTE This must come before routes that display facture (uses id).
 router.get("/facture/create", facture_controller.facture_create_get);

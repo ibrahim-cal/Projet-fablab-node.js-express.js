@@ -1,13 +1,17 @@
 extends layout
 
 block content
-  h1= title
-  p #[em FabLab] vous souhaite la bienvenue
+  h3= title
 
-  h1 Dynamic content
+  p Bienvenu au #[em FabLab]. Nous vous souhaitons la bienvenue !
+
+  h5 Qui sommes-nous ?
 
   if error
     p Error getting dynamic content.
   else
-    p Voici la liste des machines 
+    p Fablab un parc machine professionnel dédié au prototypage !
+    p Le FabLab est accessible du mardi au vendredi, individuellement, de 10h à 16h dans le cadre des OpenLab’s.
+
+
 

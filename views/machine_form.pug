@@ -1,0 +1,31 @@
+extends layout
+
+block content
+  h4 #{title}
+
+  form(method="POST")
+    .mb-3
+      label.form-label(for="nom") Nom de la machine :
+      input#nom.form-control(
+        type="text"
+        placeholder=" decoupeuse, scanner, ..."
+        name="nom"
+        required
+        value=undefined === machine ? "" : machine.nom
+      )
+    .mb-3
+      label.form-label(for="tarif") Tarif par minute :
+      input#tarif.form-control(
+        type="text"
+        placeholder=" 0,30€/min, 0,55€/min, ..."
+        name="tarif"
+        required
+        value=undefined === machine ? "" : machine.tarif
+      )
+    .mb-3
+      button.btn.btn-primary(type="submit") Valider 
+
+  if errors
+    ul
+      each error in errors
+        li!= error.msg

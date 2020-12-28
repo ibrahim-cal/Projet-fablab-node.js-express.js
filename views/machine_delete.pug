@@ -1,0 +1,25 @@
+extends layout
+
+block content
+  h5 #{title}: #{machine.nom}
+
+  if machine.utilisations.length
+    p #[strong Suppression impossible.]
+    p Veuillez d'abord supprimer les utilisations liées à cette machine.
+
+    div(style="margin-left:20px;margin-top:20px")
+     p 
+
+  else
+    p Voulez-vous vraiment supprimer cette machine ?
+
+    form(method="POST", action="")
+      .mb-3
+        input#machineid.form-control(
+          type="hidden",
+          name="authorid",
+          required="true",
+          value=machine._id
+        )
+
+      button.btn.btn-primary(type="submit") Supprimer

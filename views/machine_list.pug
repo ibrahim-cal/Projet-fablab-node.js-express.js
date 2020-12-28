@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  h1= nom
+
+  ul
+    h5= title
+    each machine in machine_list
+
+      li
+        a(href=machine.url) #{machine.nom}  
+        p tarif :  #{machine.tarif}
+        
+         a(href=machine.url + '/delete')  Supprimer 
+         a(href=machine.url + '/update')  Modifier
+         a(href=machine.url + '/create')  Nouvelle machine (terminer lien)
+        | 
+
+    else
+      li Il n'y a pas de machines.
+
