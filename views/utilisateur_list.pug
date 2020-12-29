@@ -1,0 +1,34 @@
+extends layout
+
+block content
+  
+
+  
+    h5= title
+    a(href='/catalog/utilisation/:id') utilisations
+
+
+
+    table.table
+      thead
+        tr
+          th(scope="col") Nom
+          th(scope="col") Prenom
+          th(scope="col") Email
+          th(scope="col") utilisations
+       
+      tbody
+        each utilisateur in utilisateur_list
+          tr
+            td= utilisateur.nom
+            td= utilisateur.prenom
+            td= utilisateur.email
+            td
+               a(href=utilisateur.url + '/catalog/utilisation/:id') utilisations
+          
+    
+      
+     
+
+
+    

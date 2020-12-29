@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  h3 #{title}: Liste des utilisations
+
+  
+
+      each utilisation in utilisation_list
+      
+       p  #{utilisation.duree} #{utilisation.dateUtilisation}
+   
+
+  
+      else
+       p Aucune utilisation pour cet utilisateur
+
+  

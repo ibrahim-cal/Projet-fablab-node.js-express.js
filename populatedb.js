@@ -4,6 +4,7 @@ console.log(
   "ce script remplit la BDD avec des machines, utilisateurs, etc"
 );
 const bcrypt = require("bcrypt");
+const ligneFacturation = require("./models/ligneFacturation");
 const { sequelize, Facture, LigneFacturation, Machine, Utilisateur, Utilisation } = require("./models/sequelize");
 const saltRounds = 10;
 
@@ -32,7 +33,8 @@ async function utilisateurCreate(prenom, nom, email, mdp) {
 
     utilisateurdetail =
      { prenom: prenom, nom: nom, email: email};
-     utilisateurdetail.passwordHash = await bcrypt.hash(mdp, saltRounds);
+    // utilisateurdetail.passwordHash = await bcrypt.hash(mdp, saltRounds);
+    utilisateurdetail.passwordHash = mdp; 
     
     var utilisateur = await Utilisateur.create(utilisateurdetail);
 
@@ -42,11 +44,13 @@ async function utilisateurCreate(prenom, nom, email, mdp) {
 
 }
 
-async function utilisationCreate(duree, date) {
+async function utilisationCreate(duree, date, machine, utilisateur) {
   utilisationdetail = { duree: duree };
   if (date != false) utilisationdetail.dateUtilisation = date;
-
-  var utilisation = await Utilisation.create(utilisationdetail);
+ 
+  const utilisation = await Utilisation.create(utilisationdetail);
+  await utilisation.setMachine(machine);
+  await utilisation.setUtilisateur(utilisateur);
 
   console.log("nouvelle utilisation: " + utilisation.id);
   utilisations.push(utilisation);
@@ -64,13 +68,16 @@ async function factureCreate(numeroFacture, montant, dFacture) {
   return facture;
 }
 
-async function ligneFacturationCreate(nomMachine, prix, duree, sousTotal) {
+async function ligneFacturationCreate(nomMachine, prix, duree, sousTotal, facture, utilisation) {
 
   lignefacturationdetail = {
     nomMachine: nomMachine, prix: prix, duree:
       duree, sousTotal: sousTotal};
+ 
 
-  var lignefacturation = await LigneFacturation.create(lignefacturationdetail);
+  const lignefacturation = await LigneFacturation.create(lignefacturationdetail);
+  await lignefacturation.setFacture(facture);
+  await lignefacturation.setUtilisation(utilisation);
 
   console.log("nouvelle ligne de facturation: " + lignefacturation.id);
   lignefacturations.push(lignefacturation);
@@ -80,17 +87,17 @@ async function ligneFacturationCreate(nomMachine, prix, duree, sousTotal) {
 
 async function createUtilisation() {
   return Promise.all([
-    utilisationCreate("20min", "2020-12-25"),
-    utilisationCreate("30min", "2020-12-25"),
-    utilisationCreate("10min", "2020-12-25"),
+    utilisationCreate("20min", "2020-12-25", machines[1], utilisateurs[1]),
+    utilisationCreate("30min", "2020-12-25", machines[0], utilisateurs[2]),
+    utilisationCreate("10min", "2020-12-25", machines[1], utilisateurs[2]),
   ]);
 }
 
 async function createLigneFacturation() {
   return Promise.all([
-    ligneFacturationCreate("decoupeuse laser", "0,5€/min", "20min", "10€"),
-    ligneFacturationCreate("ultimaker imprimante 3d", "0,3€/min", "30min", "9€"),
-    ligneFacturationCreate("ultimaker pro imprimante 3d", "0,55€/min", "10min", "5,50€"),
+    ligneFacturationCreate("decoupeuse laser", "0,5€/min", "20min", "10€", factures[0], utilisations[0]),
+    ligneFacturationCreate("ultimaker imprimante 3d", "0,3€/min", "30min", "9€", factures[1], utilisations[1]),
+    ligneFacturationCreate("ultimaker pro imprimante 3d", "0,55€/min", "10min", "5,50€", factures[2], utilisations[2]),
   ]);
 }
 

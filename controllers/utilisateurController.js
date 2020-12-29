@@ -5,9 +5,16 @@ const passport = require("passport");
 var session = require("express-session");
 
 
-exports.utilisateur_list = function (req, res) {
-    res.send("NOT IMPLEMENTED: utilisateur list");
-  };
+exports.utilisateur_list = async function (req, res, next) {
+  try {
+    const utilisateur_list = await Utilisateur.findAll({
+      order: [["nom", "ASC"]],
+    });
+    res.render("utilisateur_list", { title: "Voici la liste des utilisateurs :", utilisateur_list });
+  } catch (error) {
+    next(error);
+  }
+};
 
   exports.utilisateur_detail = function (req, res) {
     res.send("NOT IMPLEMENTED: utilisateur detail");
@@ -46,7 +53,7 @@ exports.utilisateur_create_get = function (req, res) {
         }
         if (!user) {// si l'user ne correspond pas, on va mettre à true et rediriger vers login
           req.session.authenticationFailed = true;
-          return res.redirect("/login");
+          return res.redirect("/utilisateur/login");
         }
 
         // si user fonctionne, on va régénerer la session. Càd supprimer
@@ -67,7 +74,7 @@ exports.utilisateur_create_get = function (req, res) {
       })(req, res, next);
     };
 
-    /*
+    
         exports.logout_get = async function (req, res, next) {
         req.logout();
   req.session.regenerate((err) => {
@@ -79,5 +86,5 @@ exports.utilisateur_create_get = function (req, res) {
   });
 };
 
-    */
+    
      

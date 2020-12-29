@@ -1,25 +1,32 @@
 extends layout
 
 block content
-  h1= nom
+  h3= nom
 
   ul
     h5= title
 
     a(href='/catalog/machine/create') Insérer une nouvelle machine
-    each machine in machine_list
+   
+    table.table
+      thead
+        tr
+          th(scope="col") Nom machine
+          th(scope="col") Tarif
+          th(scope="col") 
+          th(scope="col")  
+   
+      tbody
+        each machine in machine_list
+            tr
+            td= machine.nom
+            td= machine.tarif
+            td
+              a(href=machine.url + '/delete')  Supprimer 
+            td
+               a(href=machine.url + '/update')  Modifier
+    
 
-      li
-        a(href=machine.url) #{machine.nom}  
-        p tarif :  #{machine.tarif}
-        
-         a(href=machine.url + '/delete')  Supprimer 
-         a(href=machine.url + '/update')  Modifier
-
-      p  
-      
-        | 
-
-    else
-      li Il n'y a pas de machines.
+        else
+          li Il n'y a pas de machines.
 
