@@ -1,9 +1,11 @@
+
+
 console.log(
   "ce script remplit la BDD avec des machines, utilisateurs, etc"
 );
-
+const bcrypt = require("bcrypt");
 const { sequelize, Facture, LigneFacturation, Machine, Utilisateur, Utilisation } = require("./models/sequelize");
-
+const saltRounds = 10;
 
 var machines = [];
 var utilisateurs = [];
@@ -26,21 +28,18 @@ async function machineCreate(nom, tarif) {
   }
 }
 
-async function utilisateurCreate(prenom, nom, email, motDePasse) {
+async function utilisateurCreate(prenom, nom, email, mdp) {
 
-  try {
-    utilisateurdetail = {
-      prenom: prenom, nom: nom, email: email, motDePasse: motDePasse,
-    };
-
+    utilisateurdetail =
+     { prenom: prenom, nom: nom, email: email};
+     utilisateurdetail.passwordHash = await bcrypt.hash(mdp, saltRounds);
+    
     var utilisateur = await Utilisateur.create(utilisateurdetail);
 
     console.log("nouvel utilisateur: " + utilisateur.id);
     utilisateurs.push(utilisateur);
     return utilisateur;
-  } catch (err) {
-    console.log(err);
-  }
+
 }
 
 async function utilisationCreate(duree, date) {
@@ -105,9 +104,9 @@ async function createFacture() {
 
 async function createUtilisateur() {
   return Promise.all([
-    utilisateurCreate("Moulay", "Leila", "ML@test.be", "ML@test.be"),
-    utilisateurCreate("Cal", "Ibrahim", "CI@test.be", "CI@test.be"),
-    utilisateurCreate("Cpt", "Cpt", "Cpt@test.be", "Cpt@test.be"),
+    utilisateurCreate("Premier", "Premier", "Premier", "Premier"),
+    utilisateurCreate("Deux", "Deux", "Deux", "Deux"),
+    utilisateurCreate("Trois", "Trois", "Trois", "Trois"),
   ]);
 }
 

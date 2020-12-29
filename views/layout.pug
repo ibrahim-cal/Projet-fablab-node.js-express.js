@@ -30,6 +30,9 @@ html(lang="en")
             ul.sidebar-nav
               li
                 a(href="/catalog") Home
+            if user
+              li 
+                a(href="/logout") Se deconnecter
               li
                 a(href="/catalog/machines") Liste machines
               li
@@ -43,8 +46,6 @@ html(lang="en")
               li
                 hr
               li
-                a(href="/catalog/machine/create") Inserer une nouvelle machine
-              li
                 a(href="/catalog/utilisation/create") Encoder une nouvelle utilisation
               li
                 a(href="/catalog/facture/create") Encoder une nouvelle facture
@@ -52,6 +53,9 @@ html(lang="en")
                 a(href="/catalog/ligneFacturation/create") Encoder une nouvelle ligne de facturation
               li
                 a(href="/catalog/utilisateur/create") Creer un nouvel utilisateur
-       
+              
+            if !user
+              li.nav-item
+                a(href="/catalog/utilisateur/login") Se connecter
         .col-sm-10
            block content

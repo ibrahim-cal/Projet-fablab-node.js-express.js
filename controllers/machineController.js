@@ -2,12 +2,17 @@ const { Machine, Utilisation } = require("../models/sequelize");
 const createError = require("http-errors");
 const { body, validationResult } = require("express-validator");
 const machine = require("../models/machine");
-
+const passport = require("passport");
+var session = require("express-session");
 
 exports.index = async function (req, res, next) {
- 
+  const newlyAuthenticated = req.session.newlyAuthenticated;
+  delete req.session.newlyAuthenticated;
     res.render("index", {
-      title: "Accueil FabLab "
+      title: "Accueil fabLab ",
+      user: req.user,
+      currentUrl: req.originalUrl,
+      newlyAuthenticated,
     });
   };
 
@@ -55,7 +60,7 @@ exports.machine_create_get = function (req, res, next) {
           });
         
           await machine.save();                 // on le sauve en BDD
-          res.redirect(machine.url);            // redirection après sauvegarde
+          res.redirect("/catalog/machines");            // on redirige vers catalogue
           }
         } catch (error){
           next(error);
@@ -63,18 +68,16 @@ exports.machine_create_get = function (req, res, next) {
       },
   ];
 
-
-
 exports.machine_update_get = async function (req, res, next) {
   try{
     const machine= await Promise.all([
-      Machine.findByPk(req.params.id, {
+      Machine.findByPk(req.params.id, { // on va récupérer machine dans la BDD
       }),
     ]);
-  if (machine === null) {
-    next(createError(404, "Machine non trouvée "));
+  if (machine === null) { // si on ne trouve pas la machine
+    next(createError(404, "Machine non trouvée ")); // on renvoie une erreur
   } else {
-    res.render("machine_form",{
+    res.render("machine_form",{  // on affiche le formulaire de modification
       title : "Modification machine",
       machine,
     });
@@ -89,23 +92,23 @@ exports.machine_update_get = async function (req, res, next) {
      next();
   },
     body("nom", "Veuillez indiquer le nom de la machine.").trim().notEmpty().escape(),
-    body("tarif", "Veuillez indiquer un tarif.").trim().notEmpty().escape(),
+    body("tarif", "Veuillez indiquer un tarif.").trim().notEmpty().escape(), // on fait la validation
     async (req, res, next) => {
       try {
-        const errors = validationResult(req);
+        const errors = validationResult(req); // on traite les erreurs de validation
         if (!errors.isEmpty()) {
-        res.render("machine_form", {
+        res.render("machine_update_form", machine, {
           title : "Modification machine ",
           machine : req.body,
           errors : errors.array(),
         });
       }else {
         const machine = await Machine.findByPk(req.params.id);
-        machine.nom = req.body.nom;
-        machine.tarif = req.body.tarif;
+        machine.nom = req.body.nom; // MaJ des infos en fonction de
+        machine.tarif = req.body.tarif; // ce qu'on a reçu dans le formulaire
         await machine.save();
       }
-        res.redirect(machine.url);
+        res.redirect("/catalog/machines"); // avoir avoir sauvegardé, on redirige vers liste machines
     
     } catch (error){
       next(error);
@@ -118,7 +121,7 @@ exports.machine_update_get = async function (req, res, next) {
       const machine = await Machine.findByPk(req.params.id,{ // on récupère machine à partir de l'id et..
         include: Utilisation,                               //  les utilisations qui y sont liées 
       });
-      if (machine === null){
+      if (machine === null){ // si machine non trouvée en bdd, redirection
         res.redirect("/catalog/machines"); 
       } else{
         res.render("machine_delete", {title : "Suppression de la machine ", machine});

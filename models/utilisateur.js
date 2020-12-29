@@ -1,8 +1,14 @@
 
 
-const { DataTypes } = require("sequelize");
+const { Model, DataTypes } = require("sequelize");
 const sequelize = require("./sequelize.js");
 const bcrypt = require("bcrypt");
+
+class utilisateur extends Model {
+  async validPassword(passwordToTest){
+    return bcrypt.compare(passwordToTest, this.passwordHash);
+  }
+}
 
 
 module.exports = (sequelize) => {
@@ -28,13 +34,13 @@ module.exports = (sequelize) => {
       allowNull: false,
     },
 
-    motDePasse: DataTypes.STRING(100),
+    passwordHash: DataTypes.STRING(100),
 
     name: {
       type: DataTypes.VIRTUAL,
       get() {
-        if (this.prenom && this.nom && this.email && this.motDePasse) {
-          return `${this.prenom}, ${this.nom}, ${this.email}, ${this.motDePasse}`;
+        if (this.prenom && this.nom && this.email && this.passwordHash) {
+          return `${this.prenom}, ${this.nom}, ${this.email}, ${this.passwordHash}`;
         } else {
           return "";
         }

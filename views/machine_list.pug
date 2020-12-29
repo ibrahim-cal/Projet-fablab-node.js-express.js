@@ -5,6 +5,8 @@ block content
 
   ul
     h5= title
+
+    a(href='/catalog/machine/create') Insérer une nouvelle machine
     each machine in machine_list
 
       li
@@ -13,7 +15,9 @@ block content
         
          a(href=machine.url + '/delete')  Supprimer 
          a(href=machine.url + '/update')  Modifier
-         a(href=machine.url + '/create')  Nouvelle machine (terminer lien)
+
+      p  
+      
         | 
 
     else

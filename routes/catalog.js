@@ -11,6 +11,11 @@ var utilisation_controller = require("../controllers/utilisationController");
 
 router.get("/", machine_controller.index);
 
+router.get("/utilisateur/login", utilisateur_controller.login_get);
+router.post("/utilisateur/login", utilisateur_controller.login_post);
+//router.get("/logout", logout_get);
+
+
 // GET request for creating a facture. NOTE This must come before routes that display facture (uses id).
 router.get("/facture/create", facture_controller.facture_create_get);
 // POST request for creating facture.
