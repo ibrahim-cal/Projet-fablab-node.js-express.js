@@ -28,13 +28,55 @@ exports.utilisateur_create_get = function (req, res) {
     res.send("NOT IMPLEMENTED: utilisateur create POST");
   };
 
-  exports.utilisateur_update_get = function (req, res) {
-    res.send("NOT IMPLEMENTED: utilisateur update GET");
-  };
+  exports.utilisateur_update_get = async function (req, res, next) {
+    try{
+      const utilisateur= await Utilisateur.findByPk(req.params.id, { })
+    if (utilisateur === null) { // si on ne trouve pas l'utilisateur
+      next(createError(404, "utilisateur non trouvé ")); // on renvoie une erreur
+    } else {
+      res.render("utilisateur_update",{  //sinon on affiche le formulaire de modification
+        title : "Modification utilisateur",
+        utilisateur,
+      });
+    }
+  }  catch (error){
+    next(error);
+  }
+    };
   
-  exports.utilisateur_update_post = function (req, res) {
-    res.send("NOT IMPLEMENTED: utilisateur update POST");
-  };
+  exports.utilisateur_update_post =  [
+    (req, res, next) => {
+     next();
+  },
+    body("prenom", "Veuillez indiquer le nom de la utilisateur.").trim().notEmpty().escape(),
+    body("nom", "Veuillez indiquer un prenom.").trim().notEmpty().escape(), // on fait la validation
+    body("email", "Veuillez indiquer un email.").trim().notEmpty().escape(),
+    body("mdp", "Veuillez indiquer un mot de passe.").trim().notEmpty().escape(),
+    async (req, res, next) => {
+      try {
+        const errors = validationResult(req); // on traite les erreurs de validation
+        if (!errors.isEmpty())
+         {
+        res.render("utilisateur_update", utilisateur, {
+          title : "Modification données utilisateur ",
+          utilisateur : req.body,
+          errors : errors.array(),
+        });
+      }else {
+        const utilisateur = await Utilisateur.findByPk(req.params.id);
+        utilisateur.prenom = req.body.prenom;
+        utilisateur.nom = req.body.nom; // MaJ des infos en fonction de
+        utilisateur.email = req.body.email; // ce qu'on a reçu dans le formulaire
+        utilisateur.passwordHash = req.body.mdp;
+        await utilisateur.save();
+      }
+        res.redirect("/catalog/utilisateurs"); // avoir avoir sauvegardé, on redirige vers liste utilisateurs
+    
+    } catch (error){
+      next(error);
+    }
+  },
+  ];
 
   exports.login_get = async function (req, res, next) {
     const authenticationFailed = req.session.authenticationFailed;
@@ -49,9 +91,11 @@ exports.utilisateur_create_get = function (req, res) {
     // a definit
     passport.authenticate("local", (err1, user, info) => {
         if (err1) {
+          console.log("++++1")
           return next(err1);
         }
-        if (!user) {// si l'user ne correspond pas, on va mettre à true et rediriger vers login
+        if (!user) {
+          console.log("++++2")// si l'user ne correspond pas, on va mettre à true et rediriger vers login
           req.session.authenticationFailed = true;
           return res.redirect("/utilisateur/login");
         }
@@ -61,13 +105,16 @@ exports.utilisateur_create_get = function (req, res) {
         delete req.session.nextUrl;
         req.session.regenerate((err2) => {
           if (err2) {
+            console.log("++++3")
             return next(err2);
           }
           req.login(user, (err3) => {
             if (err3) {
+              console.log("++++4")
               return next(err3);
             }
             req.session.newlyAuthenticated = true;
+            console.log("++++5")
             res.redirect("/");
           });
         });

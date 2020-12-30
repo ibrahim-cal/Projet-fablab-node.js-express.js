@@ -1,0 +1,54 @@
+extends layout
+
+block content
+  h4 #{title} :
+   
+    
+
+
+
+  form(method="POST")
+    .mb-3
+      label.form-label(for="prenom") prenom :
+      input#prenom.form-control(
+        type="text"
+        placeholder="Cal, ..."
+        name="prenom"
+        required
+        value=undefined === utilisateur ? "" : utilisateur.prenom
+      )
+    .mb-3
+      label.form-label(for="nom") nom  :
+      input#nom.form-control(
+        type="text"
+        placeholder=" Dupond,..."
+        name="nom"
+        required
+        value=undefined === utilisateur ? "" : utilisateur.nom
+      )
+    .mb-3
+      label.form-label(for="email") email :
+      input#email.form-control(
+        type="text"
+        placeholder="Cal@test.com,..."
+        name="email"
+        required
+        value=undefined === utilisateur ? "" : utilisateur.email
+      )
+    .mb-3
+      label.form-label(for="mdp") mot de passe :
+      input#mdp.form-control(
+        type="text"
+        placeholder="  "
+        name="mdp"
+        required
+        value=undefined === utilisateur ? "" : utilisateur.passwordHash
+      )
+    .mb-3
+      button.btn.btn-primary(type="submit") Enregistrer
+
+
+  if errors
+    ul
+      each error in errors
+        li!= error.msg

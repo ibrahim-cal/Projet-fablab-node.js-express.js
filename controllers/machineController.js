@@ -70,13 +70,11 @@ exports.machine_create_get = function (req, res, next) {
 
 exports.machine_update_get = async function (req, res, next) {
   try{
-    const machine= await Promise.all([
-      Machine.findByPk(req.params.id, { // on va récupérer machine dans la BDD
-      }),
-    ]);
+    const machine= await Machine.findByPk(req.params.id, { })
   if (machine === null) { // si on ne trouve pas la machine
     next(createError(404, "Machine non trouvée ")); // on renvoie une erreur
   } else {
+    console.log(machine)
     res.render("machine_form",{  // on affiche le formulaire de modification
       title : "Modification machine",
       machine,
@@ -96,7 +94,9 @@ exports.machine_update_get = async function (req, res, next) {
     async (req, res, next) => {
       try {
         const errors = validationResult(req); // on traite les erreurs de validation
-        if (!errors.isEmpty()) {
+        if (!errors.isEmpty())
+         {
+     
         res.render("machine_update_form", machine, {
           title : "Modification machine ",
           machine : req.body,

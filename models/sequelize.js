@@ -25,11 +25,12 @@ LigneFacturation.belongsTo(Utilisation);
 LigneFacturation.belongsTo(Facture);
 
 Machine.hasMany(Utilisation);
-
-Utilisateur.hasMany(Utilisation);
-Utilisation.belongsTo(Utilisateur);
 Utilisation.belongsTo(Machine);
 Utilisation.hasMany(LigneFacturation);
+Utilisation.belongsTo(Utilisateur);
+Utilisateur.hasMany(Utilisation);
 
-module.exports = { sequelize, Facture, LigneFacturation,
-     Machine, Utilisateur, Utilisation};
+
+
+module.exports = { sequelize, Facture, Utilisation, LigneFacturation,
+     Machine, Utilisateur };

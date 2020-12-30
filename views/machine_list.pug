@@ -7,6 +7,9 @@ block content
     h5= title
 
     a(href='/catalog/machine/create') Insérer une nouvelle machine
+    p 
+    
+
    
     table.table
       thead
@@ -14,6 +17,7 @@ block content
           th(scope="col") Nom machine
           th(scope="col") Tarif
           th(scope="col") 
+          th(scope="col")  
           th(scope="col")  
    
       tbody
@@ -25,6 +29,8 @@ block content
               a(href=machine.url + '/delete')  Supprimer 
             td
                a(href=machine.url + '/update')  Modifier
+            td
+              a(href='/catalog/utilisation/create') Utiliser 
     
 
         else

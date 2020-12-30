@@ -5,7 +5,7 @@ block content
 
   
     h5= title
-    a(href='/catalog/utilisation/:id') utilisations
+  
 
 
 
@@ -15,7 +15,8 @@ block content
           th(scope="col") Nom
           th(scope="col") Prenom
           th(scope="col") Email
-          th(scope="col") utilisations
+          th(scope="col") utilisation(s)
+          th(scope="col") 
        
       tbody
         each utilisateur in utilisateur_list
@@ -24,7 +25,9 @@ block content
             td= utilisateur.prenom
             td= utilisateur.email
             td
-               a(href=utilisateur.url + '/catalog/utilisation/:id') utilisations
+               a(href= "/catalog/utilisation/:id") utilisation(s)
+            td
+               a(href=utilisateur.url + '/update')  Modifier
           
     
       

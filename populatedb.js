@@ -5,15 +5,31 @@ console.log(
 );
 const bcrypt = require("bcrypt");
 const ligneFacturation = require("./models/ligneFacturation");
-const { sequelize, Facture, LigneFacturation, Machine, Utilisateur, Utilisation } = require("./models/sequelize");
+
+const { sequelize, Facture, Utilisation, LigneFacturation, Machine, Utilisateur } = require("./models/sequelize");
 const saltRounds = 10;
 
+var utilisations = [];
 var machines = [];
 var utilisateurs = [];
-var utilisations = [];
+
 var factures = [];
 var lignefacturations = [];
 
+
+async function utilisateurCreate(prenom, nom, email, mdp) {
+  bcrypt.hash(mdp, saltRounds).then(async function(hash){
+    utilisateurdetail =
+    { prenom: prenom, nom: nom, email: email};
+    utilisateurdetail.passwordHash = hash;
+    var utilisateur = await Utilisateur.create(utilisateurdetail);
+    console.log("nouvel utilisateur: " + utilisateur.id);
+    utilisateurs.push(utilisateur);
+    return utilisateur;
+  })
+
+
+}
 
 async function machineCreate(nom, tarif) {
   try {
@@ -27,34 +43,6 @@ async function machineCreate(nom, tarif) {
   } catch (err) {
     console.log(err);
   }
-}
-
-async function utilisateurCreate(prenom, nom, email, mdp) {
-
-    utilisateurdetail =
-     { prenom: prenom, nom: nom, email: email};
-    // utilisateurdetail.passwordHash = await bcrypt.hash(mdp, saltRounds);
-    utilisateurdetail.passwordHash = mdp; 
-    
-    var utilisateur = await Utilisateur.create(utilisateurdetail);
-
-    console.log("nouvel utilisateur: " + utilisateur.id);
-    utilisateurs.push(utilisateur);
-    return utilisateur;
-
-}
-
-async function utilisationCreate(duree, date, machine, utilisateur) {
-  utilisationdetail = { duree: duree };
-  if (date != false) utilisationdetail.dateUtilisation = date;
- 
-  const utilisation = await Utilisation.create(utilisationdetail);
-  await utilisation.setMachine(machine);
-  await utilisation.setUtilisateur(utilisateur);
-
-  console.log("nouvelle utilisation: " + utilisation.id);
-  utilisations.push(utilisation);
-  return utilisation;
 }
 
 async function factureCreate(numeroFacture, montant, dFacture) {
@@ -77,19 +65,38 @@ async function ligneFacturationCreate(nomMachine, prix, duree, sousTotal, factur
 
   const lignefacturation = await LigneFacturation.create(lignefacturationdetail);
   await lignefacturation.setFacture(facture);
+  console.log("+++", utilisation)
   await lignefacturation.setUtilisation(utilisation);
+
 
   console.log("nouvelle ligne de facturation: " + lignefacturation.id);
   lignefacturations.push(lignefacturation);
   return lignefacturation;
 }
 
+async function utilisationCreate(duree, date, machine, utilisateur) {
+  utilisationdetail = { duree: duree };
+  if (date != false) utilisationdetail.dateUtilisation = date;
+ 
+  const utilisation = await Utilisation.create(utilisationdetail);
+  await utilisation.setMachine(machine);
+  console.log("+++", utilisation)
+  await utilisation.setUtilisateur(utilisateur);
+
+  console.log("nouvelle utilisation: " + utilisation.id);
+  utilisations.push(utilisation);
+  return utilisation;
+}
+
 
 async function createUtilisation() {
   return Promise.all([
-    utilisationCreate("20min", "2020-12-25", machines[1], utilisateurs[1]),
-    utilisationCreate("30min", "2020-12-25", machines[0], utilisateurs[2]),
+    utilisationCreate("20min", "2020-12-25", machines[1], utilisateurs[0]),
+    utilisationCreate("30min", "2020-12-25", machines[0], utilisateurs[1]),
     utilisationCreate("10min", "2020-12-25", machines[1], utilisateurs[2]),
+    utilisationCreate("10min", "2020-12-25", machines[1], utilisateurs[2]),
+    utilisationCreate("10min", "2020-12-25", machines[1], utilisateurs[2]),
+ 
   ]);
 }
 
@@ -129,15 +136,17 @@ async function createMachine() {
   ]);
 }
 
+
 (async () => {
   try {
     await sequelize.sync({ force: true });
-    const machines = await createMachine();
     const utilisateurs = await createUtilisateur();
     const factures = await createFacture();
-    const lignefacturations = await createLigneFacturation();
+    const machines = await createMachine();
+    
     const utilisations = await createUtilisation();
-
+    const lignefacturations = await createLigneFacturation();
+    
     sequelize.close();
   } catch (err) {
     console.error("Erreur remplissage BDD: ", err);
