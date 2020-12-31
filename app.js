@@ -9,6 +9,8 @@ const session = require("express-session");
 //Mise en place stratégie d’authentification
 const LocalStrategy = require("passport-local").Strategy;
 
+//const Utilisateur = require("./models/utilisateur");
+
 const catalogRouter = require("./routes/catalog");
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
@@ -43,9 +45,9 @@ passport.use(
 
   // stratégie locale. Permet de determiner si username ET password
  // correspondent à un utilisateur. Sinon, on va renvoyer message erreur
-  new LocalStrategy(async (username, password, done) => {
+  new LocalStrategy(async (email, password, done) => {
     try {
-      const user = await User.findByPk(username);
+      const user = await Utilisateur.findByPk(email);
       if (user && (await user.validPassword(password))) {
         done(null, user);
       } else {
@@ -59,14 +61,14 @@ passport.use(
 
 // on va stocker la partie de l'utilisateur à stocker en session
 passport.serializeUser((user, done) => {
-  done(null, user.username);
+  done(null, user.email);
 });
 
 // méthode qui va être apellée à chaque fois qu’une requête est reçue 
 // et qu’un username se trouve dans la session
-passport.deserializeUser(async (username, done) => {
+passport.deserializeUser(async (email, done) => {
   try {
-    const user = await User.findByPk(username, {
+    const user = await Utilisateur.findByPk(email, {
       include: { all: true, nested: true },
     });
     done(null, user);

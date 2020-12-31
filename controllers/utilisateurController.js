@@ -152,7 +152,7 @@ exports.utilisateur_create_get = function (req, res, next) {
             }
             req.session.newlyAuthenticated = true;
             console.log("++++5")
-            res.redirect("/");
+            res.redirect("/catalog");
           });
         });
       })(req, res, next);

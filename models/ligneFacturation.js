@@ -11,7 +11,7 @@ module.exports = (sequelize) => {
                 },
             },
             prix: {
-                type: DataTypes.FLOAT(20),
+                type: DataTypes.DECIMAL(10,2),
                 allowNull: false,      
             },
             duree: {
@@ -19,7 +19,7 @@ module.exports = (sequelize) => {
                 allowNull: false,
             },
             sousTotal: {
-                type: DataTypes.DECIMAL(65),
+                type: DataTypes.DECIMAL(10,2),
                 allowNull: false,
 
             },

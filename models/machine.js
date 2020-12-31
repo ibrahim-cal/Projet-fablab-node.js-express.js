@@ -11,7 +11,7 @@ module.exports = (sequelize) => {
                 },
             },
             tarif: {
-                type: DataTypes.DECIMAL(65),
+                type: DataTypes.DECIMAL(10,2),
                 allowNull: false,       
             },
             url: {
