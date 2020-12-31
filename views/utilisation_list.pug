@@ -1,7 +1,10 @@
 extends layout
 
 block content
-  h4= title
+  br
+  h5= title
+  
+  p
 
    table.table
       thead
@@ -19,7 +22,7 @@ block content
             td= utilisation.dateUtilisation
             td= utilisation.duree
             td= utilisation.machine.nom
-            td= ("utilisation.utilisateur.nom")
+            td= utilisation.utilisateur.nom
             td
               a(href=utilisation.url + "/delete")  Supprimer 
                 

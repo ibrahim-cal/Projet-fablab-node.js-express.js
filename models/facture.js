@@ -9,7 +9,7 @@ module.exports = (sequelize) => {
       },
      
       montant: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.DECIMAL(65),
         allowNull: false,
       },
       dateFacture: DataTypes.DATEONLY,

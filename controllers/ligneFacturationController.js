@@ -1,12 +1,24 @@
-const { LigneFacturation } = require("../models/sequelize");
+const { LigneFacturation, Facture, Utilisation } = require("../models/sequelize");
 const createError = require("http-errors");
 
 exports.ligneFacturation_list = function (req, res) {
     res.send("NOT IMPLEMENTED: ligneFacturation list");
   };
 
-  exports.ligneFacturation_detail = function (req, res) {
-    res.send("NOT IMPLEMENTED: ligneFacturation detail");
+  exports.ligneFacturation_detail = async function (req, res, next) {
+    try {
+      const ligneFacturationId = req.params.id;
+      const ligneFacturation = await LigneFacturation.findByPk(ligneFacturationId, {
+        include: [Facture, Utilisation],
+      });
+      if (ligneFacturation !== null) {
+        res.render("ligneFacturation_detail", { title: "Detail ligne facturation", ligneFacturation });
+      } else {
+        next(createError(404, "Pas de ligne de facturation"));
+      }
+    } catch (error) {
+      next(error);
+    }
   };
 
 exports.ligneFacturation_create_get = function (req, res) {
@@ -17,10 +29,35 @@ exports.ligneFacturation_create_get = function (req, res) {
     res.send("NOT IMPLEMENTED: ligneFacturation create POST");
   };
 
-  exports.ligneFacturation_delete_get = function (req, res) {
-    res.send("NOT IMPLEMENTED: ligneFacturation delete GET");
+  exports.ligneFacturation_delete_get = async function (req, res, next) {
+    try {
+      const ligneFacturation = await LigneFacturation.findByPk(req.params.id, {
+        include: [Facture, Utilisation],
+      });
+      if (ligneFacturation === null) {
+        res.redirect("/catalog/utilisations");
+      } else {
+        res.render("ligneFacturation_delete", { title: "Supprimer ligne de facturation", ligneFacturation });
+      }
+    } catch (error) {
+      next(error);
+    }
   };
   
-  exports.ligneFacturation_delete_post = function (req, res) {
-    res.send("NOT IMPLEMENTED: ligneFacturation delete POST");
+  exports.ligneFacturation_delete_post = async function (req, res, next) {
+    try {
+      const ligneFacturation = await LigneFacturation.findByPk(req.params.id, {
+        include: [Facture, Utilisation],
+      });
+      if (ligneFacturation === null) {
+        next(createError(404, "Pas de ligne de facturation"));
+      } 
+       else {
+        await ligneFacturation.destroy();
+        res.redirect("/catalog/utilisations");
+      }
+      
+    } catch (error) {
+      next(error);
+    }
   };

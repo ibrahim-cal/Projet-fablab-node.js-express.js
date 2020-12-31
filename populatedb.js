@@ -18,7 +18,8 @@ var lignefacturations = [];
 
 
 async function utilisateurCreate(prenom, nom, email, mdp) {
-  bcrypt.hash(mdp, saltRounds).then(async function(hash){
+   
+   const hash =  bcrypt.hashSync(mdp, saltRounds)
     utilisateurdetail =
     { prenom: prenom, nom: nom, email: email};
     utilisateurdetail.passwordHash = hash;
@@ -26,8 +27,6 @@ async function utilisateurCreate(prenom, nom, email, mdp) {
     console.log("nouvel utilisateur: " + utilisateur.id);
     utilisateurs.push(utilisateur);
     return utilisateur;
-  })
-
 
 }
 
@@ -65,7 +64,6 @@ async function ligneFacturationCreate(nomMachine, prix, duree, sousTotal, factur
 
   const lignefacturation = await LigneFacturation.create(lignefacturationdetail);
   await lignefacturation.setFacture(facture);
-  console.log("+++", utilisation)
   await lignefacturation.setUtilisation(utilisation);
 
 
@@ -80,7 +78,6 @@ async function utilisationCreate(duree, date, machine, utilisateur) {
  
   const utilisation = await Utilisation.create(utilisationdetail);
   await utilisation.setMachine(machine);
-  console.log("+++", utilisation)
   await utilisation.setUtilisateur(utilisateur);
 
   console.log("nouvelle utilisation: " + utilisation.id);
@@ -90,7 +87,8 @@ async function utilisationCreate(duree, date, machine, utilisateur) {
 
 
 async function createUtilisation() {
-  return Promise.all([
+ console.log(utilisateurs)
+  return await Promise.all([
     utilisationCreate("20min", "2020-12-25", machines[1], utilisateurs[0]),
     utilisationCreate("30min", "2020-12-25", machines[0], utilisateurs[1]),
     utilisationCreate("10min", "2020-12-25", machines[1], utilisateurs[2]),
@@ -101,23 +99,23 @@ async function createUtilisation() {
 }
 
 async function createLigneFacturation() {
-  return Promise.all([
-    ligneFacturationCreate("decoupeuse laser", "0,5€/min", "20min", "10€", factures[0], utilisations[0]),
-    ligneFacturationCreate("ultimaker imprimante 3d", "0,3€/min", "30min", "9€", factures[1], utilisations[1]),
-    ligneFacturationCreate("ultimaker pro imprimante 3d", "0,55€/min", "10min", "5,50€", factures[2], utilisations[2]),
+  return await Promise.all([
+    ligneFacturationCreate("decoupeuse laser", "0,5", "20", "10", factures[0], utilisations[0]),
+    ligneFacturationCreate("ultimaker imprimante 3d", "0,3", "30", "9", factures[1], utilisations[1]),
+    ligneFacturationCreate("ultimaker pro imprimante 3d", "0,55", "10", "5,50", factures[2], utilisations[2]),
   ]);
 }
 
 async function createFacture() {
-  return Promise.all([
-    factureCreate("202012001", "10€", "2020-12-25"),
-    factureCreate("202012002", "9€", "2020-12-25"),
-    factureCreate("202012003", "5€", "2020-12-25"),
+  return await Promise.all([
+    factureCreate("202012001", "10", "2020-12-25"),
+    factureCreate("202012002", "9", "2020-12-25"),
+    factureCreate("202012003", "5", "2020-12-25"),
   ]);
 }
 
 async function createUtilisateur() {
-  return Promise.all([
+  return await Promise.all([
     utilisateurCreate("Premier", "Premier", "Premier", "Premier"),
     utilisateurCreate("Deux", "Deux", "Deux", "Deux"),
     utilisateurCreate("Trois", "Trois", "Trois", "Trois"),
@@ -125,14 +123,14 @@ async function createUtilisateur() {
 }
 
 async function createMachine() {
-  return Promise.all([
-    machineCreate("decoupeuse laser", "0,5€/min"),
-    machineCreate("ultimaker imprimante 3d", "0,3€/min"),
-    machineCreate("ultimaker pro imprimante 3d", "0,55€/min"),
-    machineCreate("prusa i3 imprimante 3d", "0,3€/min"),
-    machineCreate("formlabs3 imprimante 3d", "0,3€/min"),
-    machineCreate("artec eva scanner 3D", "0,4€/min"),
-    machineCreate("ein scan sp scanner 3D", "0,35€/min"),
+  return await Promise.all([
+    machineCreate("decoupeuse laser", "1"),
+    machineCreate("ultimaker imprimante 3d", "0,3"),
+    machineCreate("ultimaker pro imprimante 3d", "0,55"),
+    machineCreate("prusa i3 imprimante 3d", "0,3"),
+    machineCreate("formlabs3 imprimante 3d", "0,3"),
+    machineCreate("artec eva scanner 3D", "0,4"),
+    machineCreate("ein scan sp scanner 3D", "0,35"),
   ]);
 }
 
@@ -140,12 +138,14 @@ async function createMachine() {
 (async () => {
   try {
     await sequelize.sync({ force: true });
-    const utilisateurs = await createUtilisateur();
-    const factures = await createFacture();
-    const machines = await createMachine();
+    createUtilisateur().then(()=>{
+      console.log( "creation ok");
+    });
+    await createFacture();
+    await createMachine();
     
-    const utilisations = await createUtilisation();
-    const lignefacturations = await createLigneFacturation();
+    await createUtilisation();
+    await createLigneFacturation();
     
     sequelize.close();
   } catch (err) {

@@ -1,16 +1,19 @@
-const { Utilisateur } = require("../models/sequelize");
+const { Utilisateur, Utilisation} = require("../models/sequelize");
 const createError = require("http-errors");
 const { body, validationResult } = require("express-validator");
 const passport = require("passport");
 var session = require("express-session");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 
 exports.utilisateur_list = async function (req, res, next) {
   try {
     const utilisateur_list = await Utilisateur.findAll({
+      include : Utilisation,
       order: [["nom", "ASC"]],
     });
-    res.render("utilisateur_list", { title: "Voici la liste des utilisateurs :", utilisateur_list });
+    res.render("utilisateur_list", { title: "Voici la liste des utilisateurs :", utilisateur_list, Utilisation });
   } catch (error) {
     next(error);
   }
@@ -20,13 +23,45 @@ exports.utilisateur_list = async function (req, res, next) {
     res.send("NOT IMPLEMENTED: utilisateur detail");
   };
 
-exports.utilisateur_create_get = function (req, res) {
-    res.send("NOT IMPLEMENTED: utilisateur create GET");
-  };
+exports.utilisateur_create_get = function (req, res, next) {
+  res.render("utilisateur_form", { title: "Creation nouveau compte"});
+};
   
-  exports.utilisateur_create_post = function (req, res) {
-    res.send("NOT IMPLEMENTED: utilisateur create POST");
-  };
+  exports.utilisateur_create_post =  [
+    (req, res, next) => {
+     next();
+  },
+    body("prenom", "Veuillez indiquer le nom de la utilisateur.").trim().notEmpty().escape(),
+    body("nom", "Veuillez indiquer un prenom.").trim().notEmpty().escape(), // nettoyage & restrictions sur champs
+    body("email", "Veuillez indiquer un email.").trim().notEmpty().escape(),
+    body("mdp", "Veuillez indiquer un mot de passe.").trim().notEmpty().escape(),
+    async (req, res, next) => {
+      try {
+        const errors = validationResult(req); // on traite les erreurs de validation
+        if (!errors.isEmpty())
+         {
+        res.render("utilisateur_form", utilisateur, {// si erreurs dans champs,
+          title : "Certains champs sont incorrects ",//on reaffiche formulaire
+          utilisateur : req.body,
+          errors : errors.array(),
+        });
+      }else {
+        const utilisateur = await Utilisateur.build({
+        prenom : req.body.prenom,
+        nom : req.body.nom, // recuperation des infos en fonction de
+        email : req.body.email, // ce qu'on a reçu dans le formulaire
+        passwordHash :  bcrypt.hashSync(req.body.mdp, saltRounds),// on recupere le mdp en version hashée
+        
+        });
+        await utilisateur.save();// sauvegarde des infos dans table utilisateur
+      }
+        res.redirect("/catalog"); // avoir avoir sauvegardé, on redirige vers page acceuil
+    
+    } catch (error){
+      next(error);
+    }
+  },
+  ];
 
   exports.utilisateur_update_get = async function (req, res, next) {
     try{
@@ -67,7 +102,9 @@ exports.utilisateur_create_get = function (req, res) {
         utilisateur.prenom = req.body.prenom;
         utilisateur.nom = req.body.nom; // MaJ des infos en fonction de
         utilisateur.email = req.body.email; // ce qu'on a reçu dans le formulaire
-        utilisateur.passwordHash = req.body.mdp;
+        const hash =  bcrypt.hashSync(req.body.mdp, saltRounds)
+        utilisateur.passwordHash = hash;
+
         await utilisateur.save();
       }
         res.redirect("/catalog/utilisateurs"); // avoir avoir sauvegardé, on redirige vers liste utilisateurs

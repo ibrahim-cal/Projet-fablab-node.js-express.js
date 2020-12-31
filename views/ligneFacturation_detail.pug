@@ -1,0 +1,29 @@
+extends layout
+
+block content
+  h3=nom
+  br
+  h5 #{title} - 
+     
+     table.table
+          br
+          thead
+            tr
+            p
+             th(scope="col") Nom machine
+             th(scope="col") Prix
+             th(scope="col") Duree
+             th(scope="col") Sous total
+
+       
+       
+          tbody
+            
+             tr
+                td  #{ligneFacturation.nomMachine}               
+                td  #{ligneFacturation.prix}                
+                td  #{ligneFacturation.duree}
+                td  #{ligneFacturation.sousTotal}
+    
+     a(href=ligneFacturation.url + "/delete")  Supprimer 
+                  

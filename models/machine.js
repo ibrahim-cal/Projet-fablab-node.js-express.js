@@ -11,11 +11,8 @@ module.exports = (sequelize) => {
                 },
             },
             tarif: {
-                type: DataTypes.STRING(100),
-                allowNull: false,
-                validate: {
-                    len: [2, 100],
-                },
+                type: DataTypes.DECIMAL(65),
+                allowNull: false,       
             },
             url: {
                 type: DataTypes.VIRTUAL,

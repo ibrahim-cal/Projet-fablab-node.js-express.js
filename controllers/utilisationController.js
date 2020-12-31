@@ -1,4 +1,4 @@
-const { Utilisation, Utilisateur, Machine } = require("../models/sequelize");
+const { Utilisation, Utilisateur, Machine, LigneFacturation } = require("../models/sequelize");
 const createError = require("http-errors");
 const { body, validationResult } = require("express-validator");
 
@@ -21,16 +21,25 @@ exports.utilisation_list = async function (req, res, next) {
       if (utilisation !== null) {
         res.render("utilisation_detail", { title: "Details des utilisations", utilisation});
       } else {
-        next(createError(404, "utilisation pas trouvee"));
+        next(createError(404, "Pas d'utilisations"));
       }
     } catch (error) {
       next(error);
     }
   };
 
-exports.utilisation_create_get = function (req, res) {
-  res.render("utilisation_form", { title: "Nouvelle utilisation" });
-}; 
+exports.utilisation_create_get = async function (req, res, next) {
+  try {
+    const [machines, utilisateurs] = await Promise.all([
+      Machine.findAll(),
+      Utilisateur.findAll(),
+    ]);
+    res.render("utilisation_form", { title: "Nouvelle utilisation", machines, utilisateurs });
+  } catch (error) {
+    next(error);
+  }
+};
+
   
   exports.utilisation_create_post = [
     body("duree")
@@ -46,23 +55,34 @@ exports.utilisation_create_get = function (req, res) {
         try {
           const errors = validationResult(req);
     
-          if (!errors.isEmpty()) { // si y a une erreur lors du remplissage formulaire
+          if (!errors.isEmpty()) {
+            // si y a une erreur lors du remplissage formulaire
+
+            
+              const [machines, utilisateurs] = await Promise.all([
+                Machine.findAll(),
+                Utilisateur.findAll(),
+              ]);
             res.render("utilisation_form", {// on redirige vers le formulaire
               title: "nouvelle utilisation",
               utilisation: req.body,
+              machines,
+              utilisateurs,
               errors: errors.array(),
             });
           } else {
 
-            const utilisation = await Utilisation.build({
-              duree: req.body.duree,
+            const utilisation = await Utilisation.build({// sinon on va créer la nouvelle utilisation
+              duree: req.body.duree, // on récupere la durée introduite dans le form
             });
             if (req.body.dateUtilisation) {
-              utilisation.dateUtilisation = req.body.dateUtilisation;
+              utilisation.dateUtilisation = req.body.dateUtilisation;// idem avec date
             }
+             // await utilisation.setMachine(machine);
+             // await utilisation.setUtilisateur(utilisateur);
  
-            await utilisation.save();
-            res.redirect("/catalog/machines");
+            await utilisation.save(); // on sauvegarde le tout en tant que nouvelle utilisation en bdd
+            res.redirect("/catalog/machines");// ensuite on redirige vers catalogue machines
           }
         } catch (error) {
           next(error);
@@ -75,10 +95,10 @@ exports.utilisation_create_get = function (req, res) {
   exports.utilisation_delete_get = async function (req, res, next) {
     try {
       const utilisation = await Utilisation.findByPk(req.params.id, {
-        include: [Machine, Utilisateur],
+        include: [Machine, Utilisateur, LigneFacturation],
       });
       if (utilisation === null) {
-        res.redirect("/catalog/utilisations");
+        res.redirect("/catalog/utilisateurs");
       } else {
         res.render("utilisation_delete", { title: "Supprimer utilisation", utilisation });
       }
@@ -90,13 +110,12 @@ exports.utilisation_create_get = function (req, res) {
   exports.utilisation_delete_post =  async function (req, res, next) {
     try {
       const utilisation = await Utilisation.findByPk(req.params.id, {
-        include: [Machine, Utilisateur],
+        include: [Machine, Utilisateur, LigneFacturation],
       });
       if (utilisation === null) {
-        next(createError(404, "utilisation not found"));
-      } else if (utilisation.factures.length > 0) {
-        res.render("facture_detail", { title: "Detail facture"});
-      } else {
+        next(createError(404, "pas d'utilisation"));
+      } 
+       else {
         await utilisation.destroy();
         res.redirect("/catalog/utilisations");
       }

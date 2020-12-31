@@ -1,17 +1,38 @@
 extends layout
 
 block content
-  h3 #{title}: Liste des utilisations
+  br
+  h5 #{title} -  #{utilisation.utilisateur.nom}
+   h6
+     
+     table.table
+       
+          thead
+           
+            tr
+             br
+             p
+             th(scope="col") Date
+             th(scope="col") Duree
+             th(scope="col") Nom machine
+             th(scope="col") 
+       
+       
+          tbody
+            
+             tr
+                td  #{utilisation.dateUtilisation} 
+                
+                td  #{utilisation.duree}
+                
+                td  #{utilisation.machine.nom}
+                td 
+                  a(href=utilisation.url + '/delete')  Supprimer 
+             
+       
 
-  
-
-      each utilisation in utilisation_list
-      
-        p  #{utilisation.duree} #{utilisation.dateUtilisation}
    
 
-  
-      else
-       p Aucune utilisation pour cet utilisateur
+
 
   

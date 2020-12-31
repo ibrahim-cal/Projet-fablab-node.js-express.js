@@ -11,18 +11,15 @@ module.exports = (sequelize) => {
                 },
             },
             prix: {
-                type: DataTypes.STRING(100),
-                allowNull: false,
-                validate: {
-                    len: [3, 100],
-                },
+                type: DataTypes.FLOAT(20),
+                allowNull: false,      
             },
             duree: {
-                type: DataTypes.STRING(50),
+                type: DataTypes.INTEGER(50),
                 allowNull: false,
             },
             sousTotal: {
-                type: DataTypes.STRING(100),
+                type: DataTypes.DECIMAL(65),
                 allowNull: false,
 
             },

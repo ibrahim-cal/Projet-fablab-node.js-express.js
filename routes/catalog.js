@@ -39,6 +39,10 @@ router.post("/ligneFacturation/create", ligneFacturation_controller.ligneFactura
 router.get("/ligneFacturation/:id", ligneFacturation_controller.ligneFacturation_detail);
 // GET request for list of all ligneFacturation items.
 router.get("/ligneFacturations", ligneFacturation_controller.ligneFacturation_list);
+// GET request to delete ligneFacturation
+router.get("/ligneFacturation/:id/delete", ligneFacturation_controller.ligneFacturation_delete_get);
+// POST request to delete ligneFacturation
+router.post("/ligneFacturation/:id/delete", ligneFacturation_controller.ligneFacturation_delete_post);
 
 
 

@@ -1,10 +1,12 @@
 extends layout
 
 block content
+ 
   
 
-  
+    br
     h5= title
+    br
   
 
 
@@ -16,7 +18,9 @@ block content
           th(scope="col") Prenom
           th(scope="col") Email
           th(scope="col") utilisation(s)
+          th(scope="col") Encoder utilisation
           th(scope="col") 
+          
        
       tbody
         each utilisateur in utilisateur_list
@@ -25,9 +29,11 @@ block content
             td= utilisateur.prenom
             td= utilisateur.email
             td
-               a(href= "/catalog/utilisation/:id") utilisation(s)
+               a(href= "/catalog/utilisation/" +utilisateur.id) liste utilisations
             td
-               a(href=utilisateur.url + '/update')  Modifier
+               a(href='/catalog/utilisation/create')  Nouvelle utilisation
+            td
+               a(href=utilisateur.url + '/update')  Modifier données utilisateur
           
     
       
