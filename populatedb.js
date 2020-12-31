@@ -89,20 +89,20 @@ async function utilisationCreate(duree, date, machine, utilisateur) {
 async function createUtilisation() {
  console.log(utilisateurs)
   return await Promise.all([
-    utilisationCreate("20min", "2020-12-25", machines[1], utilisateurs[0]),
-    utilisationCreate("30min", "2020-12-25", machines[0], utilisateurs[1]),
-    utilisationCreate("10min", "2020-12-25", machines[1], utilisateurs[2]),
-    utilisationCreate("10min", "2020-12-25", machines[1], utilisateurs[2]),
-    utilisationCreate("10min", "2020-12-25", machines[1], utilisateurs[2]),
+    utilisationCreate("20", "2020-12-25", machines[1], utilisateurs[0]),
+    utilisationCreate("30", "2020-12-25", machines[0], utilisateurs[1]),
+    utilisationCreate("10", "2020-12-25", machines[1], utilisateurs[2]),
+    utilisationCreate("10", "2020-12-25", machines[1], utilisateurs[2]),
+    utilisationCreate("10", "2020-12-25", machines[1], utilisateurs[2]),
  
   ]);
 }
 
 async function createLigneFacturation() {
   return await Promise.all([
-    ligneFacturationCreate("decoupeuse laser", "0,5", "20", "10", factures[0], utilisations[0]),
-    ligneFacturationCreate("ultimaker imprimante 3d", "0,3", "30", "9", factures[1], utilisations[1]),
-    ligneFacturationCreate("ultimaker pro imprimante 3d", "0,55", "10", "5,50", factures[2], utilisations[2]),
+    ligneFacturationCreate("decoupeuse laser", "0.5", "20", "10", factures[0], utilisations[0]),
+    ligneFacturationCreate("ultimaker imprimante 3d", "0.3", "30", "9", factures[1], utilisations[1]),
+    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "10", "5.50", factures[2], utilisations[2]),
   ]);
 }
 
@@ -125,12 +125,12 @@ async function createUtilisateur() {
 async function createMachine() {
   return await Promise.all([
     machineCreate("decoupeuse laser", "1"),
-    machineCreate("ultimaker imprimante 3d", "0,3"),
-    machineCreate("ultimaker pro imprimante 3d", "0,55"),
-    machineCreate("prusa i3 imprimante 3d", "0,3"),
-    machineCreate("formlabs3 imprimante 3d", "0,3"),
-    machineCreate("artec eva scanner 3D", "0,4"),
-    machineCreate("ein scan sp scanner 3D", "0,35"),
+    machineCreate("ultimaker imprimante 3d", "0.3"),
+    machineCreate("ultimaker pro imprimante 3d", "0.55"),
+    machineCreate("prusa i3 imprimante 3d", "0.3"),
+    machineCreate("formlabs3 imprimante 3d", "0.3"),
+    machineCreate("artec eva scanner 3D", "0.4"),
+    machineCreate("ein scan sp scanner 3D", "0.35"),
   ]);
 }
 
