@@ -1,14 +1,8 @@
 
 
 const { Model, DataTypes } = require("sequelize");
-const sequelize = require("./sequelize.js");
 const bcrypt = require("bcrypt");
 
-class utilisateur extends Model {
-  async validPassword(passwordToTest){
-    return bcrypt.compare(passwordToTest, this.passwordHash);
-  }
-}
 
 
 module.exports = (sequelize) => {
@@ -20,6 +14,7 @@ module.exports = (sequelize) => {
         allowNull: false,
       
     },
+
 
     nom: {
       type: DataTypes.STRING(100),
@@ -52,6 +47,13 @@ module.exports = (sequelize) => {
         return `/catalog/utilisateur/${this.id}`;
       },
     },
-  });
+   
+  },
+  
+  );
+ 
+ 
+
+console.log(typeof utilisateur);
   return Utilisateur;
 };

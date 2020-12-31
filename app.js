@@ -5,11 +5,13 @@ const logger = require('morgan');
 const passport = require("passport");
 const path = require('path');
 const session = require("express-session");
+const bcrypt = require("bcrypt");
 
 //Mise en place stratégie d’authentification
 const LocalStrategy = require("passport-local").Strategy;
+const sequelize = require ("./models/sequelizeInstance");
+const Utilisateur = require("./models/utilisateur")(sequelize);
 
-//const Utilisateur = require("./models/utilisateur");
 
 const catalogRouter = require("./routes/catalog");
 const indexRouter = require("./routes/index");
@@ -47,10 +49,18 @@ passport.use(
  // correspondent à un utilisateur. Sinon, on va renvoyer message erreur
   new LocalStrategy(async (email, password, done) => {
     try {
-      const user = await Utilisateur.findByPk(email);
-      if (user && (await user.validPassword(password))) {
+      const user = await Utilisateur.findOne({email});
+      console.log("+++Cal" , user);
+      if (user) {
+          console.log("++++++" + user.passwordHash)
+          const isValid = bcrypt.compareSync(password,user.passwordHash);
+          console.log(isValid);
+          if(isValid){
         done(null, user);
-      } else {
+      }else{
+        return done(null, false, { message: "Incorrect username or password" });
+      }
+     } else {
         return done(null, false, { message: "Incorrect username or password" });
       }
     } catch (error) {

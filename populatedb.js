@@ -119,6 +119,7 @@ async function createUtilisateur() {
     utilisateurCreate("Premier", "Premier", "Premier", "Premier"),
     utilisateurCreate("Deux", "Deux", "Deux", "Deux"),
     utilisateurCreate("Trois", "Trois", "Trois", "Trois"),
+    utilisateurCreate("Trois", "Trois", "Quatre", "Quatre"),
   ]);
 }
 
