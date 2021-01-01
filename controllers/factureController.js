@@ -1,4 +1,4 @@
-const { Facture, LigneFacturation } = require("../models/sequelize");
+const { Facture, LigneFacturation, Utilisation, Utilisateur } = require("../models/sequelize");
 const createError = require("http-errors");
 
 exports.facture_list =  async function (req, res, next) {
@@ -41,6 +41,53 @@ exports.facture_create_get =  async function (req, res, next) {
 };
   
   exports.facture_create_post = function (req, res) {
+    // Recup la période (du form)
+    const period = req.body.periode
+
+    // recup toutes les ligne de fact de la periode
+    const ligenFacturations = await LigneFacturation.findAll({
+      where: {
+      // date == bonne date
+      },
+      include: utilisations
+    })
+
+    // filtre pour garder celle non facturée
+    const SansFactures = ligenFacturations.filter(ligneFact => ligneFact.FactureId === null)
+
+    //////////////////////////////////////////// OPTIONNEL
+    // Recup les utilisations
+    const utilisations = []
+    SansFactures.forEach(async el => {
+      const utilisation = await Utilisation.findByPk(el.utilisationId)
+      utilisations.push(utilisation)
+    })
+    //////////////////////////////////////////// OPTIONNEL
+
+    // Recup les users
+    const usersids = []
+
+    // eviter les doublons des userID
+    SansFactures.forEach(el => {
+      const userId = el.utilisateurId
+      if (!usersids.includes(userId)) {
+        usersids.push(userId)
+      }
+    })
+
+    const users = []
+
+    usersids.forEach(async id => {
+      const user = await Utilisateur.findByPk(id)
+      users.push(user)
+    })
+
+
+    // ligne de fact à factuer dans `SansFactures`
+    // les info des users dans `users`
+
+
+
     res.send("NOT IMPLEMENTED: facture create POST");
   };
 
