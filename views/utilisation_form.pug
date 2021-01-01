@@ -2,19 +2,21 @@ extends layout
 
 block content
  h4 #{title}
+ p
+  hr
+  br
   
- 
   form(method="POST")
     .mb-3
-      label.form-label(for="duree") Duree :
+      label.form-label(for="duree") Duree en minutes :
       input#duree.form-control(
         type="text"
-        placeholder=" Veuillez indiquer la duree en minutes"
+        placeholder=" Veuillez indiquer la duree en minutes : 11, 23, 31..."
         name="duree"
         required
         value=undefined === utilisation ? "" : utilisation.duree
       )
-  
+    
     .mb-3
       label.form-label(for="dateUtilisation") Date de l'utilisation :
       input#dateUtilisation.form-control(
@@ -22,7 +24,24 @@ block content
         name="dateUtilisation"
         value=undefined === utilisation ? "" : utilisation.dateUtilisation
       )
-
+    .mb-3
+      label.form-label(for="utilisateur") utilisateur :
+      input#utilisateur.form-control(
+        type="text"
+        placeholder=" "
+        name="utilisateur"
+        required
+        value=undefined === utilisation ? "" : utilisation.utilisateur
+      )
+    .mb-3
+      label.form-label(for="machine") machine :
+      input#machine.form-control(
+        type="text"
+        name="machine"
+        
+        required
+        value=undefined === utilisation ? "" : utilisation.machine.nom
+      )
     .mb-3
       button.btn.btn-primary(type="submit") Submit
 

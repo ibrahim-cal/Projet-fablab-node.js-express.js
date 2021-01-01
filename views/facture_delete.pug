@@ -1,0 +1,21 @@
+
+extends layout
+
+block content
+  br
+  h5 #{title}
+    hr
+    p Voulez vous vraiment supprimer cette facture ? 
+    p Cette action est irréversible.
+    hr
+  
+    form(method="POST", action="")
+      .mb-3
+        input#factureid.form-control(
+          type="hidden",
+          name="factureid",
+          required="true",
+          value=facture._id
+        )
+
+      button.btn.btn-primary(type="submit") Supprimer

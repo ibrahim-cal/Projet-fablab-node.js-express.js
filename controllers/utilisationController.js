@@ -30,11 +30,11 @@ exports.utilisation_list = async function (req, res, next) {
 
 exports.utilisation_create_get = async function (req, res, next) {
   try {
-    const [machines, utilisateurs] = await Promise.all([
+    const [utilisations, machines, utilisateurs] = await Promise.all([
       Machine.findAll(),
       Utilisateur.findAll(),
     ]);
-    res.render("utilisation_form", { title: "Nouvelle utilisation", machines, utilisateurs });
+    res.render("utilisation_form", { title: "Nouvelle utilisation", utilisations, machines, utilisateurs });
   } catch (error) {
     next(error);
   }

@@ -126,15 +126,15 @@ exports.utilisateur_create_get = function (req, res, next) {
     // quand on soumet le formulaire, on va apeller la méthode 
     // "authenticate" qui va utiliser la stratégie "local" qu'on 
     // a definit
-    passport.authenticate("local", (err1, user, info) => {
+    passport.authenticate("local", (err1, utilisateur, info) => {
         if (err1) {
           console.log("++++1")
           return next(err1);
         }
-        if (!user) {
+        if (!utilisateur) {
           console.log("++++2")// si l'user ne correspond pas, on va mettre à true et rediriger vers login
           req.session.authenticationFailed = true;
-          return res.redirect("/utilisateur/login");
+          return res.redirect("/catalog/utilisateur/login");
         }
 
         // si user fonctionne, on va régénerer la session. Càd supprimer
@@ -145,7 +145,7 @@ exports.utilisateur_create_get = function (req, res, next) {
             console.log("++++3")
             return next(err2);
           }
-          req.login(user, (err3) => {
+          req.login(utilisateur, (err3) => {
             if (err3) {
               console.log("++++4")
               return next(err3);
@@ -163,7 +163,7 @@ exports.utilisateur_create_get = function (req, res, next) {
         req.logout();
   req.session.regenerate((err) => {
     if (!err) {
-      res.redirect("/");
+      res.redirect("/catalog");
     } else {
       next(err);
     }

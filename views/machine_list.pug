@@ -15,7 +15,7 @@ block content
       thead
         tr
           th(scope="col") Nom machine
-          th(scope="col") Tarif
+          th(scope="col") Tarif par minute
           th(scope="col") 
           th(scope="col")  
           th(scope="col")  
@@ -24,7 +24,7 @@ block content
         each machine in machine_list
             tr
             td= machine.nom
-            td= machine.tarif
+            td= machine.tarif+("€")
             td
               a(href=machine.url + '/delete')  Supprimer 
             td

@@ -17,7 +17,11 @@ exports.index = async function (req, res, next) {
   };
 
   exports.machine_list = async function (req, res, next) {
+    
     try {
+     
+
+
       const machine_list = await Machine.findAll({
         order: [["nom", "ASC"]],
       });

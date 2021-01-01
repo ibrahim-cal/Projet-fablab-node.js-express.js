@@ -20,6 +20,7 @@ router.get("/utilisateur/logout", utilisateur_controller.logout_get);
 router.get("/facture/create", facture_controller.facture_create_get);
 // POST request for creating facture.
 router.post("/facture/create", facture_controller.facture_create_post);
+
 // GET request to delete facture.
 router.get("/facture/:id/delete", facture_controller.facture_delete_get);
 // POST request to delete facture.
@@ -28,6 +29,7 @@ router.post("/facture/:id/delete", facture_controller.facture_delete_post);
 router.get("/facture/:id", facture_controller.facture_detail);
 // GET request for list of all facture items.
 router.get("/factures", facture_controller.facture_list);
+
 
 
 

@@ -10,7 +10,7 @@ block content
       thead
         tr
           th(scope="col") Date
-          th(scope="col") Duree
+          th(scope="col") Duree en minutes
           th(scope="col") Machine
           th(scope="col") Utilisateur
           th(scope="col") 
@@ -20,7 +20,7 @@ block content
         each utilisation in utilisation_list
             tr
             td= utilisation.dateUtilisation
-            td= utilisation.duree
+            td= utilisation.duree 
             td= utilisation.machine.nom
             td= utilisation.utilisateur.nom
             td

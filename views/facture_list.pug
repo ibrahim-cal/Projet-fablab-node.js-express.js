@@ -1,0 +1,38 @@
+extends layout
+
+block content
+  h3= nom
+
+  ul
+    h5= title
+    p 
+    
+    table.table
+      thead
+        tr
+          th(scope="col") Nom 
+          th(scope="col") Prenom
+          th(scope="col") Numero facture
+          th(scope="col") Montant
+          th(scope="col") Date facture
+          th(scope="col") Details
+          th(scope="col") Supprimer
+
+   
+      tbody
+        each facture in facture_list
+            tr
+            td
+            td
+            td= facture.numeroFacture
+            td= facture.montant
+            td= facture.dateFacture 
+            td
+              a(href="/facture" + facture.url )  Details 
+            td
+              a(href=facture.url+"/delete")  Supprimer
+
+    
+
+        else
+          li Il n'y a pas de facture

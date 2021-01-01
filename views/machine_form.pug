@@ -14,10 +14,10 @@ block content
         value=undefined === machine ? "" : machine.nom
       )
     .mb-3
-      label.form-label(for="tarif") Tarif par minute :
+      label.form-label(for="tarif") Tarif € par minute :
       input#tarif.form-control(
         type="text"
-        placeholder=" 0,30€/min, 0,55€/min, ..."
+        placeholder=" Exemple : 0.30 / 0.55  Attention à separer les chiffres par un point "
         name="tarif"
         required
         value=undefined === machine ? "" : machine.tarif
