@@ -115,10 +115,14 @@ exports.utilisateur_create_get = function (req, res, next) {
   },
   ];
 
-  exports.login_get = async function (req, res, next) {
+  exports.login_get = async function (req, res) {
     const authenticationFailed = req.session.authenticationFailed;
     delete req.session.authenticationFailed;
-    res.render("login", { title: "Login", currentUrl: req.originalUrl, authenticationFailed });
+    res.render("login", { 
+      title: "Login", 
+      currentUrl: req.originalUrl,
+     authenticationFailed,
+   });
   };
  
   exports.login_post = async function (req, res, next) {
@@ -128,11 +132,10 @@ exports.utilisateur_create_get = function (req, res, next) {
     // a definit
     passport.authenticate("local", (err1, utilisateur, info) => {
         if (err1) {
-          console.log("++++1")
           return next(err1);
         }
         if (!utilisateur) {
-          console.log("++++2")// si l'user ne correspond pas, on va mettre à true et rediriger vers login
+          // si l'user ne correspond pas, on va mettre à true et rediriger vers login
           req.session.authenticationFailed = true;
           return res.redirect("/catalog/utilisateur/login");
         }
@@ -142,16 +145,13 @@ exports.utilisateur_create_get = function (req, res, next) {
         delete req.session.nextUrl;
         req.session.regenerate((err2) => {
           if (err2) {
-            console.log("++++3")
             return next(err2);
           }
           req.login(utilisateur, (err3) => {
             if (err3) {
-              console.log("++++4")
               return next(err3);
             }
             req.session.newlyAuthenticated = true;
-            console.log("++++5")
             res.redirect("/catalog");
           });
         });
@@ -159,7 +159,7 @@ exports.utilisateur_create_get = function (req, res, next) {
     };
 
     
-        exports.logout_get = async function (req, res, next) {
+  exports.logout_get = async function (req, res, next) {
         req.logout();
   req.session.regenerate((err) => {
     if (!err) {

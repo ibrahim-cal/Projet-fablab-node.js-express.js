@@ -22,13 +22,13 @@ block content
       tbody
         each facture in facture_list
             tr
-            td
-            td
+            td= facture.id
+            td= facture.id
             td= facture.numeroFacture
             td= facture.montant
             td= facture.dateFacture 
             td
-              a(href="/facture" + facture.url )  Details 
+              a(href= "/catalog/facture/"+facture.id)  Details 
             td
               a(href=facture.url+"/delete")  Supprimer
 

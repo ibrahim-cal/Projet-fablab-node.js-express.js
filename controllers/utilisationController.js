@@ -1,6 +1,8 @@
 const { Utilisation, Utilisateur, Machine, LigneFacturation } = require("../models/sequelize");
 const createError = require("http-errors");
 const { body, validationResult } = require("express-validator");
+const machine = require("../models/machine");
+const utilisateur = require("../models/utilisateur");
 
 exports.utilisation_list = async function (req, res, next) {
   try {
@@ -30,6 +32,16 @@ exports.utilisation_list = async function (req, res, next) {
 
 exports.utilisation_create_get = async function (req, res, next) {
   try {
+    
+    if
+    (req.query.machineid)
+    {
+      machine.id = machine.id
+    }
+    else if(req.query.utilisateurid)
+      {
+       {utilisateurid=utilisateur.id}
+      }
     const [utilisations, machines, utilisateurs] = await Promise.all([
       Machine.findAll(),
       Utilisateur.findAll(),
@@ -53,6 +65,7 @@ exports.utilisation_create_get = async function (req, res, next) {
       .toDate(),
       async function (req, res, next) {
         try {
+         
           const errors = validationResult(req);
     
           if (!errors.isEmpty()) {

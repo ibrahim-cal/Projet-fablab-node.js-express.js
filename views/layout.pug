@@ -31,12 +31,10 @@ html(lang="en")
               li
                  a(href="/catalog") Home
               
-                 //if user
-                 ul 
-                  li.nav-item
-                   a(href="/catalog/utilisateur/login") Se connecter
+              if user
+                 
                  ul
-                  li 
+                 li 
                    a(href="/logout") deconnecter
                  li
                   a(href="/catalog/utilisateur/create") Creer un nouveau compte
@@ -62,11 +60,13 @@ html(lang="en")
                   hr
                  li
                   a(href="/catalog/utilisateurs") Liste des utilisateurs
+              if !user
                  
-                 li
-                  hr
+                  li
+                   a(href="/catalog/utilisateur/login") Se connecter
+  
               
-                 //if !user
+                 
                  
         .col-sm-10
            block content

@@ -47,26 +47,29 @@ passport.use(
 
   // stratégie locale. Permet de determiner si username ET password
  // correspondent à un utilisateur. Sinon, on va renvoyer message erreur
-  new LocalStrategy(async (email, password, done) => {
-    try {
-      const user = await Utilisateur.findOne({email});
-      console.log("+++Cal" , user);
-      if (user) {
-          console.log("++++++" + user.passwordHash)
-          const isValid = bcrypt.compareSync(password,user.passwordHash);
-          console.log(isValid);
-          if(isValid){
-        done(null, user);
-      }else{
-        return done(null, false, { message: "Incorrect username or password" });
-      }
-     } else {
-        return done(null, false, { message: "Incorrect username or password" });
-      }
-    } catch (error) {
-      done(error);
+ new LocalStrategy(async (email, password, done) => {
+  try {
+    const user = await Utilisateur.findOne({where: {email : email}});
+    // on va comparer : email reçu avec les email qu'on a en BDD
+    
+    if (user) {// si l'email existe, on va alors aller comparer le mdp
+       
+        const isValid = bcrypt.compareSync(password,user.passwordHash);
+        // on va utiliser un outil de bcrypt pour la comparaison des 2 mdp
+        if(isValid){
+      done(null, user);
+    }else{
+      // si email/mdp incorrect, on renvoie un message erreur
+      return done(null, false, { message: "Email ou mot de passe incorrect" });
     }
-  })
+   } else {
+     // si email/mdp incorrect, on renvoie un message erreur
+      return done(null, false, { message: "Email ou mot de passe incorrect" });
+    }
+  } catch (error) {
+    done(error);
+  }
+})
 );
 
 // on va stocker la partie de l'utilisateur à stocker en session
@@ -75,10 +78,10 @@ passport.serializeUser((user, done) => {
 });
 
 // méthode qui va être apellée à chaque fois qu’une requête est reçue 
-// et qu’un username se trouve dans la session
+// et qu’un 'email' se trouve dans la session
 passport.deserializeUser(async (email, done) => {
   try {
-    const user = await Utilisateur.findByPk(email, {
+    const user = await Utilisateur.findOne({ where : {email : email}}, {
       include: { all: true, nested: true },
     });
     done(null, user);

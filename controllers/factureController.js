@@ -1,5 +1,6 @@
-const { Facture, LigneFacturation } = require("../models/sequelize");
+const { Facture, LigneFacturation, Utilisation, Utilisateur } = require("../models/sequelize");
 const createError = require("http-errors");
+const facture = require("../models/facture");
 
 exports.facture_list =  async function (req, res, next) {
   try {
@@ -30,19 +31,48 @@ exports.facture_list =  async function (req, res, next) {
 
 exports.facture_create_get =  async function (req, res, next) {
   try {
-    const [ligneFacturations, utilisations] = await Promise.all([
+    const [factures, ligneFacturations, utilisations] = await Promise.all([
       LigneFacturation.findAll(),
-      Utilisations.findAll(),
+      Utilisation.findAll(),
+      
     ]);
-    res.render("facture_form", { title: "Nouvelle facture", ligneFacturations, utilisations });
+    res.render("facture_form", { title: "Nouvelle facture", factures, ligneFacturations, utilisations });
   } catch (error) {
     next(error);
   }
 };
   
-  exports.facture_create_post = function (req, res) {
-    res.send("NOT IMPLEMENTED: facture create POST");
-  };
+  exports.facture_create_post =
+  /* [
+    
+    body("dateFacture", "Date invalide")
+    .optional({ checkFalsy: true })
+    .isISO8601()
+    .toDate(),
+    async function (req, res, next) {
+    try {
+      const sansFactures = ligneFacturation.filter(ligneF =>
+        ligneF.FactureId === null)
+      
+      const usersId = []
+
+      sansFactures.forEach(element => {
+        const userId = element.utilisateurId
+        if (!usersId.includes(userId)) {
+          usersId.push(userId)
+        }
+      })
+
+      const users = []
+      usersId.forEach(async id => {
+        const user = await Utilisateur.findByPk(id)
+        user.push(user)
+      })
+      // A TERMINER ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+*/
+
+
 
   exports.facture_delete_get = async function (req, res, next) {
     try {

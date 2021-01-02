@@ -92,17 +92,27 @@ async function createUtilisation() {
     utilisationCreate("20", "2020-12-25", machines[1], utilisateurs[0]),
     utilisationCreate("30", "2020-12-25", machines[0], utilisateurs[1]),
     utilisationCreate("10", "2020-12-25", machines[1], utilisateurs[2]),
-    utilisationCreate("10", "2020-12-25", machines[1], utilisateurs[2]),
-    utilisationCreate("10", "2020-12-25", machines[1], utilisateurs[2]),
+    utilisationCreate("119", "2020-12-25", machines[1], utilisateurs[2]),
+    utilisationCreate("15", "2020-12-25", machines[1], utilisateurs[3]),
+    utilisationCreate("16", "2020-12-25", machines[1], utilisateurs[1]),
+    utilisationCreate("17", "2020-12-25", machines[1], utilisateurs[3]),
+    utilisationCreate("18", "2020-12-25", machines[1], utilisateurs[1]),
  
   ]);
 }
 
 async function createLigneFacturation() {
   return await Promise.all([
-    ligneFacturationCreate("decoupeuse laser", "0.5", "20", "10", factures[0], utilisations[0]),
-    ligneFacturationCreate("ultimaker imprimante 3d", "0.3", "30", "9", factures[1], utilisations[1]),
-    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "10", "5.50", factures[2], utilisations[2]),
+    ligneFacturationCreate("decoupeuse laser", "0.5", "20", "10", factures[3], utilisations[0]),
+    ligneFacturationCreate("ultimaker imprimante 3d", "0.3", "30", "9",factures[3], utilisations[1]),
+    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "10", "5.50", utilisations[2]),
+    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "10", "5.50", utilisations[2]),
+    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "10", "5.50", utilisations[2]),
+    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "13", "5.50", utilisations[2]),
+    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "18", "7.50",  utilisations[2]),
+    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "20", "6.50",  utilisations[2]),
+
+
   ]);
 }
 
@@ -111,6 +121,11 @@ async function createFacture() {
     factureCreate("202012001", "10", "2020-12-25"),
     factureCreate("202012002", "9", "2020-12-25"),
     factureCreate("202012003", "5", "2020-12-25"),
+    factureCreate("202012004", "3", "2020-12-25"),
+    factureCreate("202012005", "7", "2020-12-25"),
+    factureCreate("202012006", "2", "2020-12-25"),
+    factureCreate("202012007", "9", "2020-12-25"),
+    factureCreate("202012008", "5", "2020-12-25"),
   ]);
 }
 
@@ -120,6 +135,8 @@ async function createUtilisateur() {
     utilisateurCreate("Deux", "Deux", "Deux", "Deux"),
     utilisateurCreate("Trois", "Trois", "Trois", "Trois"),
     utilisateurCreate("Trois", "Trois", "Quatre", "Quatre"),
+    utilisateurCreate("Trois", "Trois", "Cinq", "Cinq"),
+    utilisateurCreate("Trois", "Trois", "Six", "Six"),
   ]);
 }
 
