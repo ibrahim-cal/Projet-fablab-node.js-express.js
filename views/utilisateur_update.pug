@@ -4,10 +4,6 @@ block content
   br
   h4 #{title} :
    
-    
-
-
-
   form(method="POST")
     .mb-3
       label.form-label(for="prenom") prenom :
@@ -43,11 +39,9 @@ block content
         placeholder="  "
         name="mdp"
         required
-        
       )
     .mb-3
       button.btn.btn-primary(type="submit") Enregistrer
-
 
   if errors
     ul

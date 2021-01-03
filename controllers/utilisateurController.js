@@ -9,6 +9,10 @@ const saltRounds = 10;
 
 exports.utilisateur_list = async function (req, res, next) {
   try {
+    const user = req.user;
+    if (!user) {
+      return res.redirect("/catalog/utilisateur/login");
+    }
     const utilisateur_list = await Utilisateur.findAll({
       include : Utilisation,
       order: [["nom", "ASC"]],
@@ -24,6 +28,8 @@ exports.utilisateur_list = async function (req, res, next) {
   };
 
 exports.utilisateur_create_get = function (req, res, next) {
+  const user = req.user;
+   
   res.render("utilisateur_form", { title: "Creation nouveau compte"});
 };
   
@@ -37,6 +43,7 @@ exports.utilisateur_create_get = function (req, res, next) {
     body("mdp", "Veuillez indiquer un mot de passe.").trim().notEmpty().escape(),
     async (req, res, next) => {
       try {
+      
         const errors = validationResult(req); // on traite les erreurs de validation
         if (!errors.isEmpty())
          {
@@ -65,6 +72,10 @@ exports.utilisateur_create_get = function (req, res, next) {
 
   exports.utilisateur_update_get = async function (req, res, next) {
     try{
+      const user = req.user;
+      if (!user) {
+        return res.redirect("/catalog/utilisateur/login");
+      }
       const utilisateur= await Utilisateur.findByPk(req.params.id, { })
     if (utilisateur === null) { // si on ne trouve pas l'utilisateur
       next(createError(404, "utilisateur non trouvé ")); // on renvoie une erreur
@@ -89,6 +100,10 @@ exports.utilisateur_create_get = function (req, res, next) {
     body("mdp", "Veuillez indiquer un mot de passe.").trim().notEmpty().escape(),
     async (req, res, next) => {
       try {
+        const user = req.user;
+        if (!user) {
+          return res.redirect("/catalog/utilisateur/login");
+        }
         const errors = validationResult(req); // on traite les erreurs de validation
         if (!errors.isEmpty())
          {
@@ -115,7 +130,7 @@ exports.utilisateur_create_get = function (req, res, next) {
   },
   ];
 
-  exports.login_get = async function (req, res) {
+  exports.login_get = async function (req, res, next) {
     const authenticationFailed = req.session.authenticationFailed;
     delete req.session.authenticationFailed;
     res.render("login", { 
@@ -125,16 +140,16 @@ exports.utilisateur_create_get = function (req, res, next) {
    });
   };
  
-  exports.login_post = async function (req, res, next) {
+  exports.login_post = async function (req, res, next)  {
 
     // quand on soumet le formulaire, on va apeller la méthode 
     // "authenticate" qui va utiliser la stratégie "local" qu'on 
     // a definit
-    passport.authenticate("local", (err1, utilisateur, info) => {
+    passport.authenticate("local", (err1, user, info) => {
         if (err1) {
           return next(err1);
         }
-        if (!utilisateur) {
+        if (!user) {
           // si l'user ne correspond pas, on va mettre à true et rediriger vers login
           req.session.authenticationFailed = true;
           return res.redirect("/catalog/utilisateur/login");
@@ -142,28 +157,27 @@ exports.utilisateur_create_get = function (req, res, next) {
 
         // si user fonctionne, on va régénerer la session. Càd supprimer
         // celle existante et en créer une nouvelle, par sécurité.
-        delete req.session.nextUrl;
+        //delete req.session.nextUrl;
         req.session.regenerate((err2) => {
           if (err2) {
             return next(err2);
           }
-          req.login(utilisateur, (err3) => {
+          req.login(user, (err3) => {
             if (err3) {
               return next(err3);
             }
             req.session.newlyAuthenticated = true;
-            res.redirect("/catalog");
+            res.redirect("/catalog/");
           });
         });
       })(req, res, next);
     };
 
-    
   exports.logout_get = async function (req, res, next) {
         req.logout();
   req.session.regenerate((err) => {
     if (!err) {
-      res.redirect("/catalog");
+      res.redirect("/");
     } else {
       next(err);
     }

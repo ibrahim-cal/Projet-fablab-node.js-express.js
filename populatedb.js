@@ -1,21 +1,20 @@
-
-
 console.log(
   "ce script remplit la BDD avec des machines, utilisateurs, etc"
 );
 const bcrypt = require("bcrypt");
+const { removeAllListeners } = require("nodemon");
 const ligneFacturation = require("./models/ligneFacturation");
 
-const { sequelize, Facture, Utilisation, LigneFacturation, Machine, Utilisateur } = require("./models/sequelize");
+const { sequelize, Facture, Utilisation, LigneFacturation, Machine, Utilisateur, Role, Permission } = require("./models/sequelize");
 const saltRounds = 10;
 
 var utilisations = [];
 var machines = [];
 var utilisateurs = [];
-
+var roles = [];
+var permissions = [];
 var factures = [];
 var lignefacturations = [];
-
 
 async function utilisateurCreate(prenom, nom, email, mdp) {
    
@@ -23,11 +22,17 @@ async function utilisateurCreate(prenom, nom, email, mdp) {
     utilisateurdetail =
     { prenom: prenom, nom: nom, email: email};
     utilisateurdetail.passwordHash = hash;
+    /*
+    can(permissionName)
+  {
+    return this.roles.some((role) => 
+      role.can(permissionName));
+  }
+  */
     var utilisateur = await Utilisateur.create(utilisateurdetail);
     console.log("nouvel utilisateur: " + utilisateur.id);
     utilisateurs.push(utilisateur);
     return utilisateur;
-
 }
 
 async function machineCreate(nom, tarif) {
@@ -56,11 +61,9 @@ async function factureCreate(numeroFacture, montant, dFacture) {
 }
 
 async function ligneFacturationCreate(nomMachine, prix, duree, sousTotal, facture, utilisation) {
-
   lignefacturationdetail = {
     nomMachine: nomMachine, prix: prix, duree:
       duree, sousTotal: sousTotal};
- 
 
   const lignefacturation = await LigneFacturation.create(lignefacturationdetail);
   await lignefacturation.setFacture(facture);
@@ -85,9 +88,63 @@ async function utilisationCreate(duree, date, machine, utilisateur) {
   return utilisation;
 }
 
+async function roleCreate(nom){
+  roledetail = {nom : nom};
+/*
+  can(permissionName){
+    return this.permissions.some((perm)
+     =>    perm.name === permissionName);
+  }
+  */
+  const role = await Role.create(roledetail);
+  console.log("nouveau role: " + role.id);
+  roles.push(role);
+  return role;
+}
+
+async function permCreate(nom){
+  permdetail = {nom : nom};
+  const permission = await Permission.create(permdetail);
+  console.log("nouvelle permission: " + permission.id);
+  permissions.push(permission);
+  return permission;
+}
+
+async function createRole(){
+  return await Promise.all([
+    roleCreate("membre"),
+    roleCreate("manager"),
+    roleCreate("comptable"),
+  ])
+}
+
+async function createPerm(){
+  return await Promise.all([
+    permCreate("listeMachine"),
+    permCreate("modifierMachine"),
+    permCreate("supprimerMachine"),
+    permCreate("creerMachine"),
+    permCreate("listeUtilisation"),
+    permCreate("supprimerUtilisation"),
+    permCreate("modifierUtilisateur"),
+    permCreate("listeFacture"),
+    permCreate("supprimerFacture"),
+    permCreate("supprimerLignefacturation"),
+  ])
+}
+
+async function createRolePerm(){
+return await Promise.all([
+  membre.addPermissions([listeMachine, listeUtilisation,]),
+  manager.addPermissions([listeMachine,modifierMachine,supprimerMachine,
+    creerMachine, listeUtilisation,supprimerUtilisation,modifierUtilisateur,
+    listeFacture,supprimerLignefacturation]),
+  comptable.addPermissions([listeFacture, supprimerFacture]),
+
+])
+}
 
 async function createUtilisation() {
- console.log(utilisateurs)
   return await Promise.all([
     utilisationCreate("20", "2020-12-25", machines[1], utilisateurs[0]),
     utilisationCreate("30", "2020-12-25", machines[0], utilisateurs[1]),
@@ -152,7 +209,6 @@ async function createMachine() {
   ]);
 }
 
-
 (async () => {
   try {
     await sequelize.sync({ force: true });
@@ -161,9 +217,11 @@ async function createMachine() {
     });
     await createFacture();
     await createMachine();
-    
+    await createRole();
+    await createPerm();
     await createUtilisation();
     await createLigneFacturation();
+    await createRolePerm();
     
     sequelize.close();
   } catch (err) {

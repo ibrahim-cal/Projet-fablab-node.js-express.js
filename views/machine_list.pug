@@ -1,5 +1,4 @@
 extends layout
-
 block content
   h3= nom
 
@@ -8,9 +7,6 @@ block content
 
     a(href='/catalog/machine/create') Insérer une nouvelle machine
     p 
-    
-
-   
     table.table
       thead
         tr
@@ -32,7 +28,6 @@ block content
             td
               a(href='/catalog/utilisation/create?machineid='+ machine.id) Utiliser 
     
-
         else
           li Il n'y a pas de machines.
 

@@ -4,9 +4,8 @@ block content
   br
   h5 #{title} -  #{utilisation.utilisateur.nom}
    h6
-     
      table.table
-       
+        
           thead
            
             tr
@@ -16,19 +15,17 @@ block content
              th(scope="col") Duree en minutes
              th(scope="col") Nom machine
              th(scope="col") 
-       
-       
-          tbody
-            
-             tr
-                td  #{utilisation.dateUtilisation} 
+      
+          tbody 
+              tr
                 
+                td  #{utilisation.dateUtilisation}  
                 td  #{utilisation.duree}
-                
                 td  #{utilisation.machine.nom}
                 td 
                   a(href=utilisation.url + '/delete')  Supprimer 
-             
+
+         
        
 
    

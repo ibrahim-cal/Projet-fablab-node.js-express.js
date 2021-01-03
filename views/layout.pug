@@ -30,18 +30,18 @@ html(lang="en")
             ul.sidebar-nav
               li
                  a(href="/catalog") Home
-              
-              if user
-                 
+                 hr
+                 li
+                   a(href="/catalog/utilisateur/login") Se connecter
                  ul
                  li 
                    a(href="/logout") deconnecter
                  li
                   a(href="/catalog/utilisateur/create") Creer un nouveau compte
-                 br  
+                 hr
                  li
                   a(href="/catalog/machines") Liste machines
-                 br
+                 hr
                  li
                   a(href="/catalog/utilisations") Liste des utilisations
                  li
@@ -51,22 +51,14 @@ html(lang="en")
                   a(href="/catalog/factures") Liste des factures
                  li
                   a(href="/catalog/facture/create") Encoder une nouvelle facture 
-                 li
+                 //li
                   a(href="/catalog/ligneFacturations") Liste des lignes de facturation
                  
-                 li
+                 //li
                   a(href="/catalog/ligneFacturation/create") Encoder une nouvelle ligne de facturation
-                 
-                  hr
+                 hr
                  li
                   a(href="/catalog/utilisateurs") Liste des utilisateurs
-              if !user
-                 
-                  li
-                   a(href="/catalog/utilisateur/login") Se connecter
-  
-              
-                 
                  
         .col-sm-10
            block content

@@ -7,6 +7,10 @@ exports.ligneFacturation_list = function (req, res) {
 
   exports.ligneFacturation_detail = async function (req, res, next) {
     try {
+      const user = req.user;
+    if (!user) {
+      return res.redirect("/catalog/utilisateur/login");
+    }
       const ligneFacturationId = req.params.id;
       const ligneFacturation = await LigneFacturation.findByPk(ligneFacturationId, {
         include: [Facture, Utilisation],
@@ -21,16 +25,12 @@ exports.ligneFacturation_list = function (req, res) {
     }
   };
 
-exports.ligneFacturation_create_get = function (req, res) {
-    res.send("NOT IMPLEMENTED: ligneFacturation create GET");
-  };
-  
-  exports.ligneFacturation_create_post = function (req, res) {
-    res.send("NOT IMPLEMENTED: ligneFacturation create POST");
-  };
-
   exports.ligneFacturation_delete_get = async function (req, res, next) {
     try {
+      const user = req.user;
+    if (!user) {
+      return res.redirect("/catalog/utilisateur/login");
+    }
       const ligneFacturation = await LigneFacturation.findByPk(req.params.id, {
         include: [Facture, Utilisation],
       });
@@ -46,6 +46,10 @@ exports.ligneFacturation_create_get = function (req, res) {
   
   exports.ligneFacturation_delete_post = async function (req, res, next) {
     try {
+      const user = req.user;
+    if (!user) {
+      return res.redirect("/catalog/utilisateur/login");
+    }
       const ligneFacturation = await LigneFacturation.findByPk(req.params.id, {
         include: [Facture, Utilisation],
       });
@@ -60,4 +64,12 @@ exports.ligneFacturation_create_get = function (req, res) {
     } catch (error) {
       next(error);
     }
+  };
+
+  exports.ligneFacturation_create_get = function (req, res) {
+    res.send("NOT IMPLEMENTED: ligneFacturation create GET");
+  };
+  
+  exports.ligneFacturation_create_post = function (req, res) {
+    res.send("NOT IMPLEMENTED: ligneFacturation create POST");
   };

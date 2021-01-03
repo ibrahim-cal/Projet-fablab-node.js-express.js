@@ -3,7 +3,7 @@ const { DataTypes } = require("sequelize");
 module.exports = (sequelize) => {
   const Utilisation = sequelize.define("utilisation", {
     duree: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.INTEGER(50),
       allowNull: false,
     },
    
@@ -30,5 +30,4 @@ module.exports = (sequelize) => {
     },
   });
   return Utilisation;
-
 };

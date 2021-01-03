@@ -1,9 +1,13 @@
-const { Facture, LigneFacturation, Utilisation, Utilisateur } = require("../models/sequelize");
+const { Facture, LigneFacturation, Utilisation } = require("../models/sequelize");
 const createError = require("http-errors");
 const facture = require("../models/facture");
 
 exports.facture_list =  async function (req, res, next) {
   try {
+    const user = req.user;
+    if (!user) {
+      return res.redirect("/catalog/utilisateur/login");
+    }
     const facture_list = await Facture.findAll({
       include: [LigneFacturation],
     });
@@ -15,6 +19,10 @@ exports.facture_list =  async function (req, res, next) {
 
   exports.facture_detail = async function (req, res, next) {
     try {
+      const user = req.user;
+    if (!user) {
+      return res.redirect("/catalog/utilisateur/login");
+    }
       const factureId = req.params.id;
       const facture = await Facture.findByPk(factureId, {
         include: [LigneFacturation],
@@ -31,6 +39,10 @@ exports.facture_list =  async function (req, res, next) {
 
 exports.facture_create_get =  async function (req, res, next) {
   try {
+    const user = req.user;
+    if (!user) {
+      return res.redirect("/catalog/utilisateur/login");
+    }
     const [factures, ligneFacturations, utilisations] = await Promise.all([
       LigneFacturation.findAll(),
       Utilisation.findAll(),
@@ -71,11 +83,12 @@ exports.facture_create_get =  async function (req, res, next) {
       // A TERMINER ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 */
-
-
-
   exports.facture_delete_get = async function (req, res, next) {
     try {
+      const user = req.user;
+    if (!user) {
+      return res.redirect("/catalog/utilisateur/login");
+    }
       const facture = await Facture.findByPk(req.params.id, {
         include: [LigneFacturation],
       });
@@ -91,6 +104,10 @@ exports.facture_create_get =  async function (req, res, next) {
   
   exports.facture_delete_post =  async function (req, res, next) {
     try {
+      const user = req.user;
+    if (!user) {
+      return res.redirect("/catalog/utilisateur/login");
+    }
       const facture = await Facture.findByPk(req.params.id, {
         include: [LigneFacturation],
       });

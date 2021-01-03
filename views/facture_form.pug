@@ -1,14 +1,11 @@
 extends layout
-
 block content
  h4 #{title}
  p
   hr
   br
-  
   form(method="POST")
 
-    
     .mb-3
       label.form-label(for="dateFacture") Date facture :
       input#dateFacture.form-control(
@@ -30,7 +27,6 @@ block content
       input#machine.form-control(
         type="text"
         name="machine"
-        
         required
         value=undefined === utilisation ? "" : utilisation.machine.nom
       )

@@ -4,7 +4,7 @@ module.exports = (sequelize) => {
   const Facture = sequelize.define("facture",
     {
       numeroFacture: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.INTEGER(100),
         allowNull: false,
       },
      

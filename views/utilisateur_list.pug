@@ -1,16 +1,10 @@
 extends layout
-
 block content
  
-  
-
     br
     h5= title
     br
   
-
-
-
     table.table
       thead
         tr
@@ -21,7 +15,6 @@ block content
           th(scope="col") Encoder utilisation
           th(scope="col") 
           
-       
       tbody
         each utilisateur in utilisateur_list
           tr
@@ -31,7 +24,7 @@ block content
             td
                a(href= "/catalog/utilisation/" +utilisateur.id) liste utilisations
             td
-               a(href='/catalog/utilisation/create')  Nouvelle utilisation
+               a(href='/catalog/utilisation/create?utilisateurid=' + utilisateur.id)  Nouvelle utilisation
             td
                a(href=utilisateur.url + '/update')  Modifier données utilisateur
           

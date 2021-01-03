@@ -1,13 +1,8 @@
 extends layout
-
 block content
   br
   h4 #{title} :
   hr
-   
-    
-
-
 
   form(method="POST")
     .mb-3
@@ -44,12 +39,10 @@ block content
         placeholder="  "
         name="mdp"
         required
-        value=undefined === utilisateur ? "" : utilisateur.mdp
-        
+        value=undefined === utilisateur ? "" : utilisateur.mdp        
       )
     .mb-3
       button.btn.btn-primary(type="submit") Enregistrer
-
 
   if errors
     ul

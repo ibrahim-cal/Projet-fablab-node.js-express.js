@@ -1,11 +1,7 @@
 extends layout
-
 block content
-  h4 #{title} :
-   
-    
-
-
+ 
+ h4 #{title} 
 
   form(method="POST")
     .mb-3
@@ -20,7 +16,7 @@ block content
     .mb-3
       label.form-label(for="tarif") Tarif par minute :
       input#tarif.form-control(
-        type="text"
+        type="number"
         placeholder=" 0,30€/min, 0,55€/min, ..."
         name="tarif"
         required
@@ -28,7 +24,6 @@ block content
       )
     .mb-3
       button.btn.btn-primary(type="submit") Valider 
-
 
   if errors
     ul

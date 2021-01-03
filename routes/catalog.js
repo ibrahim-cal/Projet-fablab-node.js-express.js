@@ -1,4 +1,3 @@
-
 var express = require("express");
 var router = express.Router();
 
@@ -6,8 +5,8 @@ var router = express.Router();
 var facture_controller = require("../controllers/factureController");
 var ligneFacturation_controller = require("../controllers/ligneFacturationController");
 var machine_controller = require("../controllers/machineController");
-var utilisateur_controller = require("../controllers/utilisateurController");
 var utilisation_controller = require("../controllers/utilisationController");
+var utilisateur_controller = require("../controllers/utilisateurController");
 
 router.get("/", machine_controller.index);
 
@@ -15,12 +14,10 @@ router.get("/utilisateur/login", utilisateur_controller.login_get);
 router.post("/utilisateur/login", utilisateur_controller.login_post);
 router.get("/utilisateur/logout", utilisateur_controller.logout_get);
 
-
 // GET request for creating a facture. NOTE This must come before routes that display facture (uses id).
 router.get("/facture/create", facture_controller.facture_create_get);
 // POST request for creating facture.
 router.post("/facture/create", facture_controller.facture_create_post);
-
 // GET request to delete facture.
 router.get("/facture/:id/delete", facture_controller.facture_delete_get);
 // POST request to delete facture.
@@ -29,8 +26,6 @@ router.post("/facture/:id/delete", facture_controller.facture_delete_post);
 router.get("/facture/:id", facture_controller.facture_detail);
 // GET request for list of all facture items.
 router.get("/factures", facture_controller.facture_list);
-
-
 
 
 // GET request for creating a ligneFacturation. NOTE This must come before routes that display ligneFacturation (uses id).
@@ -45,7 +40,6 @@ router.get("/ligneFacturations", ligneFacturation_controller.ligneFacturation_li
 router.get("/ligneFacturation/:id/delete", ligneFacturation_controller.ligneFacturation_delete_get);
 // POST request to delete ligneFacturation
 router.post("/ligneFacturation/:id/delete", ligneFacturation_controller.ligneFacturation_delete_post);
-
 
 
 // GET request for creating a machine. NOTE This must come before routes that display machine (uses id).
@@ -66,7 +60,6 @@ router.get("/machine/:id", machine_controller.machine_detail);
 router.get("/machines", machine_controller.machine_list);
 
 
-
 // GET request for creating a utilisateur. NOTE This must come before routes that display utilisateur (uses id).
 router.get("/utilisateur/create", utilisateur_controller.utilisateur_create_get);
 // POST request for creating utilisateur.
@@ -79,7 +72,6 @@ router.post("/utilisateur/:id/update", utilisateur_controller.utilisateur_update
 router.get("/utilisateur/:id", utilisateur_controller.utilisateur_detail);
 // GET request for list of all utilisateur items.
 router.get("/utilisateurs", utilisateur_controller.utilisateur_list);
-
 
 
 // GET request for creating a utilisation. NOTE This must come before routes that display utilisation (uses id).

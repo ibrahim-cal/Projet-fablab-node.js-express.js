@@ -6,6 +6,10 @@ const utilisateur = require("../models/utilisateur");
 
 exports.utilisation_list = async function (req, res, next) {
   try {
+    const user = req.user;
+    if (!user) {
+      return res.redirect("/catalog/utilisateur/login");
+    }
     const utilisation_list = await Utilisation.findAll({
       include: [Machine, Utilisateur],
     });
@@ -17,6 +21,10 @@ exports.utilisation_list = async function (req, res, next) {
 
   exports.utilisation_detail = async function (req, res, next) {
     try {
+      const user = req.user;
+    if (!user) {
+      return res.redirect("/catalog/utilisateur/login");
+    }
       const utilisationId = req.params.id;
       const utilisation = await Utilisation.findByPk(utilisationId, {
         include: [Utilisateur, Machine],  });
@@ -32,27 +40,28 @@ exports.utilisation_list = async function (req, res, next) {
 
 exports.utilisation_create_get = async function (req, res, next) {
   try {
-    
-    if
-    (req.query.machineid)
-    {
-      machine.id = machine.id
+    const user = req.user;
+    if (!user) {
+      return res.redirect("/catalog/utilisateur/login");
     }
-    else if(req.query.utilisateurid)
-      {
-       {utilisateurid=utilisateur.id}
-      }
-    const [utilisations, machines, utilisateurs] = await Promise.all([
+    let machine;
+    let utilisateur;
+    if (req.query.machineid) {
+      machine = await Machine.findByPk(req.query.machineid);
+    } else if (req.query.utilisateurid) {
+      utilisateur = await Utilisateur.findByPk(req.query.utilisateurid);
+    }
+    const [machines, utilisateurs] = await Promise.all([
       Machine.findAll(),
       Utilisateur.findAll(),
     ]);
-    res.render("utilisation_form", { title: "Nouvelle utilisation", utilisations, machines, utilisateurs });
+  
+    res.render("utilisation_form", { title: "Nouvelle utilisation", machine, utilisateur, machines, utilisateurs });
   } catch (error) {
     next(error);
   }
 };
 
-  
   exports.utilisation_create_post = [
     body("duree")
       .trim()
@@ -65,13 +74,16 @@ exports.utilisation_create_get = async function (req, res, next) {
       .toDate(),
       async function (req, res, next) {
         try {
+          const user = req.user;
+    if (!user) {
+      return res.redirect("/catalog/utilisateur/login");
+    }
          
           const errors = validationResult(req);
     
           if (!errors.isEmpty()) {
             // si y a une erreur lors du remplissage formulaire
 
-            
               const [machines, utilisateurs] = await Promise.all([
                 Machine.findAll(),
                 Utilisateur.findAll(),
@@ -103,10 +115,12 @@ exports.utilisation_create_get = async function (req, res, next) {
       },
     ];
 
-
-
   exports.utilisation_delete_get = async function (req, res, next) {
     try {
+      const user = req.user;
+    if (!user) {
+      return res.redirect("/catalog/utilisateur/login");
+    }
       const utilisation = await Utilisation.findByPk(req.params.id, {
         include: [Machine, Utilisateur, LigneFacturation],
       });
@@ -122,6 +136,10 @@ exports.utilisation_create_get = async function (req, res, next) {
   
   exports.utilisation_delete_post =  async function (req, res, next) {
     try {
+      const user = req.user;
+    if (!user) {
+      return res.redirect("/catalog/utilisateur/login");
+    }
       const utilisation = await Utilisation.findByPk(req.params.id, {
         include: [Machine, Utilisateur, LigneFacturation],
       });

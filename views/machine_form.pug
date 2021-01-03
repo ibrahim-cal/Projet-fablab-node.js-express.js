@@ -1,8 +1,6 @@
 extends layout
-
-  else 
+block content
   h4 #{title}
-
 
   form(method="POST")
     .mb-3
@@ -17,7 +15,7 @@ extends layout
     .mb-3
       label.form-label(for="tarif") Tarif € par minute :
       input#tarif.form-control(
-        type="text"
+        type="number"
         placeholder=" Exemple : 0.30 / 0.55  Attention à separer les chiffres par un point "
         name="tarif"
         required

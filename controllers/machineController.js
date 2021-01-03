@@ -19,7 +19,10 @@ exports.index = async function (req, res, next) {
   exports.machine_list = async function (req, res, next) {
     
     try {
-     
+      const user = req.user;
+      if (!user) {
+        return res.redirect("/catalog/utilisateur/login");
+      }
 
 
       const machine_list = await Machine.findAll({
@@ -32,6 +35,10 @@ exports.index = async function (req, res, next) {
   };
 
 exports.machine_create_get = function (req, res, next) {
+  const user = req.user;
+    if (!user) {
+      return res.redirect("/login");
+    }
     res.render("machine_form", { title: "Encoder une nouvelle machine"});
   };
   
@@ -47,6 +54,10 @@ exports.machine_create_get = function (req, res, next) {
     .escape()
     .withMessage("Veuillez indiquer un tarif à la minute"),
     async function (req, res, next) {
+      const user = req.user;
+    if (!user) {
+      return res.redirect("/login");
+    }
       try {
       const errors = validationResult(req);                          // récupération erreurs validation
 
@@ -74,6 +85,10 @@ exports.machine_create_get = function (req, res, next) {
 
 exports.machine_update_get = async function (req, res, next) {
   try{
+    const user = req.user;
+    if (!user) {
+      return res.redirect("/login");
+    }
     const machine= await Machine.findByPk(req.params.id, { })
   if (machine === null) { // si on ne trouve pas la machine
     next(createError(404, "Machine non trouvée ")); // on renvoie une erreur
@@ -97,6 +112,10 @@ exports.machine_update_get = async function (req, res, next) {
     body("tarif", "Veuillez indiquer un tarif.").trim().notEmpty().escape(), // on fait la validation
     async (req, res, next) => {
       try {
+        const user = req.user;
+    if (!user) {
+      return res.redirect("/login");
+    }
         const errors = validationResult(req); // on traite les erreurs de validation
         if (!errors.isEmpty())
          {
@@ -122,6 +141,10 @@ exports.machine_update_get = async function (req, res, next) {
 
   exports.machine_delete_get = async function (req, res, next) {
     try{
+      const user = req.user;
+    if (!user) {
+      return res.redirect("/login");
+    }
       const machine = await Machine.findByPk(req.params.id,{ // on récupère machine à partir de l'id et..
         include: Utilisation,                               //  les utilisations qui y sont liées 
       });
@@ -138,6 +161,10 @@ exports.machine_update_get = async function (req, res, next) {
   
   exports.machine_delete_post = async function (req, res, next) {
    try {
+    const user = req.user;
+    if (!user) {
+      return res.redirect("/login");
+    }
      const machine = await Machine.findByPk(req.params.id,{
         include: Utilisation,
      });

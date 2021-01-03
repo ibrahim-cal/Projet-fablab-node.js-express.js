@@ -1,27 +1,22 @@
-
-
-const { Model, DataTypes } = require("sequelize");
+const { DataTypes } = require("sequelize");
 const bcrypt = require("bcrypt");
-
-
 
 module.exports = (sequelize) => {
   const Utilisateur = sequelize.define("utilisateur", {
     prenom: {
       type: DataTypes.STRING(100),
       validate: {
-        len: [2, 100],},
-        allowNull: false,
-      
+        len: [2, 100],
+      },
+      allowNull: false,
     },
-
 
     nom: {
       type: DataTypes.STRING(100),
       validate: {
-        len: [2, 100],},
-        allowNull: false,
-      
+        len: [2, 100],
+      },
+      allowNull: false,
     },
 
     email: {
@@ -47,13 +42,7 @@ module.exports = (sequelize) => {
         return `/catalog/utilisateur/${this.id}`;
       },
     },
-   
   },
-  
   );
- 
- 
-
-console.log(typeof utilisateur);
   return Utilisateur;
 };

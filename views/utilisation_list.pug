@@ -1,11 +1,8 @@
 extends layout
-
 block content
   br
   h5= title
-  
   p
-
    table.table
       thead
         tr
@@ -15,9 +12,9 @@ block content
           th(scope="col") Utilisateur
           th(scope="col") 
           
-   
       tbody
         each utilisation in utilisation_list
+        
             tr
             td= utilisation.dateUtilisation
             td= utilisation.duree 
@@ -26,9 +23,5 @@ block content
             td
               a(href=utilisation.url + "/delete")  Supprimer 
                 
-          
-            
-    
-
         else
           li Il n'y a pas d'utilisations
