@@ -34,9 +34,13 @@ block content
    
     .mb-3
       label.form-label(for="utilisateur") utilisateur &ensp;
-      select
+      select(name= "utilisateurid")
        each utilisateur  in utilisateurs
         option(value=utilisateur.id)  #{utilisateur.nom}  #{utilisateur.prenom}    
+      input(
+        type="hidden" 
+        value=utilisateur && utilisateur.id
+        name="utilisateuridhidden") 
       
       .mb-3
       label.form-label(for="machine") machine :
@@ -46,7 +50,12 @@ block content
         required
         value=undefined === machine ? "" : machine.nom
         disabled=!!machine
+       
       )
+      input(
+        type="hidden" 
+        value=machine.id
+        name="machineid") 
   
     .mb-3
       button.btn.btn-primary(type="submit") Submit

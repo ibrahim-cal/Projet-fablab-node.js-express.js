@@ -87,7 +87,7 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/catalog", catalogRouter);
 
-// catch 404 and forward to error handler
+// renvoie une erreur 404
 app.use(function(req, res, next) {
   next(createError(404));
 });

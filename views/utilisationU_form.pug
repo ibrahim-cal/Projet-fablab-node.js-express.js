@@ -34,21 +34,29 @@ block content
       
     .mb-3
       label.form-label(for="machine") machine &ensp;
-      select
+      select(name= "machineid")
        each machine  in machines
           option(value=machine.id)   #{machine.nom}  #{machine.tarif}€/min
+      input(
+        type="hidden" 
+        value=machine && machine.id
+        name="machineidhidden") 
       
     .mb-3
       label.form-label(for="utilisateur") utilisateur :
       input#utilisateur.form-control(
         type="text"
         placeholder=" "
-        name="utilisateur"
+        name="utilisateurid"
         required
         value=undefined === utilisateur ? "" : utilisateur.email
         disabled=!!utilisateur    
       
       )
+      input(
+        type="hidden" 
+        value=utilisateur.id
+        name="utilisateuridhidden") 
   
     .mb-3
       button.btn.btn-primary(type="submit") Submit

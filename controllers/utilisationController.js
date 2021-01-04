@@ -2,7 +2,6 @@ const { Utilisation, Utilisateur, Machine, LigneFacturation } = require("../mode
 const createError = require("http-errors");
 const { body, validationResult } = require("express-validator");
 const machine = require("../models/machine");
-const utilisateur = require("../models/utilisateur");
 const passport = require("passport");
 var session = require("express-session");
 
@@ -113,12 +112,13 @@ exports.utilisation_create_get = async function (req, res, next) {
             if (req.body.dateUtilisation) {
               utilisation.dateUtilisation = req.body.dateUtilisation;// idem avec date
             }
-            const utilisateur = await Utilisateur.findByPk(req.body.utilisateur.id);
-              await utilisateur.setUtilisation(utilisateur);
+            const recupUtilisateur = await Utilisateur.findByPk(req.body.utilisateuridhidden || req.body.utilisateurid);
+           
+              await utilisation.setUtilisateur(recupUtilisateur);
             
-              const machine = await Machine.findByPk(req.body.machine);
+              const recupMachine = await Machine.findByPk(req.body.machineidhidden || req.body.machineid);
    
-              await machine.setUtilisation(machine);
+              await utilisation.setMachine(recupMachine);
  
             await utilisation.save(); // on sauvegarde le tout en tant que nouvelle utilisation en bdd
             res.redirect("/catalog/machines");// ensuite on redirige vers catalogue machines

@@ -1,5 +1,6 @@
 const { Facture, Utilisateur, LigneFacturation, Utilisation } = require("../models/sequelize");
 const createError = require("http-errors");
+const { body, validationResult } = require("express-validator");
 const facture = require("../models/facture");
 const passport = require("passport");
 var session = require("express-session");
@@ -27,11 +28,13 @@ exports.facture_list =  async function (req, res, next) {
       return res.redirect("/catalog/utilisateur/login");
     }
       const factureId = req.params.id;
-      const facture = await Facture.findByPk(factureId, {// requete dans la BDD sur base de l'id reçu dans l'url, qui correspond
-        include: [LigneFacturation, Utilisateur], // à l'id de la ligne de facturation selectionnée juste avant
+      console.log(req.params.id)
+      const factures = await Facture.findByPk(factureId, {// requete dans la BDD sur base de l'id reçu dans l'url, qui correspond
+        include: [LigneFacturation, Utilisateur],// à l'id de la ligne de facturation selectionnée juste avant
       });
+      console.log(factures)
       if (facture !== null) {
-        res.render("facture_detail", { title: "Detail facture", facture });
+        res.render("facture_detail", { title: "Detail facture", factures });
       } else {
         next(createError(404, "Pas de details de facture"));
       }

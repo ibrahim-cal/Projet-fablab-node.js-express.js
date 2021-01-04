@@ -27,7 +27,7 @@ exports.utilisateur_list = async function (req, res, next) {
 exports.utilisateur_create_get = function (req, res, next) {
   const user = req.user;
    
-  res.render("utilisateur_form", { title: "Creation nouveau compte"});
+  res.render("utilisateur_form", { title: "Création nouveau compte"});
 };
   
   exports.utilisateur_create_post =  [
@@ -174,7 +174,7 @@ exports.utilisateur_create_get = function (req, res, next) {
         req.logout();
   req.session.regenerate((err) => {
     if (!err) {
-      res.redirect("/");
+      res.redirect("/catalog");
     } else {
       next(err);
     }

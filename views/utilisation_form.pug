@@ -2,17 +2,12 @@ extends layout
 block content
  h4 #{title}
   if user 
-          p Bienvenu cher membre  
+          p Bienvenu cher membre 
   else  
           p Bienvenu cher invité
  p
   hr
   br
-  if user 
-          p Bienvenu cher membre  
-  else  
-          p Bienvenu cher invité
-
   
   form(method="POST")
     .mb-3
@@ -34,38 +29,26 @@ block content
    
     .mb-3
       label.form-label(for="utilisateur") utilisateur &ensp;
-      select
+      select(name="utilisateurid")
        each utilisateur  in utilisateurs
-        option(value=utilisateur.id)  #{utilisateur.nom}  #{utilisateur.prenom}  
+        
+        option(value=utilisateur.id)  #{utilisateur.nom}  #{utilisateur.prenom} 
+      input(
+        type="hidden" 
+        value=utilisateur && utilisateur.id
+        name="utilisateuridhidden")  
         
       
     .mb-3
       label.form-label(for="machine") machine &ensp;
-      select
+      select(name= "machineid")
        each machine  in machines
           option(value=machine.id)   #{machine.nom}  #{machine.tarif}€/min
+      input(
+        type="hidden" 
+        value=machine && machine.id
+        name="machineidhidden") 
           
-      
-    //.mb-3
-      label.form-label(for="utilisateur") utilisateur :
-      input#utilisateur.form-control(
-        type="text"
-        placeholder=" "
-        name="utilisateur"
-        required
-        value=undefined === utilisateur ? "" : utilisateur.email
-        disabled=!!utilisateur
-      )
-      .mb-3
-      label.form-label(for="machine") machine :
-      input#machine.form-control(
-        type="text"
-        name="machine"  
-        required
-        value=undefined === machine ? "" : machine.nom
-        disabled=!!machine
-      )
-  
     .mb-3
       button.btn.btn-primary(type="submit") Submit
            

@@ -1,6 +1,8 @@
 extends layout
 block content
+ 
   h3= nom
+
     if user 
           p Bienvenu cher membre  
     else  
@@ -27,13 +29,13 @@ block content
 
       tbody           
             tr
-            td= facture.utilisateur.nom
-            td= facture.utilisateur.prenom
-            td= facture.numeroFacture
-            td= facture.montant
-            td= facture.dateFacture 
+            td
+            td
+            td= factures.numeroFacture
+            td= factures.montant
+            td= factures.dateFacture 
             td
             td             
-            td= facture.ligneFacturation.prix             
-            td= facture.ligneFacturation.duree
-            td= facture.ligneFacturation.sousTotal
+            td= factures.ligneFacturation.prix             
+            td
+            td

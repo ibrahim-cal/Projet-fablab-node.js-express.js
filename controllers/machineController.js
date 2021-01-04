@@ -91,7 +91,6 @@ exports.machine_update_get = async function (req, res, next) {
   if (machine === null) { // si on ne trouve pas la machine
     next(createError(404, "Machine non trouvée ")); // on renvoie une erreur
   } else {
-    console.log(machine)
     res.render("machine_form",{  // on affiche le formulaire de modification
       title : "Modification machine",
       machine,
