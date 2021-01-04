@@ -16,7 +16,8 @@ block content
       label.form-label(for="tarif") Tarif € par minute :
       input#tarif.form-control(
         type="number"
-        placeholder=" Exemple : 0.30 / 0.55  Attention à separer les chiffres par un point "
+        step=".01"
+        placeholder=" Exemple : 0.30 - 0.55 - ... "
         name="tarif"
         required
         value=undefined === machine ? "" : machine.tarif

@@ -3,6 +3,8 @@ const createError = require("http-errors");
 const { body, validationResult } = require("express-validator");
 const machine = require("../models/machine");
 const utilisateur = require("../models/utilisateur");
+const passport = require("passport");
+var session = require("express-session");
 
 exports.utilisation_list = async function (req, res, next) {
   try {
@@ -10,8 +12,8 @@ exports.utilisation_list = async function (req, res, next) {
     if (!user) {
       return res.redirect("/catalog/utilisateur/login");
     }
-    const utilisation_list = await Utilisation.findAll({
-      include: [Machine, Utilisateur],
+    const utilisation_list = await Utilisation.findAll({ // on récupere la liste des utilisations et on la stocke
+      include: [Machine, Utilisateur],                  // dans utilisation_list, pour ensuite la reutiliser dans la vue
     });
     res.render("utilisation_list", { title: "Liste des utilisations", utilisation_list });
   } catch (error) {
@@ -25,8 +27,8 @@ exports.utilisation_list = async function (req, res, next) {
     if (!user) {
       return res.redirect("/catalog/utilisateur/login");
     }
-      const utilisationId = req.params.id;
-      const utilisation = await Utilisation.findByPk(utilisationId, {
+      const utilisationId = req.params.id; // on recupere l'id de l'url (celui de l'utilisateur selectionné)
+      const utilisation = await Utilisation.findByPk(utilisationId, {// et on lance une recherche en BDD 
         include: [Utilisateur, Machine],  });
       if (utilisation !== null) {
         res.render("utilisation_detail", { title: "Details des utilisations", utilisation});
@@ -46,24 +48,32 @@ exports.utilisation_create_get = async function (req, res, next) {
     }
     let machine;
     let utilisateur;
-    if (req.query.machineid) {
-      machine = await Machine.findByPk(req.query.machineid);
-    } else if (req.query.utilisateurid) {
+    if (req.query.machineid) { // 49 - 54 : si on a reçu dans l'url un id de machine ou utilisateur, on va le stocker
+      machine = await Machine.findByPk(req.query.machineid); // dans une variable. Ensuite on fait une recherche en BDD
+    } else if (req.query.utilisateurid) {                   // correspondante sur base de l'id
       utilisateur = await Utilisateur.findByPk(req.query.utilisateurid);
     }
     const [machines, utilisateurs] = await Promise.all([
       Machine.findAll(),
       Utilisateur.findAll(),
     ]);
-  
-    res.render("utilisation_form", { title: "Nouvelle utilisation", machine, utilisateur, machines, utilisateurs });
+    if (req.query.machineid) {
+    res.render("utilisationM_form", { title: "Nouvelle utilisation", machine, utilisateur, machines, utilisateurs });}
+    if (req.query.utilisateurid) {
+    res.render("utilisationU_form", { title: "Nouvelle utilisation", machine, utilisateur, machines, utilisateurs });}
+    else{
+      // on a deux if, qui vont renvoyer vers un formulaire légerement différent. Selon qu'on ait reçu l'id d'une machine
+      // ou d'un utilisateur dans l'url. Càd si de la page précedente etait une machine ou un user selectionné
+
+    
+    res.render("utilisation_form", { title: "Nouvelle utilisation", machine, utilisateur, machines, utilisateurs });}
   } catch (error) {
     next(error);
   }
 };
 
   exports.utilisation_create_post = [
-    body("duree")
+    body("duree") //ligne 73 -81 : on fait la validation & nettoyage des champs
       .trim()
       .notEmpty()
       .escape()
@@ -75,10 +85,9 @@ exports.utilisation_create_get = async function (req, res, next) {
       async function (req, res, next) {
         try {
           const user = req.user;
-    if (!user) {
+      if (!user) {
       return res.redirect("/catalog/utilisateur/login");
     }
-         
           const errors = validationResult(req);
     
           if (!errors.isEmpty()) {
@@ -98,13 +107,18 @@ exports.utilisation_create_get = async function (req, res, next) {
           } else {
 
             const utilisation = await Utilisation.build({// sinon on va créer la nouvelle utilisation
-              duree: req.body.duree, // on récupere la durée introduite dans le form
+              duree: req.body.duree, 
+              // on récupere la durée introduite dans le form
             });
             if (req.body.dateUtilisation) {
               utilisation.dateUtilisation = req.body.dateUtilisation;// idem avec date
             }
-             // await utilisation.setMachine(machine);
-             // await utilisation.setUtilisateur(utilisateur);
+            const utilisateur = await Utilisateur.findByPk(req.body.utilisateur.id);
+              await utilisateur.setUtilisation(utilisateur);
+            
+              const machine = await Machine.findByPk(req.body.machine);
+   
+              await machine.setUtilisation(machine);
  
             await utilisation.save(); // on sauvegarde le tout en tant que nouvelle utilisation en bdd
             res.redirect("/catalog/machines");// ensuite on redirige vers catalogue machines
@@ -141,13 +155,14 @@ exports.utilisation_create_get = async function (req, res, next) {
       return res.redirect("/catalog/utilisateur/login");
     }
       const utilisation = await Utilisation.findByPk(req.params.id, {
-        include: [Machine, Utilisateur, LigneFacturation],
+        include: [Machine, Utilisateur, LigneFacturation], // on cherche en BDD, l'utilisation ayant
+                                      // l'id correspondant à celui dans l'url (donc l'utilisation sélectionnée)
       });
       if (utilisation === null) {
         next(createError(404, "pas d'utilisation"));
       } 
        else {
-        await utilisation.destroy();
+        await utilisation.destroy(); // on supprime l'utilisation qui correspondait
         res.redirect("/catalog/utilisations");
       }
       

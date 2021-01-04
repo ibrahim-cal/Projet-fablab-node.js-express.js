@@ -1,6 +1,10 @@
 extends layout
 block content
   h3= nom
+    if user 
+          p Bienvenu cher membre  
+    else  
+          p Bienvenu cher invité
 
   ul
     h5= title
@@ -23,13 +27,13 @@ block content
 
       tbody           
             tr
-            td
-            td
+            td= facture.utilisateur.nom
+            td= facture.utilisateur.prenom
             td= facture.numeroFacture
             td= facture.montant
             td= facture.dateFacture 
             td
-            td                 
-            td                  
-            td  
-            td  
+            td             
+            td= facture.ligneFacturation.prix             
+            td= facture.ligneFacturation.duree
+            td= facture.ligneFacturation.sousTotal

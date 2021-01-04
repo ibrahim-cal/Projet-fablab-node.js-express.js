@@ -2,6 +2,10 @@ extends layout
 block content
   br
   h5 #{title}
+    if user 
+          p Bienvenu cher membre  
+    else  
+          p Bienvenu cher invité
     hr
     p Voulez vous vraiment supprimer cette facture ? 
     P Il n'y a pas de retour en arrière possible.

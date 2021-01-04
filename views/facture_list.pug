@@ -1,9 +1,14 @@
 extends layout
 block content
   h3= nom
-
+    if user 
+          p Bienvenu cher membre  
+    else  
+          p Bienvenu cher invité
+  
   ul
     h5= title
+      
     p 
     table.table
       thead
@@ -19,8 +24,8 @@ block content
       tbody
         each facture in facture_list
             tr
-            td= facture.id
-            td= facture.id
+            td= facture.utilisateur.nom
+            td= facture.utilisateur.prenom
             td= facture.numeroFacture
             td= facture.montant
             td= facture.dateFacture 
@@ -28,6 +33,6 @@ block content
               a(href= "/catalog/facture/"+facture.id)  Details 
             td
               a(href=facture.url+"/delete")  Supprimer
-              
+     
         else
           li Il n'y a pas de facture

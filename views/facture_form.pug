@@ -1,6 +1,10 @@
 extends layout
 block content
  h4 #{title}
+  if user 
+          p Bienvenu cher membre  
+  else  
+          p Bienvenu cher invité
  p
   hr
   br
@@ -13,15 +17,13 @@ block content
         name="dateFacture"
         value=undefined === facture? "" : facture.dateFacture
       )
+      
     .mb-3
-      label.form-label(for="utilisateur") utilisateur :
-      input#utilisateur.form-control(
-        type="text"
-        placeholder=" "
-        name="utilisateur"
-        required
-        value=undefined === utilisation ? "" : utilisation.utilisateur
-      )
+      label.form-label(for="utilisateur") utilisateur &ensp;
+      select
+       each utilisateur  in utilisateurs
+        option(value=utilisateur.id)  #{utilisateur.nom}  #{utilisateur.prenom} 
+    
     .mb-3
       label.form-label(for="machine") machine :
       input#machine.form-control(

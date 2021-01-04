@@ -16,6 +16,8 @@ const Permission =require("./permission")(sequelize);
 Facture.hasMany(LigneFacturation);
 LigneFacturation.belongsTo(Utilisation);
 LigneFacturation.belongsTo(Facture);
+Utilisateur.hasMany(Facture);
+Facture.belongsTo(Utilisateur);
 
 Machine.hasMany(Utilisation);
 Utilisation.belongsTo(Machine);

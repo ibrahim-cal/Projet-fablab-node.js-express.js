@@ -2,6 +2,10 @@ extends layout
 block content
   br
   h5= title
+  if user 
+          p Bienvenu cher membre  
+  else  
+          p Bienvenu cher invité
   p
    table.table
       thead
@@ -21,7 +25,7 @@ block content
             td= utilisation.machine.nom
             td= utilisation.utilisateur.nom
             td
-              a(href=utilisation.url + "/delete")  Supprimer 
+              a(href=utilisation.url+"/delete")  Supprimer 
                 
         else
           li Il n'y a pas d'utilisations

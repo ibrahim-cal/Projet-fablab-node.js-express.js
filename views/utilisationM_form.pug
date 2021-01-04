@@ -36,26 +36,8 @@ block content
       label.form-label(for="utilisateur") utilisateur &ensp;
       select
        each utilisateur  in utilisateurs
-        option(value=utilisateur.id)  #{utilisateur.nom}  #{utilisateur.prenom}  
-        
+        option(value=utilisateur.id)  #{utilisateur.nom}  #{utilisateur.prenom}    
       
-    .mb-3
-      label.form-label(for="machine") machine &ensp;
-      select
-       each machine  in machines
-          option(value=machine.id)   #{machine.nom}  #{machine.tarif}€/min
-          
-      
-    //.mb-3
-      label.form-label(for="utilisateur") utilisateur :
-      input#utilisateur.form-control(
-        type="text"
-        placeholder=" "
-        name="utilisateur"
-        required
-        value=undefined === utilisateur ? "" : utilisateur.email
-        disabled=!!utilisateur
-      )
       .mb-3
       label.form-label(for="machine") machine :
       input#machine.form-control(

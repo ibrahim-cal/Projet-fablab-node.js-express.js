@@ -6,14 +6,14 @@ var session = require("express-session");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
-
 exports.utilisateur_list = async function (req, res, next) {
   try {
     const user = req.user;
     if (!user) {
       return res.redirect("/catalog/utilisateur/login");
     }
-    const utilisateur_list = await Utilisateur.findAll({
+    // on récupere la liste des utilisateurs et on la stocke
+    const utilisateur_list = await Utilisateur.findAll({// dans utilisateur_list, pour ensuite la reutiliser dans la vue
       include : Utilisation,
       order: [["nom", "ASC"]],
     });
@@ -23,9 +23,6 @@ exports.utilisateur_list = async function (req, res, next) {
   }
 };
 
-  exports.utilisateur_detail = function (req, res) {
-    res.send("NOT IMPLEMENTED: utilisateur detail");
-  };
 
 exports.utilisateur_create_get = function (req, res, next) {
   const user = req.user;
@@ -184,5 +181,7 @@ exports.utilisateur_create_get = function (req, res, next) {
   });
 };
 
-    
+exports.utilisateur_detail = function (req, res) {
+  res.send("NOT IMPLEMENTED: utilisateur detail");
+};
      

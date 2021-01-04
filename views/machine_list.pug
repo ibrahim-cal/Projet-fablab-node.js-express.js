@@ -1,11 +1,20 @@
 extends layout
 block content
   h3= nom
+  if user 
+          p Bienvenu cher membre  
+  else  
+          p Bienvenu cher invité
 
   ul
     h5= title
+    if user 
+        p hello
+    else 
+        p no users
 
     a(href='/catalog/machine/create') Insérer une nouvelle machine
+        
     p 
     table.table
       thead

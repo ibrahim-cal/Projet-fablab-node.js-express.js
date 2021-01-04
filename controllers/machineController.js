@@ -23,10 +23,8 @@ exports.index = async function (req, res, next) {
       if (!user) {
         return res.redirect("/catalog/utilisateur/login");
       }
-
-
-      const machine_list = await Machine.findAll({
-        order: [["nom", "ASC"]],
+      const machine_list = await Machine.findAll({  // on récupere la liste des machines en la stockant dans variable
+        order: [["nom", "ASC"]],  // machine_list
       });
       res.render("machine_list", { title: "Voici la liste des machines disponibles :", machine_list });
     } catch (error) {
@@ -59,12 +57,12 @@ exports.machine_create_get = function (req, res, next) {
       return res.redirect("/login");
     }
       try {
-      const errors = validationResult(req);                          // récupération erreurs validation
+      const errors = validationResult(req);   // récupération erreurs validation
 
       if(!errors.isEmpty()) {
         res.render("machine_form", {
           title : "Encoder une nouvelle machine :",
-          machine : req.body,       // garder les champs valides 
+          machine : req.body,       //permet de garde les champs valides 
           errors: errors.array(),   // tableau d'erreurs des champs invalides
         });
       } else {

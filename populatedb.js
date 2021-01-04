@@ -2,7 +2,7 @@ console.log(
   "ce script remplit la BDD avec des machines, utilisateurs, etc"
 );
 const bcrypt = require("bcrypt");
-const { removeAllListeners } = require("nodemon");
+//const { removeAllListeners } = require("nodemon");
 const ligneFacturation = require("./models/ligneFacturation");
 
 const { sequelize, Facture, Utilisation, LigneFacturation, Machine, Utilisateur, Role, Permission } = require("./models/sequelize");
@@ -49,11 +49,12 @@ async function machineCreate(nom, tarif) {
   }
 }
 
-async function factureCreate(numeroFacture, montant, dFacture) {
+async function factureCreate(numeroFacture, montant, dFacture, utilisateur) {
   facturedetail = { numeroFacture: numeroFacture, montant: montant };
   if (dFacture != false) facturedetail.dateFacture = dFacture;
 
-  var facture = await Facture.create(facturedetail);
+  const facture = await Facture.create(facturedetail);
+  await facture.setUtilisateur(utilisateur);
 
   console.log("nouvelle facture: " + facture.id);
   factures.push(facture);
@@ -146,28 +147,28 @@ return await Promise.all([
 
 async function createUtilisation() {
   return await Promise.all([
-    utilisationCreate("20", "2020-12-25", machines[1], utilisateurs[0]),
+    utilisationCreate("20", "2020-12-25", machines[0], utilisateurs[0]),
     utilisationCreate("30", "2020-12-25", machines[0], utilisateurs[1]),
     utilisationCreate("10", "2020-12-25", machines[1], utilisateurs[2]),
     utilisationCreate("119", "2020-12-25", machines[1], utilisateurs[2]),
-    utilisationCreate("15", "2020-12-25", machines[1], utilisateurs[3]),
-    utilisationCreate("16", "2020-12-25", machines[1], utilisateurs[1]),
+    utilisationCreate("15", "2020-12-25", machines[2], utilisateurs[3]),
+    utilisationCreate("16", "2020-12-25", machines[2], utilisateurs[1]),
     utilisationCreate("17", "2020-12-25", machines[1], utilisateurs[3]),
-    utilisationCreate("18", "2020-12-25", machines[1], utilisateurs[1]),
+    utilisationCreate("18", "2020-12-25", machines[2], utilisateurs[1]),
  
   ]);
 }
 
 async function createLigneFacturation() {
   return await Promise.all([
-    ligneFacturationCreate("decoupeuse laser", "0.5", "20", "10", factures[3], utilisations[0]),
+    ligneFacturationCreate("decoupeuse laser", "0.5", "20", "10", factures[0], utilisations[0]),
     ligneFacturationCreate("ultimaker imprimante 3d", "0.3", "30", "9",factures[3], utilisations[1]),
-    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "10", "5.50", utilisations[2]),
-    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "10", "5.50", utilisations[2]),
-    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "10", "5.50", utilisations[2]),
-    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "13", "5.50", utilisations[2]),
-    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "18", "7.50",  utilisations[2]),
-    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "20", "6.50",  utilisations[2]),
+    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "10", "5.50",factures[3], utilisations[2]),
+    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "10", "5.50",factures[1], utilisations[2]),
+    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "10", "5.50",factures[2], utilisations[3]),
+    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "13", "5.50",factures[0], utilisations[1]),
+    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "18", "7.50", factures[1], utilisations[2]),
+    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "20", "6.50", factures[2], utilisations[2]),
 
 
   ]);
@@ -175,14 +176,10 @@ async function createLigneFacturation() {
 
 async function createFacture() {
   return await Promise.all([
-    factureCreate("202012001", "10", "2020-12-25"),
-    factureCreate("202012002", "9", "2020-12-25"),
-    factureCreate("202012003", "5", "2020-12-25"),
-    factureCreate("202012004", "3", "2020-12-25"),
-    factureCreate("202012005", "7", "2020-12-25"),
-    factureCreate("202012006", "2", "2020-12-25"),
-    factureCreate("202012007", "9", "2020-12-25"),
-    factureCreate("202012008", "5", "2020-12-25"),
+    factureCreate("202012001", "10", "2020-12-25", utilisateurs[0]),
+    factureCreate("202012002", "9", "2020-12-25", utilisateurs[2]),
+    factureCreate("202012003", "5", "2020-12-25", utilisateurs[3]),
+    factureCreate("202012004", "3", "2020-12-25", utilisateurs[4]),
   ]);
 }
 
@@ -191,9 +188,9 @@ async function createUtilisateur() {
     utilisateurCreate("Premier", "Premier", "Premier", "Premier"),
     utilisateurCreate("Deux", "Deux", "Deux", "Deux"),
     utilisateurCreate("Trois", "Trois", "Trois", "Trois"),
-    utilisateurCreate("Trois", "Trois", "Quatre", "Quatre"),
-    utilisateurCreate("Trois", "Trois", "Cinq", "Cinq"),
-    utilisateurCreate("Trois", "Trois", "Six", "Six"),
+    utilisateurCreate("Quatre", "Quatre", "Quatre", "Quatre"),
+    utilisateurCreate("Cinq", "Cinq", "Cinq", "Cinq"),
+    utilisateurCreate("Six", "Six", "Six", "Six"),
   ]);
 }
 
@@ -215,13 +212,14 @@ async function createMachine() {
     createUtilisateur().then(()=>{
       console.log( "creation ok");
     });
-    await createFacture();
-    await createMachine();
+    
     await createRole();
     await createPerm();
+    await createFacture();
+    await createMachine();
     await createUtilisation();
     await createLigneFacturation();
-    await createRolePerm();
+    //await createRolePerm();
     
     sequelize.close();
   } catch (err) {

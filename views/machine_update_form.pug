@@ -2,6 +2,10 @@ extends layout
 block content
  
  h4 #{title} 
+  if user 
+          p Bienvenu cher membre  
+  else  
+          p Bienvenu cher invité
 
   form(method="POST")
     .mb-3
@@ -17,7 +21,8 @@ block content
       label.form-label(for="tarif") Tarif par minute :
       input#tarif.form-control(
         type="number"
-        placeholder=" 0,30€/min, 0,55€/min, ..."
+        step=".01"
+        placeholder=" 0,30, 0,50, ..."
         name="tarif"
         required
         value=undefined === machine ? "" : machine.tarif

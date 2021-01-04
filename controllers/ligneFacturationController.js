@@ -1,9 +1,8 @@
 const { LigneFacturation, Facture, Utilisation } = require("../models/sequelize");
 const createError = require("http-errors");
+const passport = require("passport");
+var session = require("express-session");
 
-exports.ligneFacturation_list = function (req, res) {
-    res.send("NOT IMPLEMENTED: ligneFacturation list");
-  };
 
   exports.ligneFacturation_detail = async function (req, res, next) {
     try {
@@ -50,8 +49,8 @@ exports.ligneFacturation_list = function (req, res) {
     if (!user) {
       return res.redirect("/catalog/utilisateur/login");
     }
-      const ligneFacturation = await LigneFacturation.findByPk(req.params.id, {
-        include: [Facture, Utilisation],
+      const ligneFacturation = await LigneFacturation.findByPk(req.params.id, { // recherche de la ligne de facturation en BDD
+        include: [Facture, Utilisation],// sur base de l'id reçu dans l'url
       });
       if (ligneFacturation === null) {
         next(createError(404, "Pas de ligne de facturation"));
@@ -72,4 +71,8 @@ exports.ligneFacturation_list = function (req, res) {
   
   exports.ligneFacturation_create_post = function (req, res) {
     res.send("NOT IMPLEMENTED: ligneFacturation create POST");
+  };
+
+  exports.ligneFacturation_list = function (req, res) {
+    res.send("NOT IMPLEMENTED: ligneFacturation list");
   };
