@@ -28,7 +28,7 @@ Utilisateur.hasMany(Utilisation);
 
 Role.belongsToMany(Permission, { through: "role_permissions" });
 Permission.belongsToMany(Role, { through: "role_permissions" });
-Utilisateur.belongsToMany(Role, { through: "utilisateur_roles"});
+Utilisateur.belongsTo(Role);
 Role.belongsToMany(Utilisateur, { through: "utilisateur_roles"});
 
 module.exports = { sequelize, Facture, Utilisation, LigneFacturation,

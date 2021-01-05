@@ -11,6 +11,8 @@ exports.facture_list =  async function (req, res, next) {
     if (!user) {
       return res.redirect("/catalog/utilisateur/login");
     }
+    
+
     const facture_list = await Facture.findAll({ // on fait une requete en BDD dans la table facture, en incluant les tables 
       include: [LigneFacturation, Utilisateur], // LigneFacturation et utilisateur. On stocke le tout dans une variable facture_list
     });

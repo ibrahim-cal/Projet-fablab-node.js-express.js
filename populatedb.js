@@ -23,7 +23,7 @@ async function utilisateurCreate(prenom, nom, email, mdp, role) {
     utilisateurdetail.passwordHash = hash;
   
     var utilisateur = await Utilisateur.create(utilisateurdetail);
-    await utilisateur.setRoles(role);
+    await utilisateur.setRole(role);
     console.log("nouvel utilisateur: " + utilisateur.id);
     utilisateurs.push(utilisateur);
     return utilisateur;
@@ -83,11 +83,12 @@ async function utilisationCreate(duree, date, machine, utilisateur) {
   return utilisation;
 }
 
-async function roleCreate(nom){
+async function roleCreate(nom, permission){
   
   roledetail = { nom : nom };
 
   const role = await Role.create(roledetail);
+  await role.addPermissions(permission);
   
   console.log("nouveau role: " + role.id);
   roles.push(role);
@@ -148,8 +149,6 @@ async function createRole(){
   ])
 }
 
-
-
 async function createUtilisation() {
   return await Promise.all([
     utilisationCreate("20", "2020-12-25", machines[0], utilisateurs[0]),
@@ -188,8 +187,6 @@ async function createFacture() {
   ]);
 }
 
-
-
 async function createUtilisateur() {
   return await Promise.all([
     utilisateurCreate("Dupond", "Jean", "dupond-jean@hotmail.com", "dupond", roles[0]),
@@ -199,8 +196,6 @@ async function createUtilisateur() {
 
   ]);
 }
-
-
 
 (async () => {
   try {

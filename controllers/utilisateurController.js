@@ -16,10 +16,10 @@ exports.utilisateur_list = async function (req, res, next) {
       return res.redirect("/catalog/utilisateur/login");
     }
     
-    const utilisateurRoleid = Utilisateur.findByPk(req.user.id, {});
-    console.log("++++!!!!!!" + utilisateurRoleid)
-    if (utilisateurRoleid.roleId == 4)      // si l'id utilisateur connecté est 4 ( si il est pas manager)
-    {       // alors on autorise la suite. Sinon, on renvoit une erreur 403 ligne 28
+    //const utilisateurRoleid = await Utilisateur.findByPk(req.user.id, {});
+  
+         // si l'id utilisateur connecté est 4 ( si il est pas manager)
+           // alors on autorise la suite. Sinon, on renvoit une erreur 403 ligne 28
     
     // on récupere la liste des utilisateurs et on la stocke
     const utilisateur_list = await Utilisateur.findAll({// dans utilisateur_list, pour ensuite la reutiliser dans la vue
@@ -28,10 +28,9 @@ exports.utilisateur_list = async function (req, res, next) {
     });
     res.render("utilisateur_list", { title: "Voici la liste des utilisateurs :", utilisateur_list, Utilisation });
     
-  }
-  else{
+
     return next(createError(403));
-  }
+  
   } catch (error) {
     next(error);
   }

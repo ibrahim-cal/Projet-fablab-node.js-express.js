@@ -26,6 +26,8 @@ module.exports = (sequelize) => {
 
     passwordHash: DataTypes.STRING(100),
 
+   
+
     name: {
       type: DataTypes.VIRTUAL,
       get() {
