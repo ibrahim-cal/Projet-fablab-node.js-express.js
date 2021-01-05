@@ -1,4 +1,4 @@
-const { Utilisateur, Utilisation} = require("../models/sequelize");
+const { Utilisateur, Utilisation, Role} = require("../models/sequelize");
 const createError = require("http-errors");
 const { body, validationResult } = require("express-validator");
 const passport = require("passport");
@@ -6,21 +6,36 @@ var session = require("express-session");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
+
+
+  
 exports.utilisateur_list = async function (req, res, next) {
   try {
     const user = req.user;
     if (!user) {
       return res.redirect("/catalog/utilisateur/login");
     }
+    
+    const utilisateurRoleid = Utilisateur.findByPk(req.user.id, {});
+    console.log("++++!!!!!!" + utilisateurRoleid)
+    if (utilisateurRoleid.roleId == 4)      // si l'id utilisateur connecté est 4 ( si il est pas manager)
+    {       // alors on autorise la suite. Sinon, on renvoit une erreur 403 ligne 28
+    
     // on récupere la liste des utilisateurs et on la stocke
     const utilisateur_list = await Utilisateur.findAll({// dans utilisateur_list, pour ensuite la reutiliser dans la vue
       include : Utilisation,
       order: [["nom", "ASC"]],
     });
     res.render("utilisateur_list", { title: "Voici la liste des utilisateurs :", utilisateur_list, Utilisation });
+    
+  }
+  else{
+    return next(createError(403));
+  }
   } catch (error) {
     next(error);
   }
+
 };
 
 
