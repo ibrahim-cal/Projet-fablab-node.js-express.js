@@ -15,7 +15,7 @@ var permissions = [];
 var factures = [];
 var lignefacturations = [];
 
-async function utilisateurCreate(prenom, nom, email, mdp) {
+async function utilisateurCreate(prenom, nom, email, mdp, role) {
    
    const hash =  bcrypt.hashSync(mdp, saltRounds)
     utilisateurdetail =
@@ -23,6 +23,7 @@ async function utilisateurCreate(prenom, nom, email, mdp) {
     utilisateurdetail.passwordHash = hash;
   
     var utilisateur = await Utilisateur.create(utilisateurdetail);
+    await utilisateur.setRoles(role);
     console.log("nouvel utilisateur: " + utilisateur.id);
     utilisateurs.push(utilisateur);
     return utilisateur;
@@ -107,15 +108,23 @@ async function permCreate(nom, role){
 async function createPerm(){
   return await Promise.all([
     permCreate("lireMachine", roles[0]),
+    permCreate("lireMachine", roles[1]),
     permCreate("modifierMachine", roles[1]),
     permCreate("supprimerMachine", roles[1]),
     permCreate("creerMachine", roles[1]),
     permCreate("lireUtilisation", roles[0]),
+    permCreate("lireUtilisation", roles[1]),
     permCreate("supprimerUtilisation", roles[1]),
-    permCreate("modifierUtilisateur", roles[1]),
     permCreate("lireFacture", roles[0]),
+    permCreate("lireFacture", roles[1]),
+    permCreate("lireFacture", roles[2]),
     permCreate("supprimerFacture", roles[2]),
+    permCreate("lireLignefacturation", roles[0]),
+    permCreate("lireLignefacturation", roles[1]),
     permCreate("supprimerLignefacturation", roles[1]),
+    permCreate("lireUtilisateur", roles[1], roles[3]),
+    permCreate("modifierUtilisateur", roles[1]),
+    permCreate("modifierMotdepasse", roles[0]),
   ])
 }
 
@@ -183,10 +192,10 @@ async function createFacture() {
 
 async function createUtilisateur() {
   return await Promise.all([
-    utilisateurCreate("Dupond", "Jean", "dupond-jean@hotmail.com", "dupond"),
-    utilisateurCreate("Delarue", "Jean-luc", "delarue-jeanluc@hotmail.com", "delarue"),
-    utilisateurCreate("manager", "manager", "manager", "manager"),
-    utilisateurCreate("comptable", "comptable", "comptable", "comptable"),
+    utilisateurCreate("Dupond", "Jean", "dupond-jean@hotmail.com", "dupond", roles[0]),
+    utilisateurCreate("Delarue", "Jean-luc", "delarue-jeanluc@hotmail.com", "delarue", roles[0]),
+    utilisateurCreate("manager", "manager", "manager", "manager", roles[1]),
+    utilisateurCreate("comptable", "comptable", "comptable", "comptable", roles[2]),
 
   ]);
 }
@@ -196,21 +205,18 @@ async function createUtilisateur() {
 (async () => {
   try {
     await sequelize.sync({ force: true });
-    createUtilisateur().then(()=>{
-      console.log( "creation ok");
-    });
+    //createUtilisateur().then(()=>{
+      // console.log( "creation ok");
+    // });
+    
     await createRole();
+    await createUtilisateur();
     await createPerm();
     await createMachine();
-    
-    
-
     await createFacture();
-    
     await createUtilisation();
     await createLigneFacturation();
 
-    
     sequelize.close();
   } catch (err) {
     console.error("Erreur remplissage BDD: ", err);
