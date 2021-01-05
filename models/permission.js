@@ -6,6 +6,12 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             primarykey: true,
         },
+        url: {
+            type: DataTypes.VIRTUAL,
+            get() {
+              return `/catalog/permission/${this.id}`;
+            },
+          },
     });
 return Permission;
 };

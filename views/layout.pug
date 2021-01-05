@@ -28,11 +28,7 @@ html(lang="en")
         .col-sm-2
           block sidebar
             ul.sidebar-nav
-              if user 
-                p Bienvenu cher membre  
-                
-              else  
-                p Bienvenu cher invité
+              
               li
                  a(href="/catalog") Home
                  hr
@@ -40,7 +36,7 @@ html(lang="en")
                    a(href="/catalog/utilisateur/login") Se connecter
                  ul
                  li 
-                   a(href="/logout") deconnecter
+                   a(href="/catalog/utilisateur/logout") deconnecter
                  li
                   a(href="/catalog/utilisateur/create") Creer un nouveau compte
                  hr

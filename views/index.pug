@@ -2,13 +2,13 @@ extends layout
 
 block content
   h3= title
-  
+  h5= logout
      p Bienvenu au #[em FabLab]. Nous vous souhaitons la bienvenue !
         
         if user 
-          p Bienvenu cher membre  
+          p  Cher #[strong membre]  
         else  
-          p Bienvenu cher invité
+          p Cher #[strong invité]
 
      h5 Qui sommes-nous ?
 

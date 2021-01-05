@@ -4,14 +4,14 @@ const { Sequelize, DataTypes, Model } = require("sequelize");
 const sequelize = require ("./sequelizeInstance");
 const { deserializeUser } = require("passport");
 
+
 const Facture =             require("./facture")(sequelize);
 const LigneFacturation =    require("./ligneFacturation")(sequelize);
 const Machine =             require("./machine")(sequelize);
 const Utilisateur =         require("./utilisateur")(sequelize);
 const Utilisation =         require("./utilisation")(sequelize);
-
-const Role = require("./role")(sequelize);
-const Permission =require("./permission")(sequelize);
+const Role =                require("./role")(sequelize);
+const Permission =          require("./permission")(sequelize);
 
 Facture.hasMany(LigneFacturation);
 LigneFacturation.belongsTo(Utilisation);

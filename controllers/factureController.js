@@ -27,14 +27,13 @@ exports.facture_list =  async function (req, res, next) {
     if (!user) {
       return res.redirect("/catalog/utilisateur/login");
     }
-      const factureId = req.params.id;
-      console.log(req.params.id)
-      const factures = await Facture.findByPk(factureId, {// requete dans la BDD sur base de l'id reçu dans l'url, qui correspond
-        include: [LigneFacturation, Utilisateur],// à l'id de la ligne de facturation selectionnée juste avant
+      const factureId = req.params.id; // on recupere l'id de la facture
+      const facture = await Facture.findByPk(factureId, {// requete dans la BDD pour récuperer la facture dont 
+        include: [LigneFacturation, Utilisateur],// l'id correspond à celui reçu juste avant
       });
-      console.log(factures)
+      console.log(facture)
       if (facture !== null) {
-        res.render("facture_detail", { title: "Detail facture", factures });
+        res.render("facture_detail", { title: "Detail facture", facture });
       } else {
         next(createError(404, "Pas de details de facture"));
       }

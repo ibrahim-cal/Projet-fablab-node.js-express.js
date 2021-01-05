@@ -3,7 +3,6 @@ console.log(
 );
 const bcrypt = require("bcrypt");
 //const { removeAllListeners } = require("nodemon");
-const ligneFacturation = require("./models/ligneFacturation");
 
 const { sequelize, Facture, Utilisation, LigneFacturation, Machine, Utilisateur, Role, Permission } = require("./models/sequelize");
 const saltRounds = 10;
@@ -22,13 +21,7 @@ async function utilisateurCreate(prenom, nom, email, mdp) {
     utilisateurdetail =
     { prenom: prenom, nom: nom, email: email};
     utilisateurdetail.passwordHash = hash;
-    /*
-    can(permissionName)
-  {
-    return this.roles.some((role) => 
-      role.can(permissionName));
-  }
-  */
+  
     var utilisateur = await Utilisateur.create(utilisateurdetail);
     console.log("nouvel utilisateur: " + utilisateur.id);
     utilisateurs.push(utilisateur);
@@ -90,25 +83,52 @@ async function utilisationCreate(duree, date, machine, utilisateur) {
 }
 
 async function roleCreate(nom){
-  roledetail = {nom : nom};
-/*
-  can(permissionName){
-    return this.permissions.some((perm)
-     =>    perm.name === permissionName);
-  }
-  */
+  
+  roledetail = { nom : nom };
+
   const role = await Role.create(roledetail);
+  
   console.log("nouveau role: " + role.id);
   roles.push(role);
   return role;
 }
 
-async function permCreate(nom){
+
+async function permCreate(nom, role){
   permdetail = {nom : nom};
   const permission = await Permission.create(permdetail);
+  await permission.setRoles(role);
   console.log("nouvelle permission: " + permission.id);
   permissions.push(permission);
   return permission;
+}
+
+
+async function createPerm(){
+  return await Promise.all([
+    permCreate("lireMachine", roles[0]),
+    permCreate("modifierMachine", roles[1]),
+    permCreate("supprimerMachine", roles[1]),
+    permCreate("creerMachine", roles[1]),
+    permCreate("lireUtilisation", roles[0]),
+    permCreate("supprimerUtilisation", roles[1]),
+    permCreate("modifierUtilisateur", roles[1]),
+    permCreate("lireFacture", roles[0]),
+    permCreate("supprimerFacture", roles[2]),
+    permCreate("supprimerLignefacturation", roles[1]),
+  ])
+}
+
+async function createMachine() {
+  return await Promise.all([
+    machineCreate("decoupeuse laser", "1"),
+    machineCreate("ultimaker imprimante 3d", "0.3"),
+    machineCreate("ultimaker pro imprimante 3d", "0.55"),
+    machineCreate("prusa i3 imprimante 3d", "0.3"),
+    machineCreate("formlabs3 imprimante 3d", "0.3"),
+    machineCreate("artec eva scanner 3D", "0.4"),
+    machineCreate("ein scan sp scanner 3D", "0.35"),
+  ]);
 }
 
 async function createRole(){
@@ -119,31 +139,7 @@ async function createRole(){
   ])
 }
 
-async function createPerm(){
-  return await Promise.all([
-    permCreate("listeMachine"),
-    permCreate("modifierMachine"),
-    permCreate("supprimerMachine"),
-    permCreate("creerMachine"),
-    permCreate("listeUtilisation"),
-    permCreate("supprimerUtilisation"),
-    permCreate("modifierUtilisateur"),
-    permCreate("listeFacture"),
-    permCreate("supprimerFacture"),
-    permCreate("supprimerLignefacturation"),
-  ])
-}
 
-async function createRolePerm(){
-return await Promise.all([
-  membre.addPermissions([listeMachine, listeUtilisation,]),
-  manager.addPermissions([listeMachine,modifierMachine,supprimerMachine,
-    creerMachine, listeUtilisation,supprimerUtilisation,modifierUtilisateur,
-    listeFacture,supprimerLignefacturation]),
-  comptable.addPermissions([listeFacture, supprimerFacture]),
-
-])
-}
 
 async function createUtilisation() {
   return await Promise.all([
@@ -183,28 +179,19 @@ async function createFacture() {
   ]);
 }
 
+
+
 async function createUtilisateur() {
   return await Promise.all([
-    utilisateurCreate("Premier", "Premier", "Premier", "Premier"),
-    utilisateurCreate("Deux", "Deux", "Deux", "Deux"),
-    utilisateurCreate("Trois", "Trois", "Trois", "Trois"),
-    utilisateurCreate("Quatre", "Quatre", "Quatre", "Quatre"),
-    utilisateurCreate("Cinq", "Cinq", "Cinq", "Cinq"),
-    utilisateurCreate("Six", "Six", "Six", "Six"),
+    utilisateurCreate("Dupond", "Jean", "dupond-jean@hotmail.com", "dupond"),
+    utilisateurCreate("Delarue", "Jean-luc", "delarue-jeanluc@hotmail.com", "delarue"),
+    utilisateurCreate("manager", "manager", "manager", "manager"),
+    utilisateurCreate("comptable", "comptable", "comptable", "comptable"),
+
   ]);
 }
 
-async function createMachine() {
-  return await Promise.all([
-    machineCreate("decoupeuse laser", "1"),
-    machineCreate("ultimaker imprimante 3d", "0.3"),
-    machineCreate("ultimaker pro imprimante 3d", "0.55"),
-    machineCreate("prusa i3 imprimante 3d", "0.3"),
-    machineCreate("formlabs3 imprimante 3d", "0.3"),
-    machineCreate("artec eva scanner 3D", "0.4"),
-    machineCreate("ein scan sp scanner 3D", "0.35"),
-  ]);
-}
+
 
 (async () => {
   try {
@@ -212,14 +199,17 @@ async function createMachine() {
     createUtilisateur().then(()=>{
       console.log( "creation ok");
     });
-    
     await createRole();
     await createPerm();
-    await createFacture();
     await createMachine();
+    
+    
+
+    await createFacture();
+    
     await createUtilisation();
     await createLigneFacturation();
-    //await createRolePerm();
+
     
     sequelize.close();
   } catch (err) {

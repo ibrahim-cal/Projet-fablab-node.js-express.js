@@ -174,7 +174,7 @@ exports.utilisateur_create_get = function (req, res, next) {
         req.logout();
   req.session.regenerate((err) => {
     if (!err) {
-      res.redirect("/catalog");
+      res.redirect("/" );
     } else {
       next(err);
     }

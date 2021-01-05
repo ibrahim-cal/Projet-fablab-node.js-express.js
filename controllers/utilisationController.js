@@ -113,7 +113,8 @@ exports.utilisation_create_get = async function (req, res, next) {
               utilisation.dateUtilisation = req.body.dateUtilisation;// idem avec date
             }
             const recupUtilisateur = await Utilisateur.findByPk(req.body.utilisateuridhidden || req.body.utilisateurid);
-           
+           // 115 - 121 : on va récuperer l'id machine et/ou utilisateur ou les deux en fonction de ce qui est passé
+           // comme id dans l'url. Car on a 3 versions différentes de formulaire d'encodage
               await utilisation.setUtilisateur(recupUtilisateur);
             
               const recupMachine = await Machine.findByPk(req.body.machineidhidden || req.body.machineid);

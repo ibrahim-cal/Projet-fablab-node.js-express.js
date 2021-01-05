@@ -6,6 +6,7 @@ const logger = require('morgan');
 const passport = require("passport");
 const path = require('path');
 const session = require("express-session");
+const { deserializeUser } = require("passport");
 
 //Mise en place stratégie d’authentification
 const LocalStrategy = require("passport-local").Strategy;

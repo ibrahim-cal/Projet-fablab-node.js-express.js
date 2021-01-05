@@ -16,26 +16,19 @@ block content
      
       thead      
         tr
-          th(scope="col") Nom 
-          th(scope="col") Prenom
           th(scope="col") Numero facture
           th(scope="col") Montant
           th(scope="col") Date facture
-          th(scope="col") Details
           th(scope="col") Nom machine
-          th(scope="col") Prix en €
+          th(scope="col") Tarif en €
           th(scope="col") Duree en minutes
           th(scope="col") Sous total en €
 
       tbody           
-            tr
-            td
-            td
-            td= factures.numeroFacture
-            td= factures.montant
-            td= factures.dateFacture 
-            td
-            td             
-            td= factures.ligneFacturation.prix             
+            td= facture.numeroFacture
+            td= facture.montant
+            td= facture.dateFacture 
+            td   
+            td         
             td
             td
