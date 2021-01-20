@@ -1,0 +1,26 @@
+
+extends layout
+
+block content
+  h4 #{title}
+  
+  if utilisation.ligneFacturations.length 
+    p #[strong Suppression impossible :]  Il y a une ou plusieurs facture(s) liée(s) à cette utilisation.
+    p Veuillez d'abord supprimer la facture liée à cette utilisation :
+    each ligneFacturation in utilisation.ligneFacturations
+
+     li 
+        a(href=ligneFacturation.url) Voir facture 
+  else 
+    p Voulez vous vraiment supprimer cette utilisation ?
+  
+    form(method="POST", action="")
+      .mb-3
+        input#utilisationid.form-control(
+          type="hidden",
+          name="utilisationid",
+          required="true",
+          value=utilisation._id
+        )
+
+      button.btn.btn-primary(type="submit") Supprimer

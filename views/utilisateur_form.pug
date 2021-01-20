@@ -1,0 +1,51 @@
+extends layout
+block content
+  br
+  h4 #{title} :
+  hr
+
+  form(method="POST")
+    .mb-3
+      label.form-label(for="prenom") prénom :
+      input#prenom.form-control(
+        type="text"
+        placeholder=""
+        name="prenom"
+        required
+        value=undefined === utilisateur ? "" : utilisateur.prenom
+      )
+    .mb-3
+      label.form-label(for="nom") nom  :
+      input#nom.form-control(
+        type="text"
+        placeholder=""
+        name="nom"
+        required
+        value=undefined === utilisateur ? "" : utilisateur.nom
+      )
+    .mb-3
+      label.form-label(for="email") email :
+      input#email.form-control(
+        type="text"
+        placeholder="Ex@exemple.com"
+        name="email"
+        required
+        value=undefined === utilisateur ? "" : utilisateur.email
+      )
+    .mb-3
+      label.form-label(for="mdp") mot de passe :
+      input#mdp.form-control(
+        
+        type="text"
+        placeholder="  "
+        name="mdp"
+        required
+        value=undefined === utilisateur ? "" : utilisateur.mdp        
+      )
+    .mb-3
+      button.btn.btn-primary(type="submit") Enregistrer
+
+  if errors
+    ul
+      each error in errors
+        li!= error.msg

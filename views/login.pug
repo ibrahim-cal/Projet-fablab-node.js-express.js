@@ -1,0 +1,19 @@
+extends layout
+
+block content
+  h4= title
+  
+  if authenticationFailed
+    .alert.alert-warning.alert-dismissible.fade.show Email ou mot de passe incorrect.
+      button(type="button" class="btn-close" data-dismiss="alert" aria-label="Close")
+  hr
+  br
+  form(action="/catalog/utilisateur/login", method="post")
+    .mb-3
+      label.form-label(for="usernameInput") Email :
+      input#usernameInput.form-control(name="username", type="text", autofocus)
+    .mb-3
+      label.form-label(for="passwordInput") Mot de passe :
+      input#passwordInput.form-control(name="password", type="password")
+    .mb-3
+      button.btn.btn-primary(type="submit") Se connecter

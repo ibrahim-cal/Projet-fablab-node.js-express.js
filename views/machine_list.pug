@@ -1,0 +1,32 @@
+extends layout
+block content
+  h3= nom
+
+
+  ul
+    a(href='/catalog/machine/create') Insérer une nouvelle machine
+    p 
+    table.table
+      thead
+        tr
+          th(scope="col") Nom machine
+          th(scope="col") Tarif par minute
+          th(scope="col") 
+          th(scope="col")  
+          th(scope="col")  
+   
+      tbody
+        each machine in machine_list
+            tr
+            td= machine.nom
+            td= machine.tarif+("€")
+            td
+              a(href=machine.url + '/delete')  Supprimer 
+            td
+               a(href=machine.url + '/update')  Modifier
+            td
+              a(href='/catalog/utilisation/create?machineid='+ machine.id) Utiliser 
+    
+        else
+          li Il n'y a pas de machines.
+

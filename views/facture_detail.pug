@@ -1,0 +1,31 @@
+extends layout
+block content
+ 
+  h3= nom
+
+
+
+  ul
+    h5= title
+    p 
+    
+    table.table
+     
+      thead      
+        tr
+          th(scope="col") Numero facture
+          th(scope="col") Montant
+          th(scope="col") Date facture
+          th(scope="col") Nom machine
+          th(scope="col") Tarif en €
+          th(scope="col") Duree en minutes
+          th(scope="col") Sous total en €
+
+      tbody           
+            td= facture.numeroFacture
+            td= facture.montant
+            td= facture.dateFacture 
+            td   
+            td         
+            td
+            td

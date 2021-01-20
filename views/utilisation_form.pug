@@ -1,0 +1,56 @@
+extends layout
+block content
+ h4 #{title}
+ 
+ p
+  hr
+  br
+  
+  form(method="POST")
+    .mb-3
+      label.form-label(for="duree") Duree en minutes :
+      input#duree.form-control(
+        type="number"
+        placeholder=" Veuillez indiquer la duree en chiffres: 11, 23, 31..."
+        name="duree"
+        required
+        value=undefined === utilisation ? "" : utilisation.duree
+      )  
+    .mb-3
+      label.form-label(for="dateUtilisation") Date de l'utilisation :
+      input#dateUtilisation.form-control(
+        type="date"
+        name="dateUtilisation"
+        value=undefined === utilisation ? "" : utilisation.dateUtilisation
+      )
+   
+    .mb-3
+      label.form-label(for="utilisateur") utilisateur &ensp;
+      select(name="utilisateurid")
+       each utilisateur  in utilisateurs
+        
+        option(value=utilisateur.id)  #{utilisateur.nom}  #{utilisateur.prenom} 
+      input(
+        type="hidden" 
+        value=utilisateur && utilisateur.id
+        name="utilisateuridhidden")  
+        
+      
+    .mb-3
+      label.form-label(for="machine") machine &ensp;
+      select(name= "machineid")
+       each machine  in machines
+          option(value=machine.id)   #{machine.nom}  #{machine.tarif}€/min
+      input(
+        type="hidden" 
+        value=machine && machine.id
+        name="machineidhidden") 
+          
+    .mb-3
+      button.btn.btn-primary(type="submit") Submit
+           
+
+  if errors
+    ul
+      each error in errors
+        li!= error.msg
