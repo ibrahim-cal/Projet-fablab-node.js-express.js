@@ -38,16 +38,17 @@ html(lang="en")
         .col-sm-2
           block sidebar
             ul.sidebar-nav
-                 
-                 li
-                 a(href="/catalog/utilisateur/login") Se connecter
+                 unless user
+                  li
+                  a(href="/catalog/utilisateur/login") Se connecter
                  li
                  
                  a(href="/catalog") Home
                  hr
                  
                  ul
-                 li 
+                 if user
+                  li 
                    a(href="/catalog/utilisateur/logout") deconnecter
                  li
                   a(href="/catalog/utilisateur/create") Creer un nouveau compte

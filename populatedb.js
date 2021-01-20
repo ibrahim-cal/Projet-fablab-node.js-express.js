@@ -23,7 +23,7 @@ async function utilisateurCreate(prenom, nom, email, mdp, role) {
     utilisateurdetail.passwordHash = hash;
   
     var utilisateur = await Utilisateur.create(utilisateurdetail);
-    await utilisateur.setRole(role);
+    await utilisateur.addRoles(role);
     console.log("nouvel utilisateur: " + utilisateur.id);
     utilisateurs.push(utilisateur);
     return utilisateur;
@@ -196,11 +196,12 @@ async function createUtilisateur() {
 
 (async () => {
   try {
-    await sequelize.sync({ force: true });
+    await sequelize.sync({ force: true, logging: (a, b) => {
+      console.log(a)
+    } });
     //createUtilisateur().then(()=>{
       // console.log( "creation ok");
     // });
-    
     await createRole();
     await createUtilisateur();
     await createPerm();

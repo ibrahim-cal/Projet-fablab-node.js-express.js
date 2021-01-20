@@ -4,32 +4,32 @@ const { body, validationResult } = require("express-validator");
 const facture = require("../models/facture");
 const passport = require("passport");
 var session = require("express-session");
+const { roleMiddleware } = require("../middlewares/roles")
 
-exports.facture_list =  async function (req, res, next) {
-
-
-  try {
-    const user = req.user;
-    if (!user) {
-      return res.redirect("/catalog/utilisateur/login");
+exports.facture_list = async function (req, res, next) {
+  roleMiddleware(["manager", "comptable"], req, res, async () => {
+    try {
+      const user = req.user
+      if (!user) {
+        return res.redirect("/catalog/utilisateur/login")
+      }
+      //var role = await Role.findByPk(user.roleId);
+      /*
+      var user_2 = await Utilisateur.findByPk(user.id, { include: [Role],});
+      
+      console.log("------"  + user_2.role.id)
+  
+      var role = await Role.findByPk(user_2.roleId, { include: [Permission]});
+    */
+      const facture_list = await Facture.findAll({ // on fait une requete en BDD dans la table facture, en incluant les tables 
+        include: [LigneFacturation, Utilisateur], // LigneFacturation et utilisateur. On stocke le tout dans une variable facture_list
+      })
+      res.render("facture_list", { title: "Liste factures", facture_list })// on renvoie vers la page pug "facture_list"
+    } catch (error) {
+      next(error)
     }
-    //var role = await Role.findByPk(user.roleId);
-    /*
-    var user_2 = await Utilisateur.findByPk(user.id, { include: [Role],});
-    
-    console.log("------"  + user_2.role.id)
-
-    var role = await Role.findByPk(user_2.roleId, { include: [Permission]});
-  */
-    const facture_list = await Facture.findAll({ // on fait une requete en BDD dans la table facture, en incluant les tables 
-      include: [LigneFacturation, Utilisateur], // LigneFacturation et utilisateur. On stocke le tout dans une variable facture_list
-    });
-    res.render("facture_list", { title: "Liste factures", facture_list });// on renvoie vers la page pug "facture_list"
-  } catch (error) {
-    next(error);
-
-  }
-};
+  })
+}
 
   exports.facture_detail = async function (req, res, next) {
     try {
