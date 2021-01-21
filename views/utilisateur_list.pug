@@ -14,6 +14,8 @@ block content
           th(scope="col") Email
           th(scope="col") utilisation(s)
           th(scope="col") Encoder utilisation
+          th(scope="col") facture(s)
+          th(scope="col") 
           th(scope="col") 
           
       tbody
@@ -26,8 +28,11 @@ block content
                a(href= "/catalog/utilisation/" +utilisateur.id) liste utilisations
             td
                a(href='/catalog/utilisation/create?utilisateurid=' + utilisateur.id)  Nouvelle utilisation
+            td= "A IMPLEMENTER"
             td
                a(href=utilisateur.url + '/update')  Modifier données utilisateur
+            td
+               a(href= "/catalog/utilisateur/" +utilisateur.id) role
           
     
       

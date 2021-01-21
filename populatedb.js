@@ -23,7 +23,7 @@ async function utilisateurCreate(prenom, nom, email, mdp, role) {
     utilisateurdetail.passwordHash = hash;
   
     var utilisateur = await Utilisateur.create(utilisateurdetail);
-    await utilisateur.setRole(role);
+    await utilisateur.addRoles(role);
     console.log("nouvel utilisateur: " + utilisateur.id);
     utilisateurs.push(utilisateur);
     return utilisateur;
@@ -189,7 +189,7 @@ async function createUtilisateur() {
    /* utilisateurCreate("Dupond", "Jean", "dupond-jean@hotmail.com", "dupond", roles[0]),
     utilisateurCreate("Delarue", "Jean-luc", "delarue-jeanluc@hotmail.com", "delarue", roles[0]),
     utilisateurCreate("manager", "manager", "manager", "manager", roles[1]),*/
-    utilisateurCreate("comptable", "comptable", "comptable", "comptable", roles[2]),
+    utilisateurCreate("comptable", "comptable", "comptable", "comptable", roles[1]),
 
   ]);
 }

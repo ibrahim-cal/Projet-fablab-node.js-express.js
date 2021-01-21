@@ -26,11 +26,10 @@ Utilisation.hasMany(LigneFacturation);
 Utilisation.belongsTo(Utilisateur);
 Utilisateur.hasMany(Utilisation);
 
-
-//Role.hasMany(Permission);
 Permission.belongsToMany(Role, { through: "role_permissions" });
-Utilisateur.belongsTo(Role);
+Role.belongsToMany(Permission, { through: "role_permissions"});
 Role.belongsToMany(Utilisateur, { through: "utilisateur_roles"});
+Utilisateur.belongsToMany(Role, { through: "utilisateur_roles"});
 
 module.exports = { sequelize, Facture, Utilisation, LigneFacturation,
      Machine, Utilisateur, Role, Permission };

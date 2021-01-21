@@ -1,10 +1,29 @@
-const { Utilisateur, Utilisation, Role} = require("../models/sequelize");
+const { Utilisateur, Utilisation, Facture, Role} = require("../models/sequelize");
 const createError = require("http-errors");
 const { body, validationResult } = require("express-validator");
 const passport = require("passport");
 var session = require("express-session");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
+
+exports.utilisateur_detail = async function (req, res, next) {
+  try {
+    const user = req.user;
+  if (!user) {
+    return res.redirect("/catalog/utilisateur/login");
+  }
+    const utilisateurId = req.params.id; // on recupere l'id de l'url (celui de l'utilisateur selectionné)
+    const utilisateur = await Utilisateur.findByPk(utilisateurId, {// et on lance une recherche en BDD 
+      include: [Role],  });
+    if (utilisateur !== null) {
+      res.render("utilisateur_detail", { title: "Details de l'utilisateur", utilisateur});
+    } else {
+      next(createError(404, "Pas de details"));
+    }
+  } catch (error) {
+    next(error);
+  }
+};
 
 
 
@@ -15,10 +34,7 @@ exports.utilisateur_list = async function (req, res, next) {
     if (!user) {
       return res.redirect("/catalog/utilisateur/login");
     }
-    
-    //const utilisateurRoleid = await Utilisateur.findByPk(req.user.id, {});
-  
-         // si l'id utilisateur connecté est 4 ( si il est pas manager)
+
            // alors on autorise la suite. Sinon, on renvoit une erreur 403 ligne 28
     
     // on récupere la liste des utilisateurs et on la stocke
@@ -195,7 +211,3 @@ exports.utilisateur_create_get = function (req, res, next) {
   });
 };
 
-exports.utilisateur_detail = function (req, res) {
-  res.send("NOT IMPLEMENTED: utilisateur detail");
-};
-     
