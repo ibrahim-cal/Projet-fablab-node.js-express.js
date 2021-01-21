@@ -1,8 +1,8 @@
-const { DataTypes } = require("sequelize");
-const bcrypt = require("bcrypt");
+const { DataTypes } = require('sequelize');
+const bcrypt = require('bcrypt');
 
 module.exports = (sequelize) => {
-  const Utilisateur = sequelize.define("utilisateur", {
+  const Utilisateur = sequelize.define('utilisateur', {
     prenom: {
       type: DataTypes.STRING(100),
       validate: {
@@ -26,15 +26,13 @@ module.exports = (sequelize) => {
 
     passwordHash: DataTypes.STRING(100),
 
-   
-
     name: {
       type: DataTypes.VIRTUAL,
       get() {
         if (this.prenom && this.nom && this.email && this.passwordHash) {
           return `${this.prenom}, ${this.nom}, ${this.email}, ${this.passwordHash}`;
         } else {
-          return "";
+          return '';
         }
       },
     },
@@ -44,7 +42,6 @@ module.exports = (sequelize) => {
         return `/catalog/utilisateur/${this.id}`;
       },
     },
-  },
-  );
+  });
   return Utilisateur;
 };
