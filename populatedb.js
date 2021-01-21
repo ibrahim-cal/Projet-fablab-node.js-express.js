@@ -110,7 +110,7 @@ async function createPerm(){
   return await Promise.all([
     permCreate("lireMachine", roles[0]),
     permCreate("modifierMachine", roles[1]),
-    permCreate("supprimerMachine", roles[0]),
+    permCreate("supprimerMachine", roles[1]),
     permCreate("creerMachine", roles[0]),
     permCreate("lireUtilisation", roles[2]),
     permCreate("supprimerUtilisation", [roles [0], roles[1], roles[2]]),
@@ -202,8 +202,8 @@ async function createUtilisateur() {
     // });
     
     await createRole();
-    await createUtilisateur();
     await createPerm();
+    await createUtilisateur();
     await createMachine();
     await createFacture();
     await createUtilisation();

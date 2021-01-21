@@ -8,6 +8,8 @@ var machine_controller = require("../controllers/machineController");
 var utilisation_controller = require("../controllers/utilisationController");
 var utilisateur_controller = require("../controllers/utilisateurController");
 
+var { checkPermission } = require('../middlewares/roles');
+
 router.get("/", machine_controller.index);
 
 router.get("/utilisateur/login", utilisateur_controller.login_get);
@@ -49,7 +51,9 @@ router.post("/machine/create", machine_controller.machine_create_post);
 // GET request to delete machine.
 router.get("/machine/:id/delete", machine_controller.machine_delete_get);
 // POST request to delete machine.
-router.post("/machine/:id/delete", machine_controller.machine_delete_post);
+router.post("/machine/:id/delete",
+checkPermission('supprimerMachine', 'manager'),
+machine_controller.machine_delete_post);
 // GET request to update machine.
 router.get("/machine/:id/update", machine_controller.machine_update_get);
 // POST request to update machine.
