@@ -31,5 +31,8 @@ Role.belongsToMany(Permission, { through: "role_permissions"});
 Role.belongsToMany(Utilisateur, { through: "utilisateur_roles"});
 Utilisateur.belongsToMany(Role, { through: "utilisateur_roles"});
 
+const RolePermissions = sequelize.model('role_permissions');
+const UtilisateurRoles = sequelize.model('utilisateur_roles');
+
 module.exports = { sequelize, Facture, Utilisation, LigneFacturation,
-     Machine, Utilisateur, Role, Permission };
+     Machine, Utilisateur, Role, Permission, RolePermissions, UtilisateurRoles};

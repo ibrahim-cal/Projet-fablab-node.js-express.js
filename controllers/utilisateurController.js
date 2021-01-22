@@ -1,4 +1,4 @@
-const { Utilisateur, Utilisation, Facture, Role, } = require("../models/sequelize");
+const { Utilisateur, UtilisateurRoles,Utilisation, Facture, Role, } = require("../models/sequelize");
 const createError = require("http-errors");
 const { body, validationResult } = require("express-validator");
 const passport = require("passport");
@@ -14,7 +14,8 @@ exports.utilisateur_detail = async function (req, res, next) {
   }
     const utilisateurId = req.params.id; // on recupere l'id de l'url (celui de l'utilisateur selectionné)
     const utilisateur = await Utilisateur.findByPk(utilisateurId, {// et on lance une recherche en BDD 
-      include: [Utilisateur_role],  });
+      include: UtilisateurRoles 
+       });
     if (utilisateur !== null) {
       res.render("utilisateur_detail", { title: "Details de l'utilisateur", utilisateur, user: req.user});
     } else {
