@@ -108,18 +108,20 @@ async function permCreate(nom, role){
 
 async function createPerm(){
   return await Promise.all([
-    permCreate("lireMachine", roles[0]),
+    permCreate("lireMachine",[roles[0], roles[1]]),
     permCreate("modifierMachine", roles[1]),
     permCreate("supprimerMachine", roles[1]),
-    permCreate("creerMachine", roles[0]),
-    permCreate("lireUtilisation", roles[2]),
-    permCreate("supprimerUtilisation", [roles [0], roles[1], roles[2]]),
-    permCreate("lireFacture", roles[0]),
-    permCreate("supprimerFacture", roles[1]),
-    permCreate("lireLignefacturation", roles[0]),
-    permCreate("supprimerLignefacturation", roles[0]),
-    permCreate("lireUtilisateur", roles[0]),
-    permCreate("modifierUtilisateur", roles[0]),
+    permCreate("creerMachine", roles[1]),
+    permCreate("lireUtilisation", [roles[0], roles[1]]),
+    permCreate("creerUtilisation", [roles[0], roles[1]]),
+    permCreate("supprimerUtilisation", roles[1]),
+    permCreate("lireFacture", [roles[0], roles[1]]),
+    permCreate("creerFacture", roles[1]),
+    permCreate("supprimerFacture", roles[2]),
+    permCreate("lireLignefacturation", roles[1]),
+    permCreate("supprimerLignefacturation", roles[1]),
+    permCreate("lireUtilisateur", [roles[0], roles[1]]),
+    permCreate("modifierUtilisateur", [roles[0], roles[1]]),
 
   ])
 }
@@ -189,7 +191,10 @@ async function createUtilisateur() {
    /* utilisateurCreate("Dupond", "Jean", "dupond-jean@hotmail.com", "dupond", roles[0]),
     utilisateurCreate("Delarue", "Jean-luc", "delarue-jeanluc@hotmail.com", "delarue", roles[0]),
     utilisateurCreate("manager", "manager", "manager", "manager", roles[1]),*/
-    utilisateurCreate("comptable", "comptable", "comptable", "comptable", roles[1]),
+    utilisateurCreate("comptable", "comptable", "comptable", "comptable", roles[2]),
+    utilisateurCreate("manager", "manager", "manager", "manager", roles[1]),
+    utilisateurCreate("membre", "membre", "membre", "membre", roles[0]),
+    utilisateurCreate("membre2", "membre2", "membre2", "membre2", roles[0]),
 
   ]);
 }

@@ -1,4 +1,4 @@
-const { Utilisateur, Utilisation, Facture, Role} = require("../models/sequelize");
+const { Utilisateur, Utilisation, Facture, Role, } = require("../models/sequelize");
 const createError = require("http-errors");
 const { body, validationResult } = require("express-validator");
 const passport = require("passport");
@@ -14,9 +14,9 @@ exports.utilisateur_detail = async function (req, res, next) {
   }
     const utilisateurId = req.params.id; // on recupere l'id de l'url (celui de l'utilisateur selectionné)
     const utilisateur = await Utilisateur.findByPk(utilisateurId, {// et on lance une recherche en BDD 
-      include: [Role],  });
+      include: [Utilisateur_role],  });
     if (utilisateur !== null) {
-      res.render("utilisateur_detail", { title: "Details de l'utilisateur", utilisateur});
+      res.render("utilisateur_detail", { title: "Details de l'utilisateur", utilisateur, user: req.user});
     } else {
       next(createError(404, "Pas de details"));
     }
@@ -24,9 +24,6 @@ exports.utilisateur_detail = async function (req, res, next) {
     next(error);
   }
 };
-
-
-
   
 exports.utilisateur_list = async function (req, res, next) {
   try {
@@ -42,7 +39,7 @@ exports.utilisateur_list = async function (req, res, next) {
       include : Utilisation,
       order: [["nom", "ASC"]],
     });
-    res.render("utilisateur_list", { title: "Voici la liste des utilisateurs :", utilisateur_list, Utilisation });
+    res.render("utilisateur_list", { title: "Voici la liste des utilisateurs :", utilisateur_list, Utilisation, user: req.user });
     
 
     return next(createError(403));
@@ -57,7 +54,7 @@ exports.utilisateur_list = async function (req, res, next) {
 exports.utilisateur_create_get = function (req, res, next) {
   const user = req.user;
    
-  res.render("utilisateur_form", { title: "Création nouveau compte"});
+  res.render("utilisateur_form", { title: "Création nouveau compte", user: req.user});
 };
   
   exports.utilisateur_create_post =  [
@@ -110,6 +107,7 @@ exports.utilisateur_create_get = function (req, res, next) {
       res.render("utilisateur_update",{  //sinon on affiche le formulaire de modification
         title : "Modification utilisateur",
         utilisateur,
+        user: req.user
       });
     }
   }  catch (error){

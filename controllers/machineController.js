@@ -26,7 +26,7 @@ exports.index = async function (req, res, next) {
       const machine_list = await Machine.findAll({  // on récupere la liste des machines en la stockant dans variable
         order: [["nom", "ASC"]],  // machine_list
       });
-      res.render("machine_list", { title: "Voici la liste des machines disponibles :", machine_list });
+      res.render("machine_list", { title: "Voici la liste des machines disponibles :", machine_list, user: req.user });
     } catch (error) {
       next(error);
     }
@@ -37,7 +37,7 @@ exports.machine_create_get = function (req, res, next) {
     if (!user) {
       return res.redirect("/login");
     }
-    res.render("machine_form", { title: "Encoder une nouvelle machine"});
+    res.render("machine_form", { title: "Encoder une nouvelle machine", user: req.user},  );
   };
   
   exports.machine_create_post =  [
@@ -94,6 +94,7 @@ exports.machine_update_get = async function (req, res, next) {
     res.render("machine_form",{  // on affiche le formulaire de modification
       title : "Modification machine",
       machine,
+      user: req.user,
     });
   }
 }  catch (error){

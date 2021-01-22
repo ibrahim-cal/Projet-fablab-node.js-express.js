@@ -4,17 +4,35 @@ const { body, validationResult } = require("express-validator");
 const machine = require("../models/machine");
 const passport = require("passport");
 var session = require("express-session");
+const { checkPermission } = require("../middlewares/roles")
 
 exports.utilisation_list = async function (req, res, next) {
   try {
     const user = req.user;
     if (!user) {
-      return res.redirect("/catalog/utilisateur/login");
+    return res.redirect("/catalog/utilisateur/login");
     }
+
+    checkPermission(["lireUtilisation", "membre"], req, res, async () => {
+      
+      const utilisation_listMembre = await Utilisation.findAll({
+          where: { utilisateurId : user.id},
+          include: [Machine, Utilisateur], 
+        });
+          res.render("utilisation_listMembreConnecte", { title:
+             "Liste de mes utilisations",
+           utilisation_listMembre, user: req.user });
+    })
+     
+      checkPermission(["lireUtilisation", "manager"], req, res, async () => {
+  
     const utilisation_list = await Utilisation.findAll({ // on récupere la liste des utilisations et on la stocke
       include: [Machine, Utilisateur],                  // dans utilisation_list, pour ensuite la reutiliser dans la vue
     });
-    res.render("utilisation_list", { title: "Liste des utilisations", utilisation_list });
+    res.render("utilisation_list", { title: "Liste des utilisations",
+     utilisation_list, user: req.user });
+      })
+      
   } catch (error) {
     next(error);
   }
@@ -30,7 +48,7 @@ exports.utilisation_list = async function (req, res, next) {
       const utilisation = await Utilisation.findByPk(utilisationId, {// et on lance une recherche en BDD 
         include: [Utilisateur, Machine],  });
       if (utilisation !== null) {
-        res.render("utilisation_detail", { title: "Details des utilisations", utilisation});
+        res.render("utilisation_detail", { title: "Details des utilisations", utilisation, user: req.user});
       } else {
         next(createError(404, "Pas d'utilisations"));
       }
@@ -65,7 +83,7 @@ exports.utilisation_create_get = async function (req, res, next) {
       // ou d'un utilisateur dans l'url. Càd si de la page précedente etait une machine ou un user selectionné
 
     
-    res.render("utilisation_form", { title: "Nouvelle utilisation", machine, utilisateur, machines, utilisateurs });}
+    res.render("utilisation_form", { title: "Nouvelle utilisation", machine, utilisateur, machines, utilisateurs, user: req.user });}
   } catch (error) {
     next(error);
   }
@@ -143,7 +161,7 @@ exports.utilisation_create_get = async function (req, res, next) {
       if (utilisation === null) {
         res.redirect("/catalog/utilisateurs");
       } else {
-        res.render("utilisation_delete", { title: "Supprimer utilisation", utilisation });
+        res.render("utilisation_delete", { title: "Supprimer utilisation", utilisation , user: req.user});
       }
     } catch (error) {
       next(error);

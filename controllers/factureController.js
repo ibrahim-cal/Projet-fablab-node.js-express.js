@@ -4,7 +4,7 @@ const { body, validationResult } = require("express-validator");
 const facture = require("../models/facture");
 const passport = require("passport");
 var session = require("express-session");
-const { permissionMiddleware } = require("../middlewares/roles")
+const { checkPermission } = require("../middlewares/roles")
 
 exports.facture_list =  async function (req, res, next) {
 
@@ -14,10 +14,25 @@ exports.facture_list =  async function (req, res, next) {
     if (!user) {
       return res.redirect("/catalog/utilisateur/login");
     }
+
+   // checkPermission(["lireFacture", "membre"], req, res, async () => {
+     
+      const facture_listMembre = await Facture.findAll({
+          where: { utilisateurId : user.id},
+          include: [LigneFacturation, Utilisateur],     //***********    Table LigneF************** */
+        });
+          res.render("facture_listMembreConnecte", { title: "Liste de mes  factures",
+          facture_listMembre, user: req.user });
+     // })
+          
+                  //*************** Table ligne fact********************** */
+    /*
     const facture_list = await Facture.findAll({ // on fait une requete en BDD dans la table facture, en incluant les tables 
       include: [LigneFacturation, Utilisateur], // LigneFacturation et utilisateur. On stocke le tout dans une variable facture_list
     });
-    res.render("facture_list", { title: "Liste factures", facture_list });// on renvoie vers la page pug "facture_list"
+    res.render("facture_list", { title: "Liste factures", facture_list , user: req.user});// on renvoie vers la page pug "facture_list"
+  */
+
   } catch (error) {
     next(error);
   }
@@ -34,10 +49,10 @@ exports.facture_list =  async function (req, res, next) {
       const factureId = req.params.id; // on recupere l'id de la facture
       const facture = await Facture.findByPk(factureId, {// requete dans la BDD pour récuperer la facture dont 
         include: [LigneFacturation, Utilisateur],// l'id correspond à celui reçu juste avant
-      });
+      });   //*************** Table ligne fact***************** */
       
       if (facture !== null) {
-        res.render("facture_detail", { title: "Detail facture", facture });
+        res.render("facture_detail", { title: "Detail facture", facture, user: req.user });
       } else {
         next(createError(404, "Pas de details de facture"));
       }
@@ -52,14 +67,14 @@ exports.facture_create_get =  async function (req, res, next) {
     const user = req.user;
     if (!user) {
       return res.redirect("/catalog/utilisateur/login");
-    }
+    }         //*************** Table ligne fact ****************/
     const [utilisateurs, factures, ligneFacturations, utilisations] = await Promise.all([
       Utilisateur.findAll(),    // on va récuperer les contenus des tables utilisateur, ligneFact, utilisation
       LigneFacturation.findAll(),
       Utilisation.findAll(),
       
     ]);
-    res.render("facture_form", { title: "Nouvelle facture",utilisateurs, factures, ligneFacturations, utilisations });
+    res.render("facture_form", { title: "Nouvelle facture",utilisateurs, factures, ligneFacturations, utilisations, user: req.user });
   } catch (error) {
     next(error);
   }
@@ -103,12 +118,12 @@ exports.facture_create_get =  async function (req, res, next) {
       return res.redirect("/catalog/utilisateur/login");
     }
       const facture = await Facture.findByPk(req.params.id, {
-        include: [LigneFacturation],
+        include: [LigneFacturation],        //*************** Table ligne fact ***************/
       });
       if (facture === null) {
         res.redirect("/catalog/facture");
       } else {
-        res.render("facture_delete", { title: "Suppression facture", facture });
+        res.render("facture_delete", { title: "Suppression facture", facture , user: req.user});
       }
     } catch (error) {
       next(error);
@@ -122,7 +137,7 @@ exports.facture_create_get =  async function (req, res, next) {
       return res.redirect("/catalog/utilisateur/login");
     }
       const facture = await Facture.findByPk(req.params.id, {
-        include: [LigneFacturation],
+        include: [LigneFacturation],      //*************** Table ligne fact ***************/
       });
       if (facture === null) {
         next(createError(404, "pas de facture"));

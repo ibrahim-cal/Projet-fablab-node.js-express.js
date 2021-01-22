@@ -1,0 +1,28 @@
+extends layout
+block content
+  br
+  h5= title
+
+  p
+   table.table
+      thead
+        tr
+          th(scope="col") Date
+          th(scope="col") Duree en minutes
+          th(scope="col") Machine
+          th(scope="col") Tarif machine
+          th(scope="col") Utilisateur
+          th(scope="col") 
+          
+      tbody
+        each utilisation in utilisation_listMembre
+        
+            tr
+            td= utilisation.dateUtilisation
+            td= utilisation.duree 
+            td= utilisation.machine.nom
+            td= utilisation.machine.tarif
+            td= utilisation.utilisateur.nom
+            td                
+        else
+          li Il n'y a pas d'utilisations

@@ -1,4 +1,4 @@
-const {Utilisateur, Role,Permission,RolePermissions,} = require('../models/sequelize');
+const {Utilisateur, Role,Permission, RolePermissions,} = require('../models/sequelize');
   
   async function can(user, permission, role) {
     const userRoles = user.roles;

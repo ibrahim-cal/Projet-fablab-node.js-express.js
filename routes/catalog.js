@@ -17,13 +17,14 @@ router.post("/utilisateur/login", utilisateur_controller.login_post);
 router.get("/utilisateur/logout", utilisateur_controller.logout_get);
 
 // GET request for creating a facture. NOTE This must come before routes that display facture (uses id).
-router.get("/facture/create", facture_controller.facture_create_get);
+router.get("/facture/create",checkPermission('creerFacture', 'manager'), facture_controller.facture_create_get);
 // POST request for creating facture.
 router.post("/facture/create", facture_controller.facture_create_post);
 // GET request to delete facture.
-router.get("/facture/:id/delete", facture_controller.facture_delete_get);
+router.get("/facture/:id/delete",//-- checkPermission('supprimerFacture', 'comptable'),
+ facture_controller.facture_delete_get);
 // POST request to delete facture.
-router.post("/facture/:id/delete", facture_controller.facture_delete_post);
+router.post("/facture/:id/delete", checkPermission('supprimerFacture', 'comptable'), facture_controller.facture_delete_post);
 // GET request for one facture.
 router.get("/facture/:id", facture_controller.facture_detail);
 // GET request for list of all facture items.
@@ -45,19 +46,26 @@ router.post("/ligneFacturation/:id/delete", ligneFacturation_controller.ligneFac
 
 
 // GET request for creating a machine. NOTE This must come before routes that display machine (uses id).
-router.get("/machine/create", machine_controller.machine_create_get);
+router.get("/machine/create", 
+//checkPermission('creerMachine', 'manager'),
+ machine_controller.machine_create_get);
 // POST request for creating machine.
-router.post("/machine/create", machine_controller.machine_create_post);
+router.post("/machine/create", //
+//checkPermission('creerMachine', 'manager'), 
+machine_controller.machine_create_post);
 // GET request to delete machine.
-router.get("/machine/:id/delete", machine_controller.machine_delete_get);
-// POST request to delete machine.
-router.post("/machine/:id/delete",
+router.get("/machine/:id/delete",
 checkPermission('supprimerMachine', 'manager'),
-machine_controller.machine_delete_post);
+ machine_controller.machine_delete_get);
+// POST request to delete machine.
+router.post("/machine/:id/delete", checkPermission('supprimerMachine', 'manager'),machine_controller.machine_delete_post);
 // GET request to update machine.
-router.get("/machine/:id/update", machine_controller.machine_update_get);
+router.get("/machine/:id/update",
+//checkPermission('modifierMachine', 'manager'),
+ machine_controller.machine_update_get);
 // POST request to update machine.
-router.post("/machine/:id/update", machine_controller.machine_update_post);
+router.post("/machine/:id/update",// checkPermission('modifierMachine', 'manager'),
+ machine_controller.machine_update_post);
 // GET request for one machine.
 router.get("/machine/:id", machine_controller.machine_detail);
 // GET request for list of all machine items.
@@ -71,7 +79,7 @@ router.post("/utilisateur/create", utilisateur_controller.utilisateur_create_pos
 // GET request to update utilisateur.
 router.get("/utilisateur/:id/update", utilisateur_controller.utilisateur_update_get);
 // POST request to update utilisateur.
-router.post("/utilisateur/:id/update", utilisateur_controller.utilisateur_update_post);
+router.post("/utilisateur/:id/update", checkPermission('modifierUtilisateur', 'manager'), utilisateur_controller.utilisateur_update_post);
 // GET request for one utilisateur.
 router.get("/utilisateur/:id", utilisateur_controller.utilisateur_detail);
 // GET request for list of all utilisateur items.
