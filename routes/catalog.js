@@ -16,8 +16,10 @@ router.get("/utilisateur/login", utilisateur_controller.login_get);
 router.post("/utilisateur/login", utilisateur_controller.login_post);
 router.get("/utilisateur/logout", utilisateur_controller.logout_get);
 
+
 // GET request for creating a facture. NOTE This must come before routes that display facture (uses id).
-router.get("/facture/create",checkPermission('creerFacture', 'manager'), facture_controller.facture_create_get);
+router.get("/facture/create",//checkPermission('creerFacture', 'manager'), 
+facture_controller.facture_create_get);
 // POST request for creating facture.
 router.post("/facture/create", facture_controller.facture_create_post);
 // GET request to delete facture.

@@ -16,22 +16,23 @@ exports.facture_list =  async function (req, res, next) {
     }
 
    // checkPermission(["lireFacture", "membre"], req, res, async () => {
-     
+     /*
       const facture_listMembre = await Facture.findAll({
           where: { utilisateurId : user.id},
-          include: [LigneFacturation, Utilisateur],     //***********    Table LigneF************** */
+          include: [LigneFacturation, Utilisateur],     //***********    Table LigneF************** 
         });
           res.render("facture_listMembreConnecte", { title: "Liste de mes  factures",
           facture_listMembre, user: req.user });
-     // })
+      })
           
+         
                   //*************** Table ligne fact********************** */
-    /*
+    
     const facture_list = await Facture.findAll({ // on fait une requete en BDD dans la table facture, en incluant les tables 
       include: [LigneFacturation, Utilisateur], // LigneFacturation et utilisateur. On stocke le tout dans une variable facture_list
     });
     res.render("facture_list", { title: "Liste factures", facture_list , user: req.user});// on renvoie vers la page pug "facture_list"
-  */
+  
 
   } catch (error) {
     next(error);
