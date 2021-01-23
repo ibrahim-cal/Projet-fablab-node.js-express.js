@@ -4,7 +4,7 @@ console.log(
 const bcrypt = require("bcrypt");
 //const { removeAllListeners } = require("nodemon");
 
-const { sequelize, Facture, Utilisation, LigneFacturation, Machine, Utilisateur, Role, Permission } = require("./models/sequelize");
+const { sequelize, Facture, Utilisation, Machine, Utilisateur, Role, Permission } = require("./models/sequelize");
 const saltRounds = 10;
 
 var utilisations = [];
@@ -106,22 +106,23 @@ async function permCreate(nom, role){
   return permission;
 }
 
-
 async function createPerm(){
   return await Promise.all([
     permCreate("lireMachine",[roles[0], roles[1]]),
     permCreate("modifierMachine", roles[1]),
     permCreate("supprimerMachine", roles[1]),
     permCreate("creerMachine", roles[1]),
-    permCreate("lireUtilisation", [roles[0], roles[1]]),
-    permCreate("creerUtilisation", [roles[0], roles[1]]),
+    permCreate("lireToutesUtilisations", roles[1]),
+    permCreate("lireMesUtilisations", roles[0]),
+    permCreate("creerTouteUtilisation", roles[1]),
+    permCreate("creerMonUtilisation", roles[0]),
     permCreate("supprimerUtilisation", roles[1]),
-    permCreate("lireFacture", [roles[0], roles[1]]),
+    permCreate("lireToutesFactures", roles[1]),
+    permCreate("lireMesFactures", roles[0]),
     permCreate("creerFacture", roles[1]),
     permCreate("supprimerFacture", roles[2]),
-    permCreate("lireLignefacturation", roles[1]),
-    permCreate("supprimerLignefacturation", roles[1]),
-    permCreate("lireUtilisateur", [roles[0], roles[1]]),
+    permCreate("lireTousUtilisateurs", roles[1]),
+    permCreate("lireMonUtilisateur", roles[0]),
     permCreate("modifierUtilisateur", [roles[0], roles[1]]),
 
   ])
@@ -129,13 +130,13 @@ async function createPerm(){
 
 async function createMachine() {
   return await Promise.all([
-    machineCreate("decoupeuse laser", "1"),/*
+    machineCreate("decoupeuse laser", "1"),
     machineCreate("ultimaker imprimante 3d", "0.3"),
     machineCreate("ultimaker pro imprimante 3d", "0.55"),
     machineCreate("prusa i3 imprimante 3d", "0.3"),
     machineCreate("formlabs3 imprimante 3d", "0.3"),
     machineCreate("artec eva scanner 3D", "0.4"),
-    machineCreate("ein scan sp scanner 3D", "0.35"),*/
+    machineCreate("ein scan sp scanner 3D", "0.35"),
   ]);
 }
 
@@ -144,8 +145,6 @@ async function createRole(){
     roleCreate("membre"),
     roleCreate("manager"),
     roleCreate("comptable"),
-    roleCreate("test"),
-    roleCreate("test2"),
   ])
 }
 
@@ -153,43 +152,23 @@ async function createUtilisation() {
   return await Promise.all([
   /*  utilisationCreate("20", "2020-12-25", machines[0], utilisateurs[0]),/*
     utilisationCreate("30", "2020-12-25", machines[0], utilisateurs[1]),
-    utilisationCreate("10", "2020-12-25", machines[1], utilisateurs[2]),
-    utilisationCreate("119", "2020-12-25", machines[1], utilisateurs[2]),
 */
- 
   ]);
 }
-/*
-async function createLigneFacturation() {
-  return await Promise.all([
-    ligneFacturationCreate("decoupeuse laser", "0.5", "20", "10", factures[0], utilisations[0]),
-   /* ligneFacturationCreate("ultimaker imprimante 3d", "0.3", "30", "9",factures[3], utilisations[1]),
-    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "10", "5.50",factures[3], utilisations[2]),
-    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "10", "5.50",factures[1], utilisations[2]),
-  ]);
-}*/
 
 async function createFacture() {
   return await Promise.all([
     factureCreate("202012001", "10", "2020-12-25", utilisateurs[0]),/*
     factureCreate("202012002", "9", "2020-12-25", utilisateurs[2]),
-    factureCreate("202012003", "5", "2020-12-25", utilisateurs[3]),
-    factureCreate("202012004", "3", "2020-12-25", utilisateurs[4]),*/
+*/
   ]);
 }
 
 async function createUtilisateur() {
   return await Promise.all([
-   /* utilisateurCreate("Dupond", "Jean", "dupond-jean@hotmail.com", "dupond", roles[0]),
-    utilisateurCreate("Delarue", "Jean-luc", "delarue-jeanluc@hotmail.com", "delarue", roles[0]),
-    utilisateurCreate("manager", "manager", "manager", "manager", roles[1]),*/
     utilisateurCreate("comptable", "comptable", "comptable", "comptable", roles[2]),
-    utilisateurCreate("manager", "manager", "manager", "manager", roles[1]),
-    utilisateurCreate("membre", "membre", "membre", "membre", roles[0]),
-    utilisateurCreate("membre2", "membre2", "membre2", "membre2", roles[0]),
-    utilisateurCreate("membre2", "membre2", "kouidar", "kouidar", roles[1]),
-    utilisateurCreate("membre2", "membre2", "kalombo", "kalombo", roles[1]),
-
+    utilisateurCreate("manager", "manager", "mmm", "mmm", roles[1]),
+    utilisateurCreate("membre", "membre", "bbb", "bbb", roles[0]),
   ]);
 }
 
@@ -206,7 +185,6 @@ async function createUtilisateur() {
     await createMachine();
     await createFacture();
     await createUtilisation();
-    //await createLigneFacturation();
 
     sequelize.close();
   } catch (err) {

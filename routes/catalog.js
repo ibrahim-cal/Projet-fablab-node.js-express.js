@@ -3,7 +3,6 @@ var router = express.Router();
 
 // Require controller modules.
 var facture_controller = require("../controllers/factureController");
-var ligneFacturation_controller = require("../controllers/ligneFacturationController");
 var machine_controller = require("../controllers/machineController");
 var utilisation_controller = require("../controllers/utilisationController");
 var utilisateur_controller = require("../controllers/utilisateurController");
@@ -26,25 +25,12 @@ router.post("/facture/create", facture_controller.facture_create_post);
 router.get("/facture/:id/delete",//-- checkPermission('supprimerFacture', 'comptable'),
  facture_controller.facture_delete_get);
 // POST request to delete facture.
-router.post("/facture/:id/delete", checkPermission('supprimerFacture', 'comptable'), facture_controller.facture_delete_post);
+router.post("/facture/:id/delete", //checkPermission('supprimerFacture', 'comptable'),
+ facture_controller.facture_delete_post);
 // GET request for one facture.
 router.get("/facture/:id", facture_controller.facture_detail);
 // GET request for list of all facture items.
 router.get("/factures", facture_controller.facture_list);
-
-
-// GET request for creating a ligneFacturation. NOTE This must come before routes that display ligneFacturation (uses id).
-router.get("/ligneFacturation/create", ligneFacturation_controller.ligneFacturation_create_get);
-// POST request for creating ligneFacturation.
-router.post("/ligneFacturation/create", ligneFacturation_controller.ligneFacturation_create_post);
-// GET request for one ligneFacturation.
-router.get("/ligneFacturation/:id", ligneFacturation_controller.ligneFacturation_detail);
-// GET request for list of all ligneFacturation items.
-router.get("/ligneFacturations", ligneFacturation_controller.ligneFacturation_list);
-// GET request to delete ligneFacturation
-router.get("/ligneFacturation/:id/delete", ligneFacturation_controller.ligneFacturation_delete_get);
-// POST request to delete ligneFacturation
-router.post("/ligneFacturation/:id/delete", ligneFacturation_controller.ligneFacturation_delete_post);
 
 
 // GET request for creating a machine. NOTE This must come before routes that display machine (uses id).
@@ -81,7 +67,8 @@ router.post("/utilisateur/create", utilisateur_controller.utilisateur_create_pos
 // GET request to update utilisateur.
 router.get("/utilisateur/:id/update", utilisateur_controller.utilisateur_update_get);
 // POST request to update utilisateur.
-router.post("/utilisateur/:id/update", checkPermission('modifierUtilisateur', 'manager'), utilisateur_controller.utilisateur_update_post);
+router.post("/utilisateur/:id/update",// checkPermission('modifierUtilisateur', 'manager'),
+ utilisateur_controller.utilisateur_update_post);
 // GET request for one utilisateur.
 router.get("/utilisateur/:id", utilisateur_controller.utilisateur_detail);
 // GET request for list of all utilisateur items.
@@ -99,6 +86,7 @@ router.post("/utilisation/:id/delete", utilisation_controller.utilisation_delete
 // GET request for one utilisation.
 router.get("/utilisation/:id", utilisation_controller.utilisation_detail);
 // GET request for list of all utilisation items.
-router.get("/utilisations", utilisation_controller.utilisation_list);
+router.get("/utilisations",// checkPermission('lireMesUtilisations', 'membre'), 
+utilisation_controller.utilisation_list);
 
 module.exports = router;

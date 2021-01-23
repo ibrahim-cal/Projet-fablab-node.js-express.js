@@ -1,4 +1,4 @@
-const { Facture, Utilisateur,LigneFacturation, Utilisation, Role, Permission } = require("../models/sequelize");
+const { Facture, Utilisateur, Utilisation, Role, Permission } = require("../models/sequelize");
 const createError = require("http-errors");
 const { body, validationResult } = require("express-validator");
 const facture = require("../models/facture");
@@ -83,8 +83,8 @@ exports.facture_create_get =  async function (req, res, next) {
 
 };
   
-  exports.facture_create_post =
-  [
+  exports.facture_create_post =[
+
     body("dateFacture", "Date invalide")
     .optional({ checkFalsy: true })
     .isISO8601()
@@ -92,6 +92,15 @@ exports.facture_create_get =  async function (req, res, next) {
 
     async function (req, res, next) {
       try {
+        const errors = validationResult(req); // on traite les erreurs de validation
+        if (!errors.isEmpty())
+         {
+          res.render("facture_form", facture, {// si erreurs dans champs,
+            title : "Certains champs sont incorrects ",//on reaffiche formulaire
+          
+            errors : errors.array(),
+          });
+        }else {
         
         const sansFactures = await Utilisation.findAll({
           where : {
@@ -101,7 +110,7 @@ exports.facture_create_get =  async function (req, res, next) {
           // on récupère les utilisations dont factureid null - donc pas encore facturées -
           // ET dont l'utilisateur id = l'id de l'utilisateur selectionné dans le formulaire
             ] },
-          })
+          });
      
           total = 0;
           sansFactures.forEach(element => {
@@ -111,31 +120,37 @@ exports.facture_create_get =  async function (req, res, next) {
             // pour chaque utilisation, on va multiplier la durée au tarif. Ensuite on va additionner 
             // les produits afin d'avoir le total de la facture dans une variable
           })
-
+        
           console.log(total);
           console.log("++++" +req.body.dateFacture);
          
-
-          const facture = await Facture.build({
+          const facture =  Facture.build({
             numeroFacture : 
            ( ""+  (req.body.dateFacture.getFullYear()) + (req.body.dateFacture.getMonth()+1)  ) ,
            // on récupère l'année et le mois de la date du formulaire afin d'en faire le numFacture
             montant : total,
+            
           })
-
           facture.dateFacture = req.body.dateFacture; // on recupere la date du form et on la met dans dateFacture
           const recupUtilisateur = await Utilisateur.findByPk(req.body.utilisateurid);// on recupere id utilisateur selectionné
                                                                                       // dans le formulaire
           await facture.setUtilisateur(recupUtilisateur);// et on le stocke dans utilisateurid de la facture
-
+     
+           // sansFactures.setFacture(facture);
           await facture.save();// on sauvegarde toutes les données dans une nouvelle facture
+          
+          //res.redirect("/catalog/factures");
 
-         res.redirect("/catalog/factures");
+          sansFactures.forEach(element => {
+            element.setFacture(facture);
+         
+           })
+        }
         
           }  catch (error) {
         next(error);
           }
-        },
+        },  
 ];
 
 
@@ -147,7 +162,7 @@ exports.facture_create_get =  async function (req, res, next) {
       return res.redirect("/catalog/utilisateur/login");
     }
       const facture = await Facture.findByPk(req.params.id, {
-        include: [LigneFacturation],        //*************** Table ligne fact ***************/
+        include: [Utilisateur, Utilisation],        //*************** Table ligne fact ***************/
       });
       if (facture === null) {
         res.redirect("/catalog/facture");
@@ -166,7 +181,7 @@ exports.facture_create_get =  async function (req, res, next) {
       return res.redirect("/catalog/utilisateur/login");
     }
       const facture = await Facture.findByPk(req.params.id, {
-        include: [LigneFacturation],      //*************** Table ligne fact ***************/
+        include: [Utilisateur, Utilisation],      //*************** Table ligne fact ***************/
       });
       if (facture === null) {
         next(createError(404, "pas de facture"));

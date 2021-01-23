@@ -1,5 +1,18 @@
 const {Utilisateur, Role,Permission, RolePermissions,} = require('../models/sequelize');
   
+async function getUserPermissions(user) {
+  const userRoles = user.roles;
+
+  const all = await Promise.all(
+  userRoles.map((role) =>
+   RolePermissions.findAll({
+        where: { roleId: role.id },
+      })
+    )
+  );
+  return all;
+}
+
   async function can(user, permission, role) {
     const userRoles = user.roles;
     let concernedRole = null;
@@ -25,7 +38,6 @@ const {Utilisateur, Role,Permission, RolePermissions,} = require('../models/sequ
     const hasAccess = permissionsIds.some(
       (p) => p.permissionId === concernedPermission.id
     );
-  
     return hasAccess;
   }
   
@@ -33,16 +45,16 @@ const {Utilisateur, Role,Permission, RolePermissions,} = require('../models/sequ
     return async (req, res, next) => {
       try {
         const user = await Utilisateur.findByPk(req.user.id, {
-        include: [
-         {
+        include: [{
               model: Role,
               as: 'roles',
-        },
-              ],
+        },],
         });
         const hasAccess = await can(user, permission, role);
   
         if (hasAccess) {
+          req.userPermissions = await getUserPermissions(user);
+          console.log('++++++', req.userPermissions);
           next();
         } else {
           res.status(401).send('Vous avez pas les permissions');

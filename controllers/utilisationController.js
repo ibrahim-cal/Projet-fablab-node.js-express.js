@@ -12,10 +12,13 @@ exports.utilisation_list = async function (req, res, next) {
     if (!user) {
     return res.redirect("/catalog/utilisateur/login");
     }
+    const userPermissions = req.userPermissions;
+
+    let utilisation_list;
+    let utilisation_listMembre;
 /*
-    checkPermission("lireUtilisation", "membre"), req, res, async () => {
-      
-      const utilisation_listMembre = await Utilisation.findAll({
+    if (userPermissions.includes('lireMesUtilisations')) {
+      utilisation_listMembre = await Utilisation.findAll({
           where: { utilisateurId : user.id},
           include: [Machine, Utilisateur], 
         });
@@ -23,16 +26,16 @@ exports.utilisation_list = async function (req, res, next) {
              "Liste de mes utilisations",
            utilisation_listMembre, user: req.user });
     }
-     
-      checkPermission("lireUtilisation", "manager", req, res, async () => {
-  */
-    const utilisation_list = await Utilisation.findAll({ // on récupere la liste des utilisations et on la stocke
+
+    else if (userPermissions.includes('lireToutesUtilisations'))
+    {*/
+     utilisation_list = await Utilisation.findAll({ // on récupere la liste des utilisations et on la stocke
       include: [Machine, Utilisateur],                  // dans utilisation_list, pour ensuite la reutiliser dans la vue
     });
     res.render("utilisation_list", { title: "Liste des utilisations",
      utilisation_list, user: req.user });
-     // })
-      
+     
+  
   } catch (error) {
     next(error);
   }

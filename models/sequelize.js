@@ -4,9 +4,7 @@ const { Sequelize, DataTypes, Model } = require("sequelize");
 const sequelize = require ("./sequelizeInstance");
 const { deserializeUser } = require("passport");
 
-
 const Facture =             require("./facture")(sequelize);
-const LigneFacturation =    require("./ligneFacturation")(sequelize);
 const Machine =             require("./machine")(sequelize);
 const Utilisateur =         require("./utilisateur")(sequelize);
 const Utilisation =         require("./utilisation")(sequelize);
@@ -37,5 +35,5 @@ Utilisateur.belongsToMany(Role, { through: "utilisateur_roles"});
 const RolePermissions = sequelize.model('role_permissions');
 const UtilisateurRoles = sequelize.model('utilisateur_roles');
 
-module.exports = { sequelize, Facture, Utilisation, LigneFacturation,
+module.exports = { sequelize, Facture, Utilisation,
      Machine, Utilisateur, Role, Permission, RolePermissions, UtilisateurRoles};

@@ -4,15 +4,16 @@ extends layout
 block content
   h4 #{title}
   
-  //if utilisation.factures.length
-    p #[strong Suppression impossible :]  Il y a une facture liée à cette utilisation.
-    p Veuillez d'abord supprimer la facture liée à cette utilisation :
+     //if utilisation.factures.length
+      p #[strong Suppression impossible :]  Il y a une facture liée à cette utilisation.
+      p Veuillez d'abord supprimer la facture liée à cette utilisation :
   
 
-     li 
+      li 
+      else
         
-  else 
-    p Voulez vous vraiment supprimer cette utilisation ?
+
+  p Voulez vous vraiment supprimer cette utilisation ?
   
     form(method="POST", action="")
       .mb-3
