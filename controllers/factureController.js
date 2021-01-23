@@ -86,7 +86,7 @@ exports.facture_create_get =  async function (req, res, next) {
   exports.facture_create_post =[
 
     body("dateFacture", "Date invalide")
-    .optional({ checkFalsy: true })
+    .optional({ checkFalsy: true})
     .isISO8601()
     .toDate(),
 
@@ -113,6 +113,8 @@ exports.facture_create_get =  async function (req, res, next) {
           });
      
            if(sansFactures.length === 0)
+           // si il n'y a aucune utilisations à facturer
+           // on va renvoyer erreur 404 + message
            {
             next(createError(404, "Pas d'utilisations à facturer "+
             "pour ce mois et cet utilisateur. Cliquez sur précedent pour revenir à la page"));
@@ -143,6 +145,8 @@ exports.facture_create_get =  async function (req, res, next) {
 
           sansFactures.forEach(element => {
             element.setFacture(facture);
+            // on ajoute l'id de la facture sur chaque utilisations reprises 
+            // sur cette facture
            })
            res.redirect("/catalog/factures");
         }
