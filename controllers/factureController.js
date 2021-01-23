@@ -98,6 +98,8 @@ exports.facture_create_get =  async function (req, res, next) {
             [Op.and]: [
           { factureId : null},
           { utilisateurId : req.body.utilisateurid}
+          // on récupère les utilisations dont factureid null - donc pas encore facturées -
+          // ET dont l'utilisateur id = l'id de l'utilisateur selectionné dans le formulaire
             ] },
           })
      
@@ -106,23 +108,34 @@ exports.facture_create_get =  async function (req, res, next) {
            
            res= element.duree*element.tarifMachine;
             total = res+ total;
+            // pour chaque utilisation, on va multiplier la durée au tarif. Ensuite on va additionner 
+            // les produits afin d'avoir le total de la facture dans une variable
           })
+
           console.log(total);
           console.log("++++" +req.body.dateFacture);
          
+
           const facture = await Facture.build({
             numeroFacture : 
            ( ""+  (req.body.dateFacture.getFullYear()) + (req.body.dateFacture.getMonth()+1)  ) ,
+           // on récupère l'année et le mois de la date du formulaire afin d'en faire le numFacture
             montant : total,
-            dateFacture : req.body.dateFacture,
           })
-          
+
+          facture.dateFacture = req.body.dateFacture; // on recupere la date du form et on la met dans dateFacture
+          const recupUtilisateur = await Utilisateur.findByPk(req.body.utilisateurid);// on recupere id utilisateur selectionné
+                                                                                      // dans le formulaire
+          await facture.setUtilisateur(recupUtilisateur);// et on le stocke dans utilisateurid de la facture
+
+          await facture.save();// on sauvegarde toutes les données dans une nouvelle facture
+
+         res.redirect("/catalog/factures");
+        
           }  catch (error) {
         next(error);
           }
         },
-  
-
 ];
 
 
