@@ -4,13 +4,13 @@ extends layout
 block content
   h4 #{title}
   
-  if utilisation.ligneFacturations.length 
-    p #[strong Suppression impossible :]  Il y a une ou plusieurs facture(s) liée(s) à cette utilisation.
+  //if utilisation.factures.length
+    p #[strong Suppression impossible :]  Il y a une facture liée à cette utilisation.
     p Veuillez d'abord supprimer la facture liée à cette utilisation :
-    each ligneFacturation in utilisation.ligneFacturations
+  
 
      li 
-        a(href=ligneFacturation.url) Voir facture 
+        
   else 
     p Voulez vous vraiment supprimer cette utilisation ?
   

@@ -11,6 +11,11 @@ module.exports = (sequelize) => {
       type: DataTypes.DATEONLY,
       allowNull: false,
     },
+
+    tarifMachine:{
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: false,      
+    },
   
     name: {
       type: DataTypes.VIRTUAL,

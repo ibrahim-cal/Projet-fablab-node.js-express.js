@@ -17,18 +17,11 @@ block content
       
     .mb-3
       label.form-label(for="utilisateur") utilisateur &ensp;
-      select
+      select(name="utilisateurid")
        each utilisateur  in utilisateurs
+       
         option(value=utilisateur.id)  #{utilisateur.nom}  #{utilisateur.prenom} 
     
-    //.mb-3
-      label.form-label(for="machine") machine :
-      input#machine.form-control(
-        type="text"
-        name="machine"
-        required
-        value=undefined === utilisation ? "" : utilisation.machine.nom
-      )
     .mb-3
       button.btn.btn-primary(type="submit") Submit
 

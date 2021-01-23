@@ -13,16 +13,19 @@ const Utilisation =         require("./utilisation")(sequelize);
 const Role =                require("./role")(sequelize);
 const Permission =          require("./permission")(sequelize);
 
-Facture.hasMany(LigneFacturation);
-LigneFacturation.belongsTo(Utilisation);
-LigneFacturation.belongsTo(Facture);
+//Facture.hasMany(LigneFacturation);
+//LigneFacturation.belongsTo(Utilisation);
+//LigneFacturation.belongsTo(Facture);
+Utilisation.belongsTo(Facture);
+Facture.hasMany(Utilisation);
+
 Utilisateur.hasMany(Facture);
 Facture.belongsTo(Utilisateur);
 
 Machine.hasMany(Utilisation);
 Utilisation.belongsTo(Machine);
 
-Utilisation.hasMany(LigneFacturation);
+//Utilisation.hasMany(LigneFacturation);
 Utilisation.belongsTo(Utilisateur);
 Utilisateur.hasMany(Utilisation);
 

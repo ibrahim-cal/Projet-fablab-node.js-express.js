@@ -1,4 +1,4 @@
-const { Utilisation, Utilisateur, Machine, LigneFacturation } = require("../models/sequelize");
+const { Utilisation, Utilisateur, Machine, Facture } = require("../models/sequelize");
 const createError = require("http-errors");
 const { body, validationResult } = require("express-validator");
 const machine = require("../models/machine");
@@ -122,11 +122,14 @@ exports.utilisation_create_get = async function (req, res, next) {
               errors: errors.array(),
             });
           } else {
-
+            const recupMachine = await Machine.findByPk(req.body.machineidhidden || req.body.machineid);
             const utilisation = await Utilisation.build({// sinon on va créer la nouvelle utilisation
               duree: req.body.duree, 
               // on récupere la durée introduite dans le form
+              tarifMachine : recupMachine.tarif
             });
+
+       
             if (req.body.dateUtilisation) {
               utilisation.dateUtilisation = req.body.dateUtilisation;// idem avec date
             }
@@ -135,9 +138,10 @@ exports.utilisation_create_get = async function (req, res, next) {
            // comme id dans l'url. Car on a 3 versions différentes de formulaire d'encodage
               await utilisation.setUtilisateur(recupUtilisateur);
             
-              const recupMachine = await Machine.findByPk(req.body.machineidhidden || req.body.machineid);
-   
+              
+              
               await utilisation.setMachine(recupMachine);
+
  
             await utilisation.save(); // on sauvegarde le tout en tant que nouvelle utilisation en bdd
             res.redirect("/catalog/machines");// ensuite on redirige vers catalogue machines
@@ -156,7 +160,7 @@ exports.utilisation_create_get = async function (req, res, next) {
     }
       
       const utilisation = await Utilisation.findByPk(req.params.id, {
-        include: [Machine, Utilisateur, LigneFacturation],
+        include: [Machine, Utilisateur, Facture],
       });
       if (utilisation === null) {
         res.redirect("/catalog/utilisateurs");
@@ -175,7 +179,7 @@ exports.utilisation_create_get = async function (req, res, next) {
       return res.redirect("/catalog/utilisateur/login");
     }
       const utilisation = await Utilisation.findByPk(req.params.id, {
-        include: [Machine, Utilisateur, LigneFacturation], // on cherche en BDD, l'utilisation ayant
+        include: [Machine, Utilisateur, Facture], // on cherche en BDD, l'utilisation ayant
                                       // l'id correspondant à celui dans l'url (donc l'utilisation sélectionnée)
       });
       if (utilisation === null) {

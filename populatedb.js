@@ -13,7 +13,7 @@ var utilisateurs = [];
 var roles = [];
 var permissions = [];
 var factures = [];
-var lignefacturations = [];
+//var lignefacturations = [];
 
 async function utilisateurCreate(prenom, nom, email, mdp, role) {
    
@@ -54,7 +54,7 @@ async function factureCreate(numeroFacture, montant, dFacture, utilisateur) {
   factures.push(facture);
   return facture;
 }
-
+/*
 async function ligneFacturationCreate(nomMachine, prix, duree, sousTotal, facture, utilisation) {
   lignefacturationdetail = {
     nomMachine: nomMachine, prix: prix, duree:
@@ -69,6 +69,7 @@ async function ligneFacturationCreate(nomMachine, prix, duree, sousTotal, factur
   lignefacturations.push(lignefacturation);
   return lignefacturation;
 }
+*/
 
 async function utilisationCreate(duree, date, machine, utilisateur) {
   utilisationdetail = { duree: duree };
@@ -150,32 +151,23 @@ async function createRole(){
 
 async function createUtilisation() {
   return await Promise.all([
-    utilisationCreate("20", "2020-12-25", machines[0], utilisateurs[0]),/*
+  /*  utilisationCreate("20", "2020-12-25", machines[0], utilisateurs[0]),/*
     utilisationCreate("30", "2020-12-25", machines[0], utilisateurs[1]),
     utilisationCreate("10", "2020-12-25", machines[1], utilisateurs[2]),
     utilisationCreate("119", "2020-12-25", machines[1], utilisateurs[2]),
-    utilisationCreate("15", "2020-12-25", machines[2], utilisateurs[3]),
-    utilisationCreate("16", "2020-12-25", machines[2], utilisateurs[1]),
-    utilisationCreate("17", "2020-12-25", machines[1], utilisateurs[3]),
-    utilisationCreate("18", "2020-12-25", machines[2], utilisateurs[1]),*/
+*/
  
   ]);
 }
-
+/*
 async function createLigneFacturation() {
   return await Promise.all([
     ligneFacturationCreate("decoupeuse laser", "0.5", "20", "10", factures[0], utilisations[0]),
    /* ligneFacturationCreate("ultimaker imprimante 3d", "0.3", "30", "9",factures[3], utilisations[1]),
     ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "10", "5.50",factures[3], utilisations[2]),
     ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "10", "5.50",factures[1], utilisations[2]),
-    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "10", "5.50",factures[2], utilisations[3]),
-    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "13", "5.50",factures[0], utilisations[1]),
-    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "18", "7.50", factures[1], utilisations[2]),
-    ligneFacturationCreate("ultimaker pro imprimante 3d", "0.55", "20", "6.50", factures[2], utilisations[2]),
-*/
-
   ]);
-}
+}*/
 
 async function createFacture() {
   return await Promise.all([
@@ -195,6 +187,8 @@ async function createUtilisateur() {
     utilisateurCreate("manager", "manager", "manager", "manager", roles[1]),
     utilisateurCreate("membre", "membre", "membre", "membre", roles[0]),
     utilisateurCreate("membre2", "membre2", "membre2", "membre2", roles[0]),
+    utilisateurCreate("membre2", "membre2", "kouidar", "kouidar", roles[1]),
+    utilisateurCreate("membre2", "membre2", "kalombo", "kalombo", roles[1]),
 
   ]);
 }
@@ -212,7 +206,7 @@ async function createUtilisateur() {
     await createMachine();
     await createFacture();
     await createUtilisation();
-    await createLigneFacturation();
+    //await createLigneFacturation();
 
     sequelize.close();
   } catch (err) {

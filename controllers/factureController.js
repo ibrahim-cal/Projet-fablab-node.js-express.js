@@ -1,10 +1,11 @@
-const { Facture, Utilisateur, LigneFacturation, Utilisation, Role, Permission } = require("../models/sequelize");
+const { Facture, Utilisateur,LigneFacturation, Utilisation, Role, Permission } = require("../models/sequelize");
 const createError = require("http-errors");
 const { body, validationResult } = require("express-validator");
 const facture = require("../models/facture");
 const passport = require("passport");
 var session = require("express-session");
 const { checkPermission } = require("../middlewares/roles")
+const { Op } = require("sequelize");
 
 exports.facture_list =  async function (req, res, next) {
 
@@ -29,7 +30,7 @@ exports.facture_list =  async function (req, res, next) {
                   //*************** Table ligne fact********************** */
     
     const facture_list = await Facture.findAll({ // on fait une requete en BDD dans la table facture, en incluant les tables 
-      include: [LigneFacturation, Utilisateur], // LigneFacturation et utilisateur. On stocke le tout dans une variable facture_list
+      include: [Utilisation, Utilisateur], // LigneFacturation et utilisateur. On stocke le tout dans une variable facture_list
     });
     res.render("facture_list", { title: "Liste factures", facture_list , user: req.user});// on renvoie vers la page pug "facture_list"
   
@@ -49,7 +50,7 @@ exports.facture_list =  async function (req, res, next) {
     }
       const factureId = req.params.id; // on recupere l'id de la facture
       const facture = await Facture.findByPk(factureId, {// requete dans la BDD pour récuperer la facture dont 
-        include: [LigneFacturation, Utilisateur],// l'id correspond à celui reçu juste avant
+        include: [Utilisation, Utilisateur],// l'id correspond à celui reçu juste avant
       });   //*************** Table ligne fact***************** */
       
       if (facture !== null) {
@@ -69,13 +70,13 @@ exports.facture_create_get =  async function (req, res, next) {
     if (!user) {
       return res.redirect("/catalog/utilisateur/login");
     }         //*************** Table ligne fact ****************/
-    const [utilisateurs, factures, ligneFacturations, utilisations] = await Promise.all([
-      Utilisateur.findAll(),    // on va récuperer les contenus des tables utilisateur, ligneFact, utilisation
-      LigneFacturation.findAll(),
+    const [utilisateurs, factures, utilisations] = await Promise.all([
+      Utilisateur.findAll(),    // on va récuperer les contenus des tables utilisateur, utilisation
       Utilisation.findAll(),
       
     ]);
-    res.render("facture_form", { title: "Nouvelle facture",utilisateurs, factures, ligneFacturations, utilisations, user: req.user });
+    res.render("facture_form", { title: "Nouvelle facture",utilisateurs, factures,
+     utilisations, user: req.user });
   } catch (error) {
     next(error);
   }
@@ -83,34 +84,48 @@ exports.facture_create_get =  async function (req, res, next) {
 };
   
   exports.facture_create_post =
-  /* [
-    
+  [
     body("dateFacture", "Date invalide")
     .optional({ checkFalsy: true })
     .isISO8601()
     .toDate(),
+
     async function (req, res, next) {
-    try {
-      const sansFactures = ligneFacturation.filter(ligneF =>
-        ligneF.FactureId === null)
-      
-      const usersId = []
+      try {
+        
+        const sansFactures = await Utilisation.findAll({
+          where : {
+            [Op.and]: [
+          { factureId : null},
+          { utilisateurId : req.body.utilisateurid}
+            ] },
+          })
+     
+          total = 0;
+          sansFactures.forEach(element => {
+           
+           res= element.duree*element.tarifMachine;
+            total = res+ total;
+          })
+          console.log(total);
+          console.log("++++" +req.body.dateFacture);
+         
+          const facture = await Facture.build({
+            numeroFacture : 
+           ( ""+  (req.body.dateFacture.getFullYear()) + (req.body.dateFacture.getMonth()+1)  ) ,
+            montant : total,
+            dateFacture : req.body.dateFacture,
+          })
+          
+          }  catch (error) {
+        next(error);
+          }
+        },
+  
 
-      sansFactures.forEach(element => {
-        const userId = element.utilisateurId
-        if (!usersId.includes(userId)) {
-          usersId.push(userId)
-        }
-      })
+];
 
-      const users = []
-      usersId.forEach(async id => {
-        const user = await Utilisateur.findByPk(id)
-        user.push(user)
-      })
-      // A TERMINER ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-*/
   exports.facture_delete_get = async function (req, res, next) {
  
     try {
