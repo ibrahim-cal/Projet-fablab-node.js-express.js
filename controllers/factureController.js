@@ -112,6 +112,12 @@ exports.facture_create_get =  async function (req, res, next) {
             ] },
           });
      
+           if(sansFactures.length === 0)
+           {
+            next(createError(404, "Pas d'utilisations à facturer "+
+            "pour ce mois et cet utilisateur. Cliquez sur précedent pour revenir à la page"));
+           }
+          else{
           total = 0;
           sansFactures.forEach(element => {
            
@@ -120,9 +126,6 @@ exports.facture_create_get =  async function (req, res, next) {
             // pour chaque utilisation, on va multiplier la durée au tarif. Ensuite on va additionner 
             // les produits afin d'avoir le total de la facture dans une variable
           })
-        
-          console.log(total);
-          console.log("++++" +req.body.dateFacture);
          
           const facture =  Facture.build({
             numeroFacture : 
@@ -140,12 +143,10 @@ exports.facture_create_get =  async function (req, res, next) {
 
           sansFactures.forEach(element => {
             element.setFacture(facture);
-            
-         
            })
            res.redirect("/catalog/factures");
         }
-        
+      }// fin else
           }  catch (error) {
         next(error);
           }
