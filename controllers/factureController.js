@@ -136,15 +136,14 @@ exports.facture_create_get =  async function (req, res, next) {
                                                                                       // dans le formulaire
           await facture.setUtilisateur(recupUtilisateur);// et on le stocke dans utilisateurid de la facture
      
-           // sansFactures.setFacture(facture);
           await facture.save();// on sauvegarde toutes les données dans une nouvelle facture
-          
-          //res.redirect("/catalog/factures");
 
           sansFactures.forEach(element => {
             element.setFacture(facture);
+            
          
            })
+           res.redirect("/catalog/factures");
         }
         
           }  catch (error) {
