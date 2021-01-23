@@ -1,4 +1,4 @@
-const { Facture, Utilisateur, Utilisation, Role, Permission } = require("../models/sequelize");
+const { Facture, Utilisateur, Utilisation, Machine, Role, Permission } = require("../models/sequelize");
 const createError = require("http-errors");
 const { body, validationResult } = require("express-validator");
 const facture = require("../models/facture");
@@ -48,13 +48,21 @@ exports.facture_list =  async function (req, res, next) {
     if (!user) {
       return res.redirect("/catalog/utilisateur/login");
     }
-      const factureId = req.params.id; // on recupere l'id de la facture
-      const facture = await Facture.findByPk(factureId, {// requete dans la BDD pour récuperer la facture dont 
-        include: [Utilisation, Utilisateur],// l'id correspond à celui reçu juste avant
-      });   //*************** Table ligne fact***************** */
+      const factid = req.params.id;
+      // on recupere l'id de la facture
+      const utilisation_list = await Utilisation.findAll({// requete dans la BDD pour récuperer les utilisations dont 
+                  // facture id = à l'id de la facture selectionnée précedemment
+        where : {factureId: factid},
+        include : Machine,
+        
+      });   
       
-      if (facture !== null) {
-        res.render("facture_detail", { title: "Detail facture", facture, user: req.user });
+      const fact = await Facture.findByPk(factid, {// requete dans la BDD pour récuperer la facture dont 
+        include: [Utilisation, Utilisateur],// l'id correspond à celui reçu juste avant
+      }); 
+      
+      if (utilisation_list !== null) {
+        res.render("facture_detail", { title: "Detail facture", utilisation_list,fact,  user: req.user });
       } else {
         next(createError(404, "Pas de details de facture"));
       }
@@ -69,7 +77,7 @@ exports.facture_create_get =  async function (req, res, next) {
     const user = req.user;
     if (!user) {
       return res.redirect("/catalog/utilisateur/login");
-    }         //*************** Table ligne fact ****************/
+    }      
     const [utilisateurs, factures, utilisations] = await Promise.all([
       Utilisateur.findAll(),    // on va récuperer les contenus des tables utilisateur, utilisation
       Utilisation.findAll(),
@@ -131,10 +139,9 @@ exports.facture_create_get =  async function (req, res, next) {
          
           const facture =  Facture.build({
             numeroFacture : 
-           ( ""+  (req.body.dateFacture.getFullYear()) + (req.body.dateFacture.getMonth()+1)  ) ,
+           ( ""+  (req.body.dateFacture.getFullYear()) + (req.body.dateFacture.getMonth()+1) ) ,
            // on récupère l'année et le mois de la date du formulaire afin d'en faire le numFacture
-            montant : total,
-            
+            montant : total,   
           })
           facture.dateFacture = req.body.dateFacture; // on recupere la date du form et on la met dans dateFacture
           const recupUtilisateur = await Utilisateur.findByPk(req.body.utilisateurid);// on recupere id utilisateur selectionné

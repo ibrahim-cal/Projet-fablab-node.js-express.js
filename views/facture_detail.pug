@@ -5,22 +5,24 @@ block content
   ul
     h5= title
     p 
+    p Numero facture :      #{fact.numeroFacture}
+    p Montant :           #{fact.montant}
+    p Date facture :       #{fact.dateFacture}
+    p Nom - prenom :       #{fact.utilisateur.nom}  #{fact.utilisateur.prenom}
+    
     table.table
+    
       thead      
         tr
-          th(scope="col") Numero facture
-          th(scope="col") Montant
-          th(scope="col") Date facture
-          th(scope="col") Nom machine
-          th(scope="col") Tarif en €
-          th(scope="col") Duree en minutes
-          th(scope="col") Sous total en €
 
-      tbody           
-            td= facture.numeroFacture
-            td= facture.montant
-            td= facture.dateFacture 
-            td   
-            td         
-            td
-            td
+          th(scope="col") Nom equipement
+          th(scope="col") Prix par minute en €
+          th(scope="col") Minutes à facturer
+           th(scope="col") Sous total en €
+      each utilisation in utilisation_list  
+       tbody  
+               
+            td= utilisation.machine.nom
+            td= utilisation.tarifMachine
+            td= utilisation.duree
+            td= (Math.round(utilisation.tarifMachine  * utilisation.duree)) 

@@ -4,24 +4,27 @@ extends layout
 block content
   h4 #{title}
   
-     //if utilisation.factures.length
+  if utilisation.factureId === null
+          
+        p Voulez vous vraiment supprimer cette utilisation ?
+
+          form(method="POST", action="")
+            .mb-3
+              input#utilisationid.form-control(
+                type="hidden",
+                name="utilisationid",
+                required="true",
+                value=utilisation._id
+              )
+
+            button.btn.btn-primary(type="submit") Supprimer
+
+  else
       p #[strong Suppression impossible :]  Il y a une facture liée à cette utilisation.
       p Veuillez d'abord supprimer la facture liée à cette utilisation :
-  
+      
 
-      li 
-      else
+
+      
+
         
-
-  p Voulez vous vraiment supprimer cette utilisation ?
-  
-    form(method="POST", action="")
-      .mb-3
-        input#utilisationid.form-control(
-          type="hidden",
-          name="utilisationid",
-          required="true",
-          value=utilisation._id
-        )
-
-      button.btn.btn-primary(type="submit") Supprimer
