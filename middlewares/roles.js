@@ -1,6 +1,7 @@
-const {Utilisateur, Role,Permission, RolePermissions,} = require('../models/sequelize');
+const {Utilisateur, Role,Permission, RolePermissions} = require('../models/sequelize');
   
-async function getUserPermissions(user) {
+
+exports.checkP =async function getUserPermissions(user) {
   const userRoles = user.roles;
 
   const all = await Promise.all(
@@ -66,3 +67,7 @@ async function getUserPermissions(user) {
       }
     };
   };
+/*
+  exports.can1 = async function can1(permission, userId)
+{}
+*/

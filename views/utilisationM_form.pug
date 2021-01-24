@@ -27,17 +27,9 @@ block content
         value=undefined === utilisation ? "" : utilisation.dateUtilisation
       )
    
-    .mb-3
-      label.form-label(for="utilisateur") utilisateur &ensp;
-      select(name= "utilisateurid")
-       each utilisateur  in utilisateurs
-        option(value=utilisateur.id)  #{utilisateur.nom}  #{utilisateur.prenom}    
-      input(
-        type="hidden" 
-        value=utilisateur && utilisateur.id
-        name="utilisateuridhidden") 
+     
       
-      .mb-3
+    .mb-3
       label.form-label(for="machine") machine :
       input#machine.form-control(
         type="text"

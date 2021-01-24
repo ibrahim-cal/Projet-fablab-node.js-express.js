@@ -1,0 +1,71 @@
+extends layout
+block content
+  br
+  h4 #{title} :
+  hr
+
+  form(method="POST")
+    .mb-3
+      label.form-label(for="prenom") prénom :
+      input#prenom.form-control(
+        type="text"
+        placeholder=""
+        name="prenom"
+        required
+        value=undefined === utilisateur ? "" : utilisateur.prenom
+      )
+    .mb-3
+      label.form-label(for="nom") nom  :
+      input#nom.form-control(
+        type="text"
+        placeholder=""
+        name="nom"
+        required
+        value=undefined === utilisateur ? "" : utilisateur.nom
+      )
+    .mb-3
+      label.form-label(for="email") email :
+      input#email.form-control(
+        type="text"
+        placeholder="Ex@exemple.com"
+        name="email"
+        required
+        value=undefined === utilisateur ? "" : utilisateur.email
+      )
+    .mb-3
+      label.form-label(for="mdp") ancien mot de passe :
+      input#mdp.form-control(
+        
+        type="text"
+        placeholder="  "
+        name="ancienmdp"
+        required
+              
+      )
+    .mb-3
+      label.form-label(for="mdp") nouveau mot de passe : 
+      input#mdp.form-control(
+        
+        type="text"
+        placeholder="  "
+        name="nouveaumdp"
+        required
+              
+      )
+    .mb-3
+      label.form-label(for="mdp") confirmez votre nouveau mot de passe : 
+      input#mdp.form-control(
+        
+        type="text"
+        placeholder="  "
+        name="nouveaumdp2"
+        required
+       
+      )
+    .mb-3
+      button.btn.btn-primary(type="submit") Enregistrer
+
+  if errors
+    ul
+      each error in errors
+        li!= error.msg

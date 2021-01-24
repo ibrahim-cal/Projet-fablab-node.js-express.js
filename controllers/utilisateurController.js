@@ -33,17 +33,14 @@ exports.utilisateur_list = async function (req, res, next) {
       return res.redirect("/catalog/utilisateur/login");
     }
 
-           // alors on autorise la suite. Sinon, on renvoit une erreur 403 ligne 28
-    
     // on récupere la liste des utilisateurs et on la stocke
     const utilisateur_list = await Utilisateur.findAll({// dans utilisateur_list, pour ensuite la reutiliser dans la vue
-      include : Utilisation,
+      include : [Utilisation, Facture],
       order: [["nom", "ASC"]],
     });
-    res.render("utilisateur_list", { title: "Voici la liste des utilisateurs :", utilisateur_list, Utilisation, user: req.user });
+    res.render("utilisateur_list", { title: "Voici la liste des utilisateurs :",
+     utilisateur_list, Utilisation, user: req.user });
     
-
-    return next(createError(403));
   
   } catch (error) {
     next(error);
@@ -105,8 +102,17 @@ exports.utilisateur_create_get = function (req, res, next) {
     if (utilisateur === null) { // si on ne trouve pas l'utilisateur
       next(createError(404, "utilisateur non trouvé ")); // on renvoie une erreur
     } else {
+        // ***************** SI MEMBRE 
+        
+      res.render("utilisateur_updateUtilisateur", { title : "Modifier mes informations ",
+      utilisateur, user : req.user
+
+      });
+
+        //***************** SI MANAGER */
+
       res.render("utilisateur_update",{  //sinon on affiche le formulaire de modification
-        title : "Modification utilisateur",
+        title : "Modification informations utilisateur",
         utilisateur,
         user: req.user
       });

@@ -2,7 +2,7 @@ extends layout
 
 block content
   br
-  h5 #{title} -  #{utilisation.utilisateur.nom}
+  h5 #{title} -  
    h6
      table.table
         
@@ -17,9 +17,8 @@ block content
              th(scope="col") 
       
           tbody 
-            
+            each utilisation in utilisation_list
               tr
-                
                 td  #{utilisation.dateUtilisation}  
                 td  #{utilisation.duree}
                 td  #{utilisation.machine.nom}

@@ -4,21 +4,23 @@ const { body, validationResult } = require("express-validator");
 const machine = require("../models/machine");
 const passport = require("passport");
 var session = require("express-session");
-const { checkPermission } = require("../middlewares/roles")
+const { checkPermission, checkP, role } = require("../middlewares/roles")
 
 exports.utilisation_list = async function (req, res, next) {
   try {
     const user = req.user;
     if (!user) {
-    return res.redirect("/catalog/utilisateur/login");
+      return res.redirect('/catalog/utilisateur/login');
     }
-    const userPermissions = req.userPermissions;
+    
+   
 
     let utilisation_list;
     let utilisation_listMembre;
-/*
-    if (userPermissions.includes('lireMesUtilisations')) {
-      utilisation_listMembre = await Utilisation.findAll({
+//          ************************ SI MEMBRE ...
+  
+     {   
+      utilisation_listMembre = await Utilisation.findAll({    
           where: { utilisateurId : user.id},
           include: [Machine, Utilisateur], 
         });
@@ -27,15 +29,15 @@ exports.utilisation_list = async function (req, res, next) {
            utilisation_listMembre, user: req.user });
     }
 
-    else if (userPermissions.includes('lireToutesUtilisations'))
-    {*/
+   //                             ***************************** SI MANAGER .....
+/*
      utilisation_list = await Utilisation.findAll({ // on récupere la liste des utilisations et on la stocke
       include: [Machine, Utilisateur],                  // dans utilisation_list, pour ensuite la reutiliser dans la vue
     });
     res.render("utilisation_list", { title: "Liste des utilisations",
      utilisation_list, user: req.user });
-     
-  
+*/
+    
   } catch (error) {
     next(error);
   }
@@ -48,12 +50,13 @@ exports.utilisation_list = async function (req, res, next) {
       return res.redirect("/catalog/utilisateur/login");
     }
       const utilisationId = req.params.id; // on recupere l'id de l'url (celui de l'utilisateur selectionné)
-      const utilisation = await Utilisation.findByPk(utilisationId, {// et on lance une recherche en BDD 
-        include: [Utilisateur, Machine],  });
-      if (utilisation !== null) {
-        res.render("utilisation_detail", { title: "Details des utilisations", utilisation, user: req.user});
+      const utilisation_list = await Utilisation.findAll({// et on lance une recherche en BDD 
+        where : {utilisateurId : utilisationId},
+        include : [Utilisateur, Machine]  });
+      if (utilisation_list.length >0) {
+        res.render("utilisation_detail", { title: "Details des utilisations", utilisation_list, user: req.user});
       } else {
-        next(createError(404, "Pas d'utilisations"));
+        next(createError(404, "Pas d'utilisations, cliquez sur précedent pour revenir à la page"));
       }
     } catch (error) {
       next(error);
@@ -136,7 +139,7 @@ exports.utilisation_create_get = async function (req, res, next) {
             if (req.body.dateUtilisation) {
               utilisation.dateUtilisation = req.body.dateUtilisation;// idem avec date
             }
-            const recupUtilisateur = await Utilisateur.findByPk(req.body.utilisateuridhidden || req.body.utilisateurid);
+            const recupUtilisateur = await Utilisateur.findByPk(req.body.utilisateuridhidden || req.body.utilisateurid || user.id);
            // 115 - 121 : on va récuperer l'id machine et/ou utilisateur ou les deux en fonction de ce qui est passé
            // comme id dans l'url. Car on a 3 versions différentes de formulaire d'encodage
               await utilisation.setUtilisateur(recupUtilisateur);
@@ -165,6 +168,8 @@ exports.utilisation_create_get = async function (req, res, next) {
       const utilisation = await Utilisation.findByPk(req.params.id, {
         include: [Machine, Utilisateur, Facture],
       });
+      
+      
       if (utilisation === null) {
         res.redirect("/catalog/utilisateurs");
       } else {
