@@ -31,7 +31,7 @@ router.post("/facture/:id/delete", //checkPermission('supprimerFacture', 'compta
 router.get("/facture/:id", facture_controller.facture_detail);
 // GET request for list of all facture items.
 router.get("/factures", facture_controller.facture_list);
-
+router.get("/facturesMembre", facture_controller.facture_listMembre);
 
 // GET request for creating a machine. NOTE This must come before routes that display machine (uses id).
 router.get("/machine/create", 
@@ -43,10 +43,11 @@ router.post("/machine/create", //
 machine_controller.machine_create_post);
 // GET request to delete machine.
 router.get("/machine/:id/delete",
-checkPermission('supprimerMachine', 'manager'),
+//checkPermission('supprimerMachine', 'manager'),
  machine_controller.machine_delete_get);
 // POST request to delete machine.
-router.post("/machine/:id/delete", checkPermission('supprimerMachine', 'manager'),machine_controller.machine_delete_post);
+router.post("/machine/:id/delete", //checkPermission('supprimerMachine', 'manager'),
+machine_controller.machine_delete_post);
 // GET request to update machine.
 router.get("/machine/:id/update",
 //checkPermission('modifierMachine', 'manager'),
@@ -66,7 +67,10 @@ router.get("/utilisateur/create", utilisateur_controller.utilisateur_create_get)
 router.post("/utilisateur/create", utilisateur_controller.utilisateur_create_post);
 // GET request to update utilisateur.
 router.get("/utilisateur/:id/update", utilisateur_controller.utilisateur_update_get);
+router.get("/utilisateur/:id/updateMembre", utilisateur_controller.utilisateur_updateMembre_get);
 // POST request to update utilisateur.
+router.post("/utilisateur/:id/updateMembre",// checkPermission('modifierUtilisateur', 'manager'),
+ utilisateur_controller.utilisateur_updateMembre_post);
 router.post("/utilisateur/:id/update",// checkPermission('modifierUtilisateur', 'manager'),
  utilisateur_controller.utilisateur_update_post);
 // GET request for one utilisateur.
@@ -88,5 +92,6 @@ router.get("/utilisation/:id", utilisation_controller.utilisation_detail);
 // GET request for list of all utilisation items.
 router.get("/utilisations",// checkPermission('lireMesUtilisations', 'membre'), 
 utilisation_controller.utilisation_list);
+router.get("/utilisationsMembre", utilisation_controller.utilisation_listMembre);
 
 module.exports = router;

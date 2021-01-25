@@ -4,7 +4,8 @@ block content
 
 
   ul
-    a(href='/catalog/machine/create') Insérer une nouvelle machine
+    if permissions.includes("creerMachine")
+      a(href='/catalog/machine/create') Insérer une nouvelle machine
     p 
     table.table
       thead
@@ -21,9 +22,11 @@ block content
             td= machine.nom
             td= machine.tarif+("€")
             td
-              a(href=machine.url + '/delete')  Supprimer 
+              if permissions.includes("supprimerMachine")
+                  a(href=machine.url + '/delete')  Supprimer 
             td
-               a(href=machine.url + '/update')  Modifier
+              if permissions.includes("modifierMachine")
+                 a(href=machine.url + '/update')  Modifier
             td
               a(href='/catalog/utilisation/create?machineid='+ machine.id) Utiliser 
     

@@ -4,7 +4,7 @@ const { body, validationResult } = require("express-validator");
 const facture = require("../models/facture");
 const passport = require("passport");
 var session = require("express-session");
-const { can1 } = require("../middlewares/roles")
+const { can1, getUserPermissions } = require("../middlewares/roles")
 const { Op } = require("sequelize");
 
 exports.facture_list =  async function (req, res, next) {
@@ -13,38 +13,44 @@ exports.facture_list =  async function (req, res, next) {
     if (!user) {
       return res.redirect("/catalog/utilisateur/login");
     }
+    let facture_list;
 
-  
+     if (await can1("lireToutesFactures", user.id) ==  true){
+     facture_list = await Facture.findAll({ // on fait une requete en BDD dans la table facture, en incluant les tables 
+      include: [Utilisation, Utilisateur], // LigneFacturation et utilisateur. On stocke le tout dans une variable facture_list
+    });
+    let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);  
+    res.render("facture_list", { title: "Liste factures", facture_list , user: req.user, permissions:pname});// on renvoie vers la page pug "facture_list"
+  }
+  } catch (error) {
+    next(error);
+  }
+}
+
+exports.facture_listMembre =  async function (req, res, next) {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.redirect("/catalog/utilisateur/login");
+    }
      let facture_listMembre;
-     let facture_list;
-if (await can1("lireMesFactures", userID) ==  true){
-     //        *************************** SI l'utilisateur connecté à la 
-     //     ******* permission "lireMesFactures" -> on fait ça ..
      
-     {
+    //if (await can1("lireFacturesMembre", user.id) ==  true){
+
       facture_listMembre = await Facture.findAll({
           where: { utilisateurId : user.id},
           include: [ Utilisateur],     
         });
-          res.render("facture_listMembreConnecte", { title: "Liste de mes  factures",
+        let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);   
+          res.render("facture_listMembreConnecte", { title: "Liste de mes  factures",permissions:pname,
           facture_listMembre, user: req.user });
-        
-     }
-    }
-//    ******************* si l'utilisateur connecté à la permission
-//    *************  "lireToutesFactures"   on fait ça .....
-
-     facture_list = await Facture.findAll({ // on fait une requete en BDD dans la table facture, en incluant les tables 
-      include: [Utilisation, Utilisateur], // LigneFacturation et utilisateur. On stocke le tout dans une variable facture_list
-    });
-    res.render("facture_list", { title: "Liste factures", facture_list , user: req.user});// on renvoie vers la page pug "facture_list"
-
+    //}
 
   } catch (error) {
     next(error);
   }
-
 }
+
 
 
   exports.facture_detail = async function (req, res, next) {
@@ -53,6 +59,7 @@ if (await can1("lireMesFactures", userID) ==  true){
     if (!user) {
       return res.redirect("/catalog/utilisateur/login");
     }
+    if (await can1("lireFactureDetail", user.id) ==  true){
       const factid = req.params.id;
       // on recupere l'id de la facture
       const utilisation_list = await Utilisation.findAll({// requete dans la BDD pour récuperer les utilisations dont 
@@ -67,11 +74,12 @@ if (await can1("lireMesFactures", userID) ==  true){
       }); 
       
       if (utilisation_list !== null) {
-        res.render("facture_detail", { title: "Detail facture", utilisation_list,fact,  user: req.user });
+        let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);   
+        res.render("facture_detail", { title: "Detail facture", utilisation_list,fact,  user: req.user , permissions:pname});
       } else {
         next(createError(404, "Pas de details de facture"));
       }
-      µ
+    }
     } catch (error) {
       next(error);
     }
@@ -84,26 +92,31 @@ exports.facture_create_get =  async function (req, res, next) {
     if (!user) {
       return res.redirect("/catalog/utilisateur/login");
     }      
+
+  if (await can1("creerFacture", user.id) ==  true){
+
     const [utilisateurs, factures, utilisations] = await Promise.all([
       Utilisateur.findAll(),    // on va récuperer les contenus des tables utilisateur, utilisation
       Utilisation.findAll(),
-      
     ]);
-    res.render("facture_form", { title: "Nouvelle facture",utilisateurs, factures,// on renvoie vers la vue pug pour generer facture
-     utilisations, user: req.user });
-  } catch (error) {
+    let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);   
+    res.render("facture_form", { title: "Nouvelle facture",utilisateurs, factures, permissions:pname,// on renvoie vers la vue pug pour generer facture
+     utilisations, user: req.user});
+  }
+    } catch (error) {
     next(error);
   }
 
 };
   
-  exports.facture_create_post =[
+  exports.facture_create_post =
+  
+  [
 
     body("dateFacture", "Date invalide")
     .optional({ checkFalsy: true})
     .isISO8601()
     .toDate(),
-
     async function (req, res, next) {
       try {
         const errors = validationResult(req); // on traite les erreurs de validation
@@ -170,7 +183,9 @@ exports.facture_create_get =  async function (req, res, next) {
         next(error);
           }
         },  
+      
 ];
+  
 
 
   exports.facture_delete_get = async function (req, res, next) {
@@ -180,15 +195,18 @@ exports.facture_create_get =  async function (req, res, next) {
     if (!user) {
       return res.redirect("/catalog/utilisateur/login");
     }
+    if (await can1("supprimerFacture", user.id) ==  true){
       const facture = await Facture.findByPk(req.params.id, {// on va recuperer la facture dont l'id est celui de la facture selectionnée
         include: [Utilisateur, Utilisation],       
       });
       if (facture === null) {
         res.redirect("/catalog/facture");
       } else {
-        res.render("facture_delete", { title: "Suppression facture", facture , user: req.user});
+        let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);   
+        res.render("facture_delete", { title: "Suppression facture", facture , user: req.user, permissions:pname,});
       }               // on renvoit vers le formulaire pug de suppression d'une facture
-    } catch (error) {
+    }
+   } catch (error) {
       next(error);
     }
   };

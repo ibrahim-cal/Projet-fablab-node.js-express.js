@@ -5,14 +5,19 @@ const machine = require("../models/machine");
 const passport = require("passport");
 var session = require("express-session");
 
+const { getUserPermissions, can1} = require("../middlewares/roles")
+
 exports.index = async function (req, res, next) {
+  const user = req.user;
   const newlyAuthenticated = req.session.newlyAuthenticated;
   delete req.session.newlyAuthenticated;
+  let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);   
     res.render("index", {
-      title: "Accueil fabLab ",
+      title: "Accueil fabLab ", 
       user: req.user,
       currentUrl: req.originalUrl,
       newlyAuthenticated,
+      permissions:pname,
     });
   };
 
@@ -26,18 +31,21 @@ exports.index = async function (req, res, next) {
       const machine_list = await Machine.findAll({  // on récupere la liste des machines en la stockant dans variable
         order: [["nom", "ASC"]],  // machine_list
       });
-      res.render("machine_list", { title: "Voici la liste des machines disponibles :", machine_list, user: req.user });
+      let pname = await getUserPermissions(req.user?req.user.dataValues.id:-1);
+      res.render("machine_list", { title: "Voici la liste des machines disponibles :", machine_list, user: req.user, 
+    permissions:pname });
     } catch (error) {
       next(error);
     }
   };
 
-exports.machine_create_get = function (req, res, next) {
+exports.machine_create_get = async function (req, res, next) {
   const user = req.user;
     if (!user) {
       return res.redirect("/login");
     }
-    res.render("machine_form", { title: "Encoder une nouvelle machine", user: req.user},  );
+    let pname = await getUserPermissions(req.user?req.user.dataValues.id:-1);
+    res.render("machine_form", { title: "Encoder une nouvelle machine", user: req.user, permissions:pname }, );
   };
   
   exports.machine_create_post =  [
@@ -91,10 +99,13 @@ exports.machine_update_get = async function (req, res, next) {
   if (machine === null) { // si on ne trouve pas la machine
     next(createError(404, "Machine non trouvée ")); // on renvoie une erreur
   } else {
+    let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);
+  
     res.render("machine_form",{  // on affiche le formulaire de modification
       title : "Modification machine",
       machine,
       user: req.user,
+     permissions:pname
     });
   }
 }  catch (error){
@@ -149,7 +160,9 @@ exports.machine_update_get = async function (req, res, next) {
       if (machine === null){ // si machine non trouvée en bdd, redirection
         res.redirect("/catalog/machines"); 
       } else{
-        res.render("machine_delete", {title : "Suppression de la machine ", machine});
+        let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);
+      
+        res.render("machine_delete", {title : "Suppression de la machine ", machine , permissions:pname});
       } // Si on a trouvé la machine en BDD, on redirige vers template avec infos citées
    
     } catch(error){

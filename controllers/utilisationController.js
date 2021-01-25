@@ -4,7 +4,39 @@ const { body, validationResult } = require("express-validator");
 const machine = require("../models/machine");
 const passport = require("passport");
 var session = require("express-session");
-const { checkPermission, checkP, role } = require("../middlewares/roles")
+const { can1, getUserPermissions } = require("../middlewares/roles")
+
+exports.utilisation_listMembre = async function (req, res, next) {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.redirect('/catalog/utilisateur/login');
+    }
+    
+    let utilisation_listMembre;
+
+    if (await can1("lireUtilisationsMembre", user.id) ==  true){
+
+      utilisation_listMembre = await Utilisation.findAll({    
+          where: { utilisateurId : user.id},
+          include: [Machine, Utilisateur], 
+        });
+          res.render("utilisation_listMembreConnecte", { title:
+             "Liste de mes utilisations",
+           utilisation_listMembre, user: req.user });
+
+     utilisation_list = await Utilisation.findAll({ // on récupere la liste des utilisations et on la stocke
+      include: [Machine, Utilisateur],                  // dans utilisation_list, pour ensuite la reutiliser dans la vue
+    });
+
+    let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);  
+    res.render("utilisation_list", { title: "Liste des utilisations",
+     utilisation_list, user: req.user, permissions:pname });
+  }
+  } catch (error) {
+    next(error);
+  }
+};
 
 exports.utilisation_list = async function (req, res, next) {
   try {
@@ -13,31 +45,16 @@ exports.utilisation_list = async function (req, res, next) {
       return res.redirect('/catalog/utilisateur/login');
     }
     
-   
-
     let utilisation_list;
-    let utilisation_listMembre;
-//          ************************ SI MEMBRE ...
-  
-     {   
-      utilisation_listMembre = await Utilisation.findAll({    
-          where: { utilisateurId : user.id},
-          include: [Machine, Utilisateur], 
-        });
-          res.render("utilisation_listMembreConnecte", { title:
-             "Liste de mes utilisations",
-           utilisation_listMembre, user: req.user });
-    }
-
-   //                             ***************************** SI MANAGER .....
-/*
+    if (await can1("lireToutesUtilisations", user.id) ==  true){
      utilisation_list = await Utilisation.findAll({ // on récupere la liste des utilisations et on la stocke
       include: [Machine, Utilisateur],                  // dans utilisation_list, pour ensuite la reutiliser dans la vue
     });
+    let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);
+
     res.render("utilisation_list", { title: "Liste des utilisations",
-     utilisation_list, user: req.user });
-*/
-    
+     utilisation_list, user: req.user, permissions:pname });
+  }
   } catch (error) {
     next(error);
   }
@@ -54,7 +71,8 @@ exports.utilisation_list = async function (req, res, next) {
         where : {utilisateurId : utilisationId},
         include : [Utilisateur, Machine]  });
       if (utilisation_list.length >0) {
-        res.render("utilisation_detail", { title: "Details des utilisations", utilisation_list, user: req.user});
+        let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1); 
+        res.render("utilisation_detail", { title: "Details des utilisations", utilisation_list, user: req.user, permissions:pname });
       } else {
         next(createError(404, "Pas d'utilisations, cliquez sur précedent pour revenir à la page"));
       }
@@ -69,6 +87,8 @@ exports.utilisation_create_get = async function (req, res, next) {
     if (!user) {
       return res.redirect("/catalog/utilisateur/login");
     }
+    if (await can1("creerUtilisation", user.id) ==  true){
+
     let machine;
     let utilisateur;
     if (req.query.machineid) { // 49 - 54 : si on a reçu dans l'url un id de machine ou utilisateur, on va le stocker
@@ -81,21 +101,25 @@ exports.utilisation_create_get = async function (req, res, next) {
       Utilisateur.findAll(),
     ]);
     if (req.query.machineid) {
-    res.render("utilisationM_form", { title: "Nouvelle utilisation", machine, utilisateur, machines, utilisateurs });}
+      let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);  
+    res.render("utilisationM_form", { title: "Nouvelle utilisation", machine, utilisateur, machines, utilisateurs, permissions:pname  });}
     if (req.query.utilisateurid) {
-    res.render("utilisationU_form", { title: "Nouvelle utilisation", machine, utilisateur, machines, utilisateurs });}
+      let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1); 
+    res.render("utilisationU_form", { title: "Nouvelle utilisation", machine, utilisateur, machines, utilisateurs, permissions:pname  });}
     else{
       // on a deux if, qui vont renvoyer vers un formulaire légerement différent. Selon qu'on ait reçu l'id d'une machine
       // ou d'un utilisateur dans l'url. Càd si de la page précedente etait une machine ou un user selectionné
 
-    
-    res.render("utilisation_form", { title: "Nouvelle utilisation", machine, utilisateur, machines, utilisateurs, user: req.user });}
+      let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1); 
+    res.render("utilisation_form", { title: "Nouvelle utilisation", machine, utilisateur, machines, utilisateurs, user: req.user, permissions:pname  });}
+    }
   } catch (error) {
     next(error);
   }
 };
 
   exports.utilisation_create_post = [
+   
     body("duree") //ligne 73 -81 : on fait la validation & nettoyage des champs
       .trim()
       .notEmpty()
@@ -111,6 +135,7 @@ exports.utilisation_create_get = async function (req, res, next) {
       if (!user) {
       return res.redirect("/catalog/utilisateur/login");
     }
+
           const errors = validationResult(req);
     
           if (!errors.isEmpty()) {
@@ -164,7 +189,7 @@ exports.utilisation_create_get = async function (req, res, next) {
     if (!user) {
       return res.redirect("/catalog/utilisateur/login");
     }
-      
+    if (await can1("supprimerUtilisation", user.id) ==  true){
       const utilisation = await Utilisation.findByPk(req.params.id, {
         include: [Machine, Utilisateur, Facture],
       });
@@ -173,8 +198,11 @@ exports.utilisation_create_get = async function (req, res, next) {
       if (utilisation === null) {
         res.redirect("/catalog/utilisateurs");
       } else {
-        res.render("utilisation_delete", { title: "Supprimer utilisation", utilisation , user: req.user});
+        let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);
+      
+        res.render("utilisation_delete", { title: "Supprimer utilisation", utilisation , user: req.user , permissions:pname});
       }
+    }
     } catch (error) {
       next(error);
     }

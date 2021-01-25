@@ -113,17 +113,19 @@ async function createPerm(){
     permCreate("supprimerMachine", roles[1]),
     permCreate("creerMachine", roles[1]),
     permCreate("lireToutesUtilisations", roles[1]),
-    permCreate("lireMesUtilisations", roles[0]),
-    permCreate("creerTouteUtilisation", roles[1]),
-    permCreate("creerMonUtilisation", roles[0]),
+    permCreate("lireUtilisationsMembre", roles[0]),
+    permCreate("creerUtilisation", [roles[1], roles[0]]),
+    permCreate("creerUtilisationModeManager", roles[1]),
     permCreate("supprimerUtilisation", roles[1]),
-    permCreate("lireToutesFactures", roles[1]),
-    permCreate("lireMesFactures", roles[0]),
+    permCreate("lireToutesFactures", [roles[1], roles[2]]),
+    permCreate("lireFacturesMembre", roles[0]),
     permCreate("creerFacture", roles[1]),
     permCreate("supprimerFacture", roles[2]),
     permCreate("lireTousUtilisateurs", roles[1]),
-    permCreate("lireMonUtilisateur", roles[0]),
-    permCreate("modifierUtilisateur", [roles[0], roles[1]]),
+    permCreate("lireMem", roles[0]),
+    permCreate("modifierInfosTousUtilisateurs", roles[1]),
+    permCreate("modifierInfosMembre", roles[0]),
+      permCreate("lireFactureDetail", roles[1]),
 
   ])
 }
@@ -169,6 +171,7 @@ async function createUtilisateur() {
     utilisateurCreate("comptable", "comptable", "comptable", "comptable", roles[2]),
     utilisateurCreate("manager", "manager", "mmm", "mmm", roles[1]),
     utilisateurCreate("membre", "membre", "bbb", "bbb", roles[0]),
+    utilisateurCreate("membre", "membre", "cal", "cal", roles[0]),
   ]);
 }
 

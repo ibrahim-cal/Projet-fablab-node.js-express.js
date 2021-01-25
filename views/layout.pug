@@ -58,22 +58,34 @@ html(lang="en")
                     hr
                     li
                       a(href="/catalog/machines") Liste machines
-                    hr
+                    hr  
                     li
-                      a(href="/catalog/utilisations") Liste des utilisations
+                      if permissions.includes("lireToutesUtilisations")
+                        a(href="/catalog/utilisations") Liste de toutes les  utilisations
                     li
-                      a(href="/catalog/utilisation/create") Encoder une nouvelle utilisation 
+                          //if permissions.includes("lireUtilisationsMembre")
+                          a(href="/catalog/utilisationsMembre") Mes utilisations
+                    li
+                      if permissions.includes("creerUtilisationModeManager")
+                        a(href="/catalog/utilisation/create") Encoder une nouvelle utilisation 
+                        hr
+                    li
+                      if permissions.includes("lireToutesFactures")
+                        a(href="/catalog/factures") Liste de toutes les factures
+                    li
+                      
+                        a(href="/catalog/facturesMembre") Mes factures
+                    li
+                      if permissions.includes("creerFacture")
+                        a(href="/catalog/facture/create") Encoder une nouvelle facture 
                       hr
                     li
-                      a(href="/catalog/factures") Liste des factures
-                    li
-                      a(href="/catalog/facture/create") Encoder une nouvelle facture 
-                      hr
-                    li
-                      a(href="/catalog/utilisateur/"+user.id+'/update')  Modifier mes informations
+                      
+                        a(href="/catalog/utilisateur/"+user.id+'/updateMembre')  Modifier mes informations
       
                     hr
                     li
-                      a(href="/catalog/utilisateurs") Liste des utilisateurs
+                      if permissions.includes("lireTousUtilisateurs")
+                        a(href="/catalog/utilisateurs") Liste des utilisateurs
         .col-sm-10
            block content

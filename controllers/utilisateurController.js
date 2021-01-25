@@ -5,6 +5,9 @@ const passport = require("passport");
 var session = require("express-session");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
+const { getUserPermissions, can1} = require("../middlewares/roles")
+
+
 
 exports.utilisateur_detail = async function (req, res, next) {
   try {
@@ -17,7 +20,9 @@ exports.utilisateur_detail = async function (req, res, next) {
       include: UtilisateurRoles 
        });
     if (utilisateur !== null) {
-      res.render("utilisateur_detail", { title: "Details de l'utilisateur", utilisateur, user: req.user});
+      let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);
+
+      res.render("utilisateur_detail", { title: "Details de l'utilisateur", utilisateur, user: req.user, permissions:pname});
     } else {
       next(createError(404, "Pas de details"));
     }
@@ -38,8 +43,10 @@ exports.utilisateur_list = async function (req, res, next) {
       include : [Utilisation, Facture],
       order: [["nom", "ASC"]],
     });
+    let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);
+    
     res.render("utilisateur_list", { title: "Voici la liste des utilisateurs :",
-     utilisateur_list, Utilisation, user: req.user });
+     utilisateur_list, Utilisation, user: req.user , permissions:pname });
     
   
   } catch (error) {
@@ -49,10 +56,11 @@ exports.utilisateur_list = async function (req, res, next) {
 };
 
 
-exports.utilisateur_create_get = function (req, res, next) {
+exports.utilisateur_create_get = async function (req, res, next) {
   const user = req.user;
-   
-  res.render("utilisateur_form", { title: "Création nouveau compte", user: req.user});
+  let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);
+ 
+  res.render("utilisateur_form", { title: "Création nouveau compte", user: req.user, permissions:pname});
 };
   
   exports.utilisateur_create_post =  [
@@ -102,25 +110,46 @@ exports.utilisateur_create_get = function (req, res, next) {
     if (utilisateur === null) { // si on ne trouve pas l'utilisateur
       next(createError(404, "utilisateur non trouvé ")); // on renvoie une erreur
     } else {
-        // ***************** SI MEMBRE 
-        
-      res.render("utilisateur_updateUtilisateur", { title : "Modifier mes informations ",
-      utilisateur, user : req.user
-
-      });
 
         //***************** SI MANAGER */
-
+        if (await can1("lireToutesFactures", user.id) ==  true){
+        let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);
+        
       res.render("utilisateur_update",{  //sinon on affiche le formulaire de modification
         title : "Modification informations utilisateur",
         utilisateur,
-        user: req.user
+        user: req.user , permissions:pname
       });
-    }
+    }}
   }  catch (error){
     next(error);
   }
     };
+
+    exports.utilisateur_updateMembre_get = async function (req, res, next) {
+      try{
+        const user = req.user;
+        if (!user) {
+          return res.redirect("/catalog/utilisateur/login");
+        }
+        const utilisateur= await Utilisateur.findByPk(req.params.id, { })
+      if (utilisateur === null) { // si on ne trouve pas l'utilisateur
+        next(createError(404, "utilisateur non trouvé ")); // on renvoie une erreur
+      } else {
+         
+          let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);
+         
+        res.render("utilisateur_updateUtilisateur", { title : "Modifier mes informations ",
+        utilisateur, user : req.user , permissions:pname
+   });
+  
+      }
+    }  catch (error){
+      next(error);
+    }
+      };
+
+
   
   exports.utilisateur_update_post =  [
     (req, res, next) => {
@@ -162,6 +191,48 @@ exports.utilisateur_create_get = function (req, res, next) {
   },
   ];
 
+  exports.utilisateur_updateMembre_post =  [
+    (req, res, next) => {
+     next();
+  },
+    body("prenom", "Veuillez indiquer le nom de la utilisateur.").trim().notEmpty().escape(),
+    body("nom", "Veuillez indiquer un prenom.").trim().notEmpty().escape(), // on fait la validation
+    body("email", "Veuillez indiquer un email.").trim().notEmpty().escape(),
+    body("mdp", "Veuillez indiquer un mot de passe.").trim().notEmpty().escape(),
+    async (req, res, next) => {
+      try {
+        const user = req.user;
+        if (!user) {
+          return res.redirect("/catalog/utilisateur/login");
+        }
+        const errors = validationResult(req); // on traite les erreurs de validation
+        if (!errors.isEmpty())
+         {
+        res.render("utilisateur_update", utilisateur, {
+          title : "Modification données utilisateur ",
+          utilisateur : req.body,
+          errors : errors.array(),
+        });
+      }else {
+        const utilisateur = await Utilisateur.findByPk(req.params.id);
+        utilisateur.prenom = req.body.prenom;
+        utilisateur.nom = req.body.nom; // MaJ des infos en fonction de
+        utilisateur.email = req.body.email; // ce qu'on a reçu dans le formulaire
+        const hash =  bcrypt.hashSync(req.body.mdp, saltRounds)
+        utilisateur.passwordHash = hash;
+
+        await utilisateur.save();
+      }
+        res.redirect("/catalog/utilisateurs"); // avoir avoir sauvegardé, on redirige vers liste utilisateurs
+    
+    } catch (error){
+      next(error);
+    }
+  },
+  ];
+
+
+
   exports.login_get = async function (req, res, next) {
     const authenticationFailed = req.session.authenticationFailed;
     delete req.session.authenticationFailed;
@@ -199,6 +270,8 @@ exports.utilisateur_create_get = function (req, res, next) {
               return next(err3);
             }
             req.session.newlyAuthenticated = true;
+
+            
             res.redirect("/catalog/");
           });
         });

@@ -13,7 +13,7 @@ block content
           th(scope="col") Montant
           th(scope="col") Date facture
           th(scope="col") Details
-          th(scope="col") Supprimer
+          
       tbody
         each facture in facture_list
             tr
@@ -25,7 +25,8 @@ block content
             td
               a(href= "/catalog/facture/"+facture.id)  Details 
             td
-              a(href=facture.url+"/delete")  Supprimer
+              if permissions.includes("supprimerFacture")
+                a(href=facture.url+"/delete")  Supprimer
      
         else
           li Il n'y a pas de facture
