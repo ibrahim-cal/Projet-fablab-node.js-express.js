@@ -56,7 +56,8 @@ html(lang="en")
                       a(href="/catalog/utilisateur/logout") deconnecter
                     hr
                     li
-                      a(href="/catalog/machines") Liste machines
+                      if permissions.includes("lireMachine")  
+                        a(href="/catalog/machines") Liste machines
                     hr  
                     li
                       if permissions.includes("lireFacturesMembre")   

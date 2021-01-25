@@ -18,7 +18,7 @@ exports.facture_list =  async function (req, res, next) {
      if (await can1("lireToutesFactures", user.id) ==  true){
 
      facture_list = await Facture.findAll({ // on fait une requete en BDD dans la table facture, en incluant les tables 
-      include: [Utilisation, Utilisateur], // LigneFacturation et utilisateur. On stocke le tout dans une variable facture_list
+      include: [Utilisation, Utilisateur], // utilisateur, utilisation. On stocke le tout dans une variable facture_list
     });
     let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);  
     res.render("facture_list", { title: "Liste factures", facture_list , user: req.user, permissions:pname});// on renvoie vers la page pug "facture_list"
@@ -110,6 +110,73 @@ exports.facture_create_get =  async function (req, res, next) {
 
 };
   
+exports.facture_create_post = async function (req, res, next) {
+  try {
+  const errors = validationResult(req); // on traite les erreurs de validation
+  if (!errors.isEmpty()) {
+  res.render("facture_form", facture, {
+  // si erreurs dans champs,
+  title: "Certains champs sont incorrects ", //on reaffiche formulaire
+  
+  errors: errors.array(),
+  });
+  } else {
+  const sansFactures = await Utilisation.findAll({
+  where : {
+  [Op.and]: [
+  { factureId : null},
+  { utilisateurId : req.body.utilisateurid}
+  // on récupère les utilisations dont factureid null - donc pas encore facturées -
+  // ET dont l'utilisateur id = l'id de l'utilisateur selectionné dans le formulaire
+  ] },
+  });
+  // const sansFactures = await Utilisation.findAll();
+  
+  if (sansFactures.length === 0) {
+  // si il n'y a aucune utilisations à facturer
+  // on va renvoyer erreur 404 + message
+  next(createError(404,
+  "Pas d'utilisations à facturer " +
+  "pour ce mois et cet utilisateur. Cliquez sur précedent pour revenir à la page"));}
+   else {
+    total = 0;
+    let res1=0;
+      sansFactures.forEach((element) => {
+        res1 = element.duree * element.tarifMachine;
+        total = res1 + total;
+        // pour chaque utilisation, on va multiplier la durée au tarif. Ensuite on va additionner
+        // les produits afin d'avoir le total de la facture dans une variable
+  });
+  
+  console.log(req.body.dateFacture);
+       const facture = Facture.build({
+        numeroFacture:req.body.dateFacture.split("-").join(""),
+          montant: total,
+            });
+    facture.dateFacture = req.body.dateFacture; // on recupere la date du form et on la met dans dateFacture
+      const recupUtilisateur = await Utilisateur.findByPk(
+      req.body.utilisateurid
+      ); // on recupere id utilisateur selectionné
+  
+      await facture.setUtilisateur(recupUtilisateur); // et on le stocke dans utilisateurid de la facture
+  
+  await facture.save(); // on sauvegarde toutes les données dans une nouvelle facture
+  
+  sansFactures.forEach((element) => {
+  element.setFacture(facture);
+  
+  });
+  res.redirect("/catalog/factures");
+      }
+    } // fin else
+  } catch (error) {
+  next(error);
+  }
+  };
+
+
+
+/*
   exports.facture_create_post =
   
   [
@@ -156,7 +223,7 @@ exports.facture_create_get =  async function (req, res, next) {
             // pour chaque utilisation, on va multiplier la durée au tarif. Ensuite on va additionner 
             // les produits afin d'avoir le total de la facture dans une variable
           })
-         
+         console.log("*****************$$" +facture.length)
           const facture =  Facture.build({
             numeroFacture : 
            ( ""+  (req.body.dateFacture.getFullYear()) + (req.body.dateFacture.getMonth()+1) ) ,
@@ -186,7 +253,7 @@ exports.facture_create_get =  async function (req, res, next) {
         },  
       
 ];
-  
+  */
 
 
   exports.facture_delete_get = async function (req, res, next) {

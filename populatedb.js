@@ -125,7 +125,7 @@ async function createPerm(){
     permCreate("lireMem", roles[0]),
     permCreate("modifierInfosTousUtilisateurs", roles[1]),
     permCreate("modifierInfosMembre", roles[0]),
-    permCreate("lireFactureDetail", roles[1]),
+    permCreate("lireFactureDetail", [roles[1],roles[2]]),
 
   ])
 }
@@ -160,9 +160,7 @@ async function createUtilisation() {
 
 async function createFacture() {
   return await Promise.all([
-    factureCreate("202012001", "10", "2020-12-25", utilisateurs[0]),/*
-    factureCreate("202012002", "9", "2020-12-25", utilisateurs[2]),
-*/
+
   ]);
 }
 

@@ -186,14 +186,16 @@ exports.utilisation_create_get = async function (req, res, next) {
       const utilisation = await Utilisation.findByPk(req.params.id, {
         include: [Machine, Utilisateur, Facture],
       });
-      
-      
+  
       if (utilisation === null) {
         res.redirect("/catalog/utilisateurs");
       } else {
+        const utilisation = await Utilisation.findByPk(req.params.id, {
+          include: [Machine, Utilisateur, Facture],
+        });
+
         let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);
-      
-        res.render("utilisation_delete", { title: "Supprimer utilisation", utilisation , user: req.user , permissions:pname});
+        res.render("utilisation_delete", { title: "Supprimer utilisation", utilisation ,user: req.user , permissions:pname});
       }
     }
     } catch (error) {

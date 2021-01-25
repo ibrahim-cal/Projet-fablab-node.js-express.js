@@ -23,8 +23,10 @@ block content
             td= utilisation.machine.nom
             td= utilisation.tarifMachine
             td= utilisation.utilisateur.nom
-            td
-              a(href=utilisation.url+"/delete")  Supprimer 
+            if permissions.includes("supprimerUtilisation")  
+             td
+                a(href=utilisation.url+"/delete")  Supprimer 
                 
         else
-          li Il n'y a pas d'utilisations
+          li #[strong Il n'y a pas d'utilisations ! ] 
+          br
