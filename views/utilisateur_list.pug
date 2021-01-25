@@ -17,7 +17,7 @@ block content
             th(scope="col") Encoder utilisation
           th(scope="col") facture(s)
           th(scope="col") 
-          th(scope="col") 
+          th(scope="col") Roles
           
       tbody
         each utilisateur in utilisateur_list
@@ -32,12 +32,14 @@ block content
                   a(href='/catalog/utilisation/create?utilisateurid=' + utilisateur.id)  Nouvelle utilisation
             
                
-            td= "A IMPLEMENTER"
+            td
+                a(href="/catalog/facturelistMembreSelectionne/" +utilisateur.id) Consulter
             td
               if permissions.includes("modifierInfosTousUtilisateurs")   
                   a(href=utilisateur.url + '/update')  Modifier données utilisateur
-            td
-               a(href= "/catalog/utilisateur/" +utilisateur.id) role
+              if permissions.includes("lireRoles")      
+                td
+                  a(href= "/catalog/utilisateur/" +utilisateur.id) voir 
           
     
       

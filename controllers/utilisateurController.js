@@ -1,6 +1,6 @@
 const { Utilisateur, UtilisateurRoles,Utilisation, Facture, Role, } = require("../models/sequelize");
 const createError = require("http-errors");
-const { body, validationResult } = require("express-validator");
+const { body, validationResult, header } = require("express-validator");
 const passport = require("passport");
 var session = require("express-session");
 const bcrypt = require("bcrypt");
@@ -18,14 +18,13 @@ exports.utilisateur_detail = async function (req, res, next) {
     const utilisId = req.params.id; // on recupere l'id de l'url (celui de l'utilisateur selectionné)
   
     const utilisateur = await Utilisateur.findByPk(utilisId, {// et on lance une recherche en BDD 
-      include: Role 
-       });
   
- 
+       }); 
+  
     if (utilisateur !== null) {
       let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);
 
-      res.render("utilisateur_detail", { title: "Details de l'utilisateur", utilisateur, r,user: req.user, permissions:pname});
+      res.render("utilisateur_detail", { title: "Details de l'utilisateur", utilisateur,user: req.user, permissions:pname});
     } else {
       next(createError(404, "Pas de details"));
     }
@@ -50,8 +49,7 @@ exports.utilisateur_list = async function (req, res, next) {
     
     res.render("utilisateur_list", { title: "Voici la liste des utilisateurs :",
      utilisateur_list, Utilisation, user: req.user , permissions:pname });
-    
-  
+
   } catch (error) {
     next(error);
   }
@@ -116,8 +114,8 @@ exports.utilisateur_create_get = async function (req, res, next) {
       next(createError(404, "utilisateur non trouvé ")); // on renvoie une erreur
     } else {
 
-        //***************** SI MANAGER */
-        if (await can1("lireToutesFactures", user.id) ==  true){
+     
+        if (await can1("modifierInfosTousUtilisateurs", user.id) ==  true){
         let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);
         
       res.render("utilisateur_update",{  //sinon on affiche le formulaire de modification
@@ -131,21 +129,63 @@ exports.utilisateur_create_get = async function (req, res, next) {
   }
     };
 
+    exports.utilisateur_update_post =  [
+      (req, res, next) => {
+       next();
+    },
+      body("prenom", "Veuillez indiquer le nom d'utilisateur.").trim().notEmpty().escape(),
+      body("nom", "Veuillez indiquer un prenom.").trim().notEmpty().escape(), // on fait la validation
+      body("email", "Veuillez indiquer un email.").trim().notEmpty().escape(),
+      body("mdp", "Veuillez indiquer un mot de passe.").trim().notEmpty().escape(),
+      async (req, res, next) => {
+        try {
+          const user = req.user;
+          if (!user) {
+            return res.redirect("/catalog/utilisateur/login");
+          }
+          const errors = validationResult(req); // on traite les erreurs de validation
+          if (!errors.isEmpty())
+           {
+          res.render("utilisateur_update", utilisateur, {
+            title : "Modification données utilisateur ",
+            utilisateur : req.body,
+            errors : errors.array(),
+          });
+        }else {
+          const utilisateur = await Utilisateur.findByPk(req.params.id);
+          utilisateur.prenom = req.body.prenom;
+          utilisateur.nom = req.body.nom; // MaJ des infos en fonction de
+          utilisateur.email = req.body.email; // ce qu'on a reçu dans le formulaire
+          const hash =  bcrypt.hashSync(req.body.mdp, saltRounds)
+          utilisateur.passwordHash = hash;
+  
+          await utilisateur.save();
+        }
+          res.redirect("/catalog/utilisateurs"); // avoir avoir sauvegardé, on redirige vers liste utilisateurs
+      
+      } catch (error){
+        next(error);
+      }
+    },
+    ];
+
     exports.utilisateur_updateMembre_get = async function (req, res, next) {
       try{
         const user = req.user;
         if (!user) {
           return res.redirect("/catalog/utilisateur/login");
         }
-        const utilisateur= await Utilisateur.findByPk(req.params.id, { })
+        const utilisateur= await Utilisateur.findByPk(user.id, { })
       if (utilisateur === null) { // si on ne trouve pas l'utilisateur
         next(createError(404, "utilisateur non trouvé ")); // on renvoie une erreur
       } else {
          
           let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);
          
-        res.render("utilisateur_updateUtilisateur", { title : "Modifier mes informations ",
-        utilisateur, user : req.user , permissions:pname
+        res.render("utilisateur_updateUtilisateur", { 
+          title : "Modifier mes informations ",
+        utilisateur, 
+        user : req.user , permissions:pname
    });
   
       }
@@ -155,89 +195,73 @@ exports.utilisateur_create_get = async function (req, res, next) {
       };
 
 
-  
-  exports.utilisateur_update_post =  [
-    (req, res, next) => {
-     next();
-  },
-    body("prenom", "Veuillez indiquer le nom de la utilisateur.").trim().notEmpty().escape(),
-    body("nom", "Veuillez indiquer un prenom.").trim().notEmpty().escape(), // on fait la validation
-    body("email", "Veuillez indiquer un email.").trim().notEmpty().escape(),
-    body("mdp", "Veuillez indiquer un mot de passe.").trim().notEmpty().escape(),
-    async (req, res, next) => {
-      try {
-        const user = req.user;
-        if (!user) {
-          return res.redirect("/catalog/utilisateur/login");
-        }
-        const errors = validationResult(req); // on traite les erreurs de validation
-        if (!errors.isEmpty())
-         {
-        res.render("utilisateur_update", utilisateur, {
-          title : "Modification données utilisateur ",
-          utilisateur : req.body,
-          errors : errors.array(),
-        });
-      }else {
-        const utilisateur = await Utilisateur.findByPk(req.params.id);
-        utilisateur.prenom = req.body.prenom;
-        utilisateur.nom = req.body.nom; // MaJ des infos en fonction de
-        utilisateur.email = req.body.email; // ce qu'on a reçu dans le formulaire
-        const hash =  bcrypt.hashSync(req.body.mdp, saltRounds)
-        utilisateur.passwordHash = hash;
-
-        await utilisateur.save();
-      }
-        res.redirect("/catalog/utilisateurs"); // avoir avoir sauvegardé, on redirige vers liste utilisateurs
-    
-    } catch (error){
-      next(error);
-    }
-  },
-  ];
-
+      
   exports.utilisateur_updateMembre_post =  [
     (req, res, next) => {
      next();
   },
-    body("prenom", "Veuillez indiquer le nom de la utilisateur.").trim().notEmpty().escape(),
+    body("prenom", "Veuillez indiquer le nom d'utilisateur.").trim().notEmpty().escape(),
     body("nom", "Veuillez indiquer un prenom.").trim().notEmpty().escape(), // on fait la validation
     body("email", "Veuillez indiquer un email.").trim().notEmpty().escape(),
-    body("mdp", "Veuillez indiquer un mot de passe.").trim().notEmpty().escape(),
+    body("ancienmdp", "Veuillez indiquer votre ancien mot de passe.").trim().notEmpty().escape(),
     async (req, res, next) => {
       try {
         const user = req.user;
         if (!user) {
           return res.redirect("/catalog/utilisateur/login");
-        }
+                   }
+
         const errors = validationResult(req); // on traite les erreurs de validation
         if (!errors.isEmpty())
          {
-        res.render("utilisateur_update", utilisateur, {
-          title : "Modification données utilisateur ",
+       
+          res.render("utilisateur_updateUtilisateur", {
+          title : "Modification mes données ",
           utilisateur : req.body,
           errors : errors.array(),
-        });
-      }else {
-        const utilisateur = await Utilisateur.findByPk(req.params.id);
+             });
+         }
+      
+        else {
+        
+        const utilisateur = await Utilisateur.findByPk(user.id);
         utilisateur.prenom = req.body.prenom;
         utilisateur.nom = req.body.nom; // MaJ des infos en fonction de
         utilisateur.email = req.body.email; // ce qu'on a reçu dans le formulaire
-        const hash =  bcrypt.hashSync(req.body.mdp, saltRounds)
-        utilisateur.passwordHash = hash;
+        
+        
+        let nouveaumdp1 ;
+        if(bcrypt.compareSync(req.body.ancienmdp, utilisateur.passwordHash)) {
+        nouveaumdp1 =  req.body.nouveaumdp;
+      
+         } else {
+          res.render("utilisateur_updateUtilisateur",{
+          title : "Champs concernant mots de passes incorrects ",
+          utilisateur : req.body
+         });
+        }
 
-        await utilisateur.save();
-      }
-        res.redirect("/catalog/utilisateurs"); // avoir avoir sauvegardé, on redirige vers liste utilisateurs
-    
+         if(nouveaumdp1 == req.body.nouveaumdp2) {
+          const hash2 =  bcrypt.hashSync(req.body.nouveaumdp2, saltRounds);
+          utilisateur.passwordHash= hash2;
+           } else {
+            res.render("utilisateur_updateUtilisateur",{
+            title : "Champs concernant mots de passes incorrects ",
+            utilisateur : req.body
+           });
+          }
+              await utilisateur.save();
+        }
+        
+        res.redirect("/catalog"); // avoir avoir sauvegardé, on redirige
+      
     } catch (error){
       next(error);
     }
   },
   ];
 
-
-
+  
   exports.login_get = async function (req, res, next) {
     const authenticationFailed = req.session.authenticationFailed;
     delete req.session.authenticationFailed;
@@ -275,8 +299,7 @@ exports.utilisateur_create_get = async function (req, res, next) {
               return next(err3);
             }
             req.session.newlyAuthenticated = true;
-
-            
+  
             res.redirect("/catalog/");
           });
         });

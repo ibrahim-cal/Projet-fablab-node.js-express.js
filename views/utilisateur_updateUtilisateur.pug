@@ -26,7 +26,7 @@ block content
     .mb-3
       label.form-label(for="email") email :
       input#email.form-control(
-        type="text"
+        type="email"
         placeholder="Ex@exemple.com"
         name="email"
         required
@@ -36,32 +36,31 @@ block content
       label.form-label(for="mdp") ancien mot de passe :
       input#mdp.form-control(
         
-        type="text"
+        type="password"
         placeholder="  "
         name="ancienmdp"
         required
               
       )
     .mb-3
-      label.form-label(for="mdp") nouveau mot de passe : 
+      label.form-label(for="nouveaumdp") nouveau mot de passe : 
       input#mdp.form-control(
         
-        type="text"
+        type="password"
         placeholder="  "
         name="nouveaumdp"
         required
               
       )
     .mb-3
-      label.form-label(for="mdp") confirmez votre nouveau mot de passe : 
+      label.form-label(for="nouveaumdp2") confirmez votre nouveau mot de passe : 
       input#mdp.form-control(
-        
-        type="text"
-        placeholder="  "
-        name="nouveaumdp2"
-        required
-       
-      )
+              type="password"
+              placeholder="  "
+              name="nouveaumdp2"
+              required
+            
+            )
     .mb-3
       button.btn.btn-primary(type="submit") Enregistrer
 

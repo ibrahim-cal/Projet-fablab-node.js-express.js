@@ -51,6 +51,31 @@ exports.facture_listMembre =  async function (req, res, next) {
     next(error);
   }
 }
+exports.facture_listMembreSelectionne =  async function (req, res, next) {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.redirect("/catalog/utilisateur/login");
+    }
+     let facture_listMembreSelectionne;
+     
+
+      facture_listMembreSelectionne = await Facture.findAll({
+          where: { utilisateurId : req.params.id},
+          include: [ Utilisateur]   
+        });
+        console.log(facture_listMembreSelectionne.montant)
+        let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);
+
+          res.render("facture_listMembreSelectionne", { title: "Liste factures",facture_listMembreSelectionne,
+          permissions:pname,
+           user: req.user });
+    //}
+
+  } catch (error) {
+    next(error);
+  }
+}
 
 
 

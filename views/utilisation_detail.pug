@@ -22,8 +22,9 @@ block content
                 td  #{utilisation.dateUtilisation}  
                 td  #{utilisation.duree}
                 td  #{utilisation.machine.nom}
-                td 
-                  a(href=utilisation.url + '/delete')  Supprimer 
+                  if permissions.includes("supprimerUtilisation")   
+                   td 
+                      a(href=utilisation.url + '/delete')  Supprimer 
 
          
        

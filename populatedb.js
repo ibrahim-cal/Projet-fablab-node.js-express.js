@@ -122,10 +122,11 @@ async function createPerm(){
     permCreate("creerFacture", roles[1]),
     permCreate("supprimerFacture", roles[2]),
     permCreate("lireTousUtilisateurs", [roles[1], roles[2]]),
-    permCreate("lireMem", roles[0]),
+    permCreate("lireMembre", roles[0]),
     permCreate("modifierInfosTousUtilisateurs", roles[1]),
     permCreate("modifierInfosMembre", roles[0]),
     permCreate("lireFactureDetail", [roles[1],roles[2]]),
+    permCreate("lireRoles", roles[1]),
 
   ])
 }
@@ -166,10 +167,10 @@ async function createFacture() {
 
 async function createUtilisateur() {
   return await Promise.all([
-    utilisateurCreate("comptable", "comptable", "comptable", "comptable", roles[2]),
-    utilisateurCreate("manager", "manager", "mmm", "mmm", roles[1]),
-    utilisateurCreate("membre", "membre", "bbb", "bbb", roles[0]),
-    utilisateurCreate("membre", "membre", "cal", "cal", roles[0]),
+    utilisateurCreate("cpt", "cpt", "comptable@comptable.com", "comptable", roles[2]),
+    utilisateurCreate("manager", "manager", "manager@manager.com", "manager", roles[1]),
+    utilisateurCreate("membre1", "membre1", "membre@membre.com", "membre", roles[0]),
+    utilisateurCreate("membre2", "membre2", "cal1@cal1.com", "cal1", roles[0]),
   ]);
 }
 
