@@ -121,11 +121,11 @@ async function createPerm(){
     permCreate("lireFacturesMembre", roles[0]),
     permCreate("creerFacture", roles[1]),
     permCreate("supprimerFacture", roles[2]),
-    permCreate("lireTousUtilisateurs", roles[1]),
+    permCreate("lireTousUtilisateurs", [roles[1], roles[2]]),
     permCreate("lireMem", roles[0]),
     permCreate("modifierInfosTousUtilisateurs", roles[1]),
     permCreate("modifierInfosMembre", roles[0]),
-      permCreate("lireFactureDetail", roles[1]),
+    permCreate("lireFactureDetail", roles[1]),
 
   ])
 }

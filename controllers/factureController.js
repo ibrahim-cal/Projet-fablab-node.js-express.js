@@ -1,4 +1,4 @@
-const { Facture, Utilisateur, Utilisation, Machine, Role, Permission } = require("../models/sequelize");
+const { Facture, Utilisateur, Utilisation, Machine, Role,  Permission } = require("../models/sequelize");
 const createError = require("http-errors");
 const { body, validationResult } = require("express-validator");
 const facture = require("../models/facture");
@@ -16,6 +16,7 @@ exports.facture_list =  async function (req, res, next) {
     let facture_list;
 
      if (await can1("lireToutesFactures", user.id) ==  true){
+
      facture_list = await Facture.findAll({ // on fait une requete en BDD dans la table facture, en incluant les tables 
       include: [Utilisation, Utilisateur], // LigneFacturation et utilisateur. On stocke le tout dans une variable facture_list
     });
@@ -42,7 +43,7 @@ exports.facture_listMembre =  async function (req, res, next) {
           include: [ Utilisateur],     
         });
         let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);   
-          res.render("facture_listMembreConnecte", { title: "Liste de mes  factures",permissions:pname,
+          res.render("facture_listMembreConnecte", { title: "Liste factures",permissions:pname,
           facture_listMembre, user: req.user });
     //}
 

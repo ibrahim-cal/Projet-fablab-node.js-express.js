@@ -54,33 +54,35 @@ html(lang="en")
                     ul
                     li 
                       a(href="/catalog/utilisateur/logout") deconnecter
-                    
                     hr
                     li
                       a(href="/catalog/machines") Liste machines
                     hr  
                     li
-                      if permissions.includes("lireToutesUtilisations")
+                      if permissions.includes("lireFacturesMembre")   
+                        a(href="/catalog/facturesMembre") Mes factures
+                    li
+                      if permissions.includes("lireUtilisationsMembre")   
+                        
+                         a(href="/catalog/utilisationsMembre") Mes utilisations
+                    li
+                      if permissions.includes("lireToutesUtilisations")     
                         a(href="/catalog/utilisations") Liste de toutes les  utilisations
+              
                     li
-                          //if permissions.includes("lireUtilisationsMembre")
-                          a(href="/catalog/utilisationsMembre") Mes utilisations
-                    li
-                      if permissions.includes("creerUtilisationModeManager")
+                      if permissions.includes("creerUtilisationModeManager")        
                         a(href="/catalog/utilisation/create") Encoder une nouvelle utilisation 
                         hr
                     li
-                      if permissions.includes("lireToutesFactures")
+                      if permissions.includes("lireToutesFactures")     
                         a(href="/catalog/factures") Liste de toutes les factures
+                  
                     li
-                      
-                        a(href="/catalog/facturesMembre") Mes factures
-                    li
-                      if permissions.includes("creerFacture")
+                      if permissions.includes("creerFacture")        
                         a(href="/catalog/facture/create") Encoder une nouvelle facture 
                       hr
                     li
-                      
+                      if permissions.includes("modifierInfosMembre")
                         a(href="/catalog/utilisateur/"+user.id+'/updateMembre')  Modifier mes informations
       
                     hr

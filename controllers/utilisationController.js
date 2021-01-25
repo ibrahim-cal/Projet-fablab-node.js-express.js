@@ -13,25 +13,18 @@ exports.utilisation_listMembre = async function (req, res, next) {
       return res.redirect('/catalog/utilisateur/login');
     }
     
-    let utilisation_listMembre;
-
     if (await can1("lireUtilisationsMembre", user.id) ==  true){
+    let utilisation_listMembre;
 
       utilisation_listMembre = await Utilisation.findAll({    
           where: { utilisateurId : user.id},
           include: [Machine, Utilisateur], 
         });
+        let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);  
           res.render("utilisation_listMembreConnecte", { title:
              "Liste de mes utilisations",
-           utilisation_listMembre, user: req.user });
+           utilisation_listMembre, permissions:pname,user: req.user  });
 
-     utilisation_list = await Utilisation.findAll({ // on récupere la liste des utilisations et on la stocke
-      include: [Machine, Utilisateur],                  // dans utilisation_list, pour ensuite la reutiliser dans la vue
-    });
-
-    let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);  
-    res.render("utilisation_list", { title: "Liste des utilisations",
-     utilisation_list, user: req.user, permissions:pname });
   }
   } catch (error) {
     next(error);

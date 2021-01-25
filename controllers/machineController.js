@@ -14,10 +14,11 @@ exports.index = async function (req, res, next) {
   let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);   
     res.render("index", {
       title: "Accueil fabLab ", 
+      permissions:pname,
       user: req.user,
       currentUrl: req.originalUrl,
-      newlyAuthenticated,
-      permissions:pname,
+      newlyAuthenticated
+      
     });
   };
 

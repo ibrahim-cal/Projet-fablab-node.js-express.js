@@ -15,14 +15,17 @@ exports.utilisateur_detail = async function (req, res, next) {
   if (!user) {
     return res.redirect("/catalog/utilisateur/login");
   }
-    const utilisateurId = req.params.id; // on recupere l'id de l'url (celui de l'utilisateur selectionné)
-    const utilisateur = await Utilisateur.findByPk(utilisateurId, {// et on lance une recherche en BDD 
-      include: UtilisateurRoles 
+    const utilisId = req.params.id; // on recupere l'id de l'url (celui de l'utilisateur selectionné)
+  
+    const utilisateur = await Utilisateur.findByPk(utilisId, {// et on lance une recherche en BDD 
+      include: Role 
        });
+  
+ 
     if (utilisateur !== null) {
       let pname= await getUserPermissions(req.user?req.user.dataValues.id:-1);
 
-      res.render("utilisateur_detail", { title: "Details de l'utilisateur", utilisateur, user: req.user, permissions:pname});
+      res.render("utilisateur_detail", { title: "Details de l'utilisateur", utilisateur, r,user: req.user, permissions:pname});
     } else {
       next(createError(404, "Pas de details"));
     }
@@ -90,7 +93,9 @@ exports.utilisateur_create_get = async function (req, res, next) {
         passwordHash :  bcrypt.hashSync(req.body.mdp, saltRounds),// on recupere le mdp en version hashée
         
         });
+        const r = await Role.findOne({  where :  { nom :"membre"}}); // on va recuperer membre de table role pour le lier au nouvel utilisateur
         await utilisateur.save();// sauvegarde des infos dans table utilisateur
+        await utilisateur.setRoles(r);// on met le role "membre" au nouvel utilisateur
       }
         res.redirect("/catalog"); // avoir avoir sauvegardé, on redirige vers page acceuil
     

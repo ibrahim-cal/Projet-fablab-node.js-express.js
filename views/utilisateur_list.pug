@@ -13,7 +13,8 @@ block content
           th(scope="col") Prenom
           th(scope="col") Email
           th(scope="col") utilisation(s)
-          th(scope="col") Encoder utilisation
+          if permissions.includes("creerUtilisationModeManager")   
+            th(scope="col") Encoder utilisation
           th(scope="col") facture(s)
           th(scope="col") 
           th(scope="col") 
@@ -26,11 +27,15 @@ block content
             td= utilisateur.email
             td
                a(href= "/catalog/utilisation/" +utilisateur.id) liste utilisations
-            td
-               a(href='/catalog/utilisation/create?utilisateurid=' + utilisateur.id)  Nouvelle utilisation
+            if permissions.includes("creerUtilisationModeManager")   
+               td  
+                  a(href='/catalog/utilisation/create?utilisateurid=' + utilisateur.id)  Nouvelle utilisation
+            
+               
             td= "A IMPLEMENTER"
             td
-               a(href=utilisateur.url + '/update')  Modifier données utilisateur
+              if permissions.includes("modifierInfosTousUtilisateurs")   
+                  a(href=utilisateur.url + '/update')  Modifier données utilisateur
             td
                a(href= "/catalog/utilisateur/" +utilisateur.id) role
           
