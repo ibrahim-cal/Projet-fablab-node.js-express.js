@@ -13,7 +13,8 @@ block content
           th(scope="col") Montant
           th(scope="col") Date facture
           th(scope="col") Details
-          
+          if permissions.includes("supprimerFacture")
+            th
       tbody
         each facture in facture_list
             tr

@@ -68,11 +68,7 @@ html(lang="en")
                     li
                       if permissions.includes("lireToutesUtilisations")     
                         a(href="/catalog/utilisations") Liste de toutes les  utilisations
-              
-                    li
-                      if permissions.includes("creerUtilisationModeManager")        
-                        a(href="/catalog/utilisation/create") Encoder une nouvelle utilisation 
-                        hr
+
                     li
                       if permissions.includes("lireToutesFactures")     
                         a(href="/catalog/factures") Liste de toutes les factures

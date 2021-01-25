@@ -26,6 +26,20 @@ block content
         required
         value=undefined === utilisation ? "" : utilisation.dateUtilisation
       )
+      br
+
+      if permissions.includes("creerUtilisationModeManager")
+
+        .mb-3
+          label.form-label(for="utilisateur") utilisateur &ensp;
+          select(name="utilisateurid")
+            each utilisateur  in utilisateurs
+            
+               option(value=utilisateur.id)  #{utilisateur.nom}  #{utilisateur.prenom} 
+          input(
+            type="hidden" 
+            value=utilisateur && utilisateur.id
+            name="utilisateuridhidden")  
    
      
       

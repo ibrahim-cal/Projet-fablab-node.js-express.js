@@ -112,7 +112,7 @@ async function createPerm(){
     permCreate("modifierMachine", roles[1]),
     permCreate("supprimerMachine", roles[1]),
     permCreate("creerMachine", roles[1]),
-    permCreate("lireToutesUtilisations", roles[1]),
+    permCreate("lireToutesUtilisations", [roles[1], roles[2]]),
     permCreate("lireUtilisationsMembre", roles[0]),
     permCreate("creerUtilisation", [roles[1], roles[0]]),
     permCreate("creerUtilisationModeManager", roles[1]),
