@@ -1,4 +1,4 @@
-# projet-ibrahim-cal
+# projet Fablab
 
 Un fablab met des machines de fabrication numérique à disposition de ses membres. À chaque machine correspond un tarif. L’utilisation des machines est facturée en fonction de la durée. 
 
